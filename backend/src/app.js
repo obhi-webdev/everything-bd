@@ -17,7 +17,11 @@ app.disable("x-powered-by");
 
 app.use(helmet());
 app.use(cors({
-  origin: "http://localhost:5173"
+  origin: [
+    "http://localhost:5173",
+    "https://everything-bd.com",
+    "https://www.everything-bd.com"
+  ]
 }));
 app.use(express.json({ limit: "100kb" }));
 app.use(morgan("dev"));
