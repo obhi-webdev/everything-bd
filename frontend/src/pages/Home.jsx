@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowRight,
   Truck,
@@ -8,18 +8,42 @@ import {
 } from "lucide-react";
 
 import Header from "../components/layout/Header";
+import { useShopStore } from "../store/useShopStore";
 import Hero from "../components/home/Hero";
 import ProductCard from "../components/product/ProductCard";
 import CartDrawer from "../components/layout/CartDrawer";
 
 import {
-  products,
   categories
 } from "../features/products/data/products";
+import { useProducts } from "../features/products/hooks/useProducts";
 
 export default function Home() {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(
+    () => new URLSearchParams(window.location.search).get("q") || ""
+  );
   const [category, setCategory] = useState("All");
+  const { products, loading, error } = useProducts();
+
+  const showWishlist = new URLSearchParams(
+    window.location.search
+  ).get("wishlist") === "1";
+
+  const wishlist = useShopStore(state => state.wishlist);
+
+  useEffect(() => {
+    const id = window.location.hash.slice(1);
+    if (!id) return;
+
+    const timer = window.setTimeout(() => {
+      document.getElementById(id)?.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    }, 120);
+
+    return () => window.clearTimeout(timer);
+  }, []);
 
   const filteredProducts = products.filter((product) => {
     const keyword = search.toLowerCase();
@@ -33,14 +57,17 @@ export default function Home() {
     const matchCategory =
       category === "All" || product.category === category;
 
-    return matchSearch && matchCategory;
+    const matchWishlist =
+      !showWishlist || wishlist.includes(product.id);
+
+    return matchSearch && matchCategory && matchWishlist;
   });
 
   return (
     <>
       <Header search={search} setSearch={setSearch} />
 
-      <main>
+      <main id="home">
         <Hero />
 
         <section className="benefits">
@@ -124,7 +151,11 @@ export default function Home() {
               ))}
             </div>
 
-            {filteredProducts.length > 0 ? (
+            {loading ? (
+              <div className="no-products">Loading skincare products...</div>
+            ) : error ? (
+              <div className="no-products" role="alert">{error}</div>
+            ) : filteredProducts.length > 0 ? (
               <div className="product-grid">
                 {filteredProducts.map((product) => (
                   <ProductCard
@@ -135,7 +166,7 @@ export default function Home() {
               </div>
             ) : (
               <div className="no-products">
-                No matching products found.
+                {showWishlist ? "No wishlist products found." : "No matching products found."}
               </div>
             )}
           </div>

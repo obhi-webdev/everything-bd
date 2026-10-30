@@ -1,0 +1,158 @@
+.pm { margin-top: 24px; }
+.pm-heading, .pm-actions, .pm-panel-heading,
+.pm-form-actions, .pm-row-actions {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+}
+.pm-heading { flex-wrap: wrap; margin-bottom: 22px; }
+.pm-heading h2 { font-size: 22px; margin: 0 0 6px; }
+.pm-heading p, .pm-footnote { color: #98868c; font-size: 12px; }
+.pm button {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 7px; padding: 10px 15px;
+  border-radius: 9px; border: 1px solid #ead7dc;
+  background: white; color: #785b66;
+  font-size: 12px; font-weight: 600;
+}
+.pm button:disabled { opacity: .5; cursor: not-allowed; }
+.pm .pm-primary { background: #ca8b99; border-color: #ca8b99; color: white; }
+.pm-panel {
+  background: white; border: 1px solid #f0e0e4;
+  border-radius: 16px; padding: 24px; margin-bottom: 23px;
+}
+.pm-panel-heading { margin-bottom: 22px; }
+.pm-panel-heading h3 { margin: 0; font-size: 18px; }
+.pm-form-grid {
+  display: grid; grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 16px;
+}
+.pm form label {
+  display: flex; flex-direction: column; gap: 7px;
+  margin-bottom: 15px; font-size: 12px; font-weight: 600;
+  color: #66525a;
+}
+.pm input:not([type=checkbox]), .pm select, .pm textarea {
+  width: 100%; padding: 12px; border: 1px solid #ead8de;
+  border-radius: 9px; outline: none;
+  background: #fffcfc; font-size: 13px; color: #332b30;
+}
+.pm input:focus, .pm textarea:focus, .pm select:focus {
+  border-color: #ca8b99;
+}
+.pm textarea { resize: vertical; }
+.pm form .pm-checkbox { flex-direction: row; align-items: center; }
+.pm-form-actions { justify-content: flex-end; margin-top: 15px; }
+.pm-error, .pm-success {
+  padding: 12px 16px; border-radius: 10px; font-size: 13px;
+}
+.pm-error { color: #a22d4d; background: #fff0f1; }
+.pm-success { color: #397253; background: #edf8f0; }
+.pm-table-scroll { overflow-x: auto; }
+.pm-table { width: 100%; border-collapse: collapse; text-align: left; }
+.pm-table th {
+  padding: 13px; color: #94808a; font-size: 11px;
+  background: #fdf6f8; white-space: nowrap;
+}
+.pm-table td {
+  padding: 14px 13px; font-size: 12px;
+  border-bottom: 1px solid #f5e9ed;
+}
+.pm-product { display: flex; gap: 12px; align-items: center; min-width: 190px; }
+.pm-product img, .pm-no-image {
+  width: 53px; height: 58px; object-fit: cover;
+  border-radius: 8px; background: #fae7eb;
+}
+.pm-no-image {
+  display: grid; place-items: center; font-size: 9px;
+  color: #af8791; text-align: center;
+}
+.pm-product strong, .pm-product small { display: block; }
+.pm-product small { margin-top: 5px; color: #aa929b; }
+.pm-row-actions { justify-content: flex-start; }
+.pm .pm-row-actions button { padding: 7px; }
+.pm-status {
+  padding: 5px 10px; background: #f8e9ed;
+  color: #a46d7c; border-radius: 20px;
+  text-transform: capitalize; font-size: 11px;
+}
+.pm-empty { text-align: center; color: #9c8790; padding: 28px; }
+@media(max-width:650px) {
+  .pm-form-grid { grid-template-columns: 1fr; }
+  .pm-panel { padding: 15px; }
+  .pm-heading { align-items: flex-start; }
+}
+
+.eb-uploader {
+  margin: 20px 0;
+  padding: 22px;
+  border: 1px dashed #ddaab5;
+  border-radius: 14px;
+  background: #fff9fa;
+}
+.eb-upload-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 13px;
+}
+.eb-file-input { display: none; }
+.pm .eb-upload-button {
+  background: #ca8b99;
+  color: white;
+  border: none;
+  padding: 13px 20px;
+}
+.eb-upload-help {
+  font-size: 11px;
+  color: #99868e;
+  margin-top: 10px;
+}
+.eb-progress {
+  margin: 16px 0;
+  height: 7px;
+  border-radius: 20px;
+  background: #f2d9df;
+  overflow: hidden;
+}
+.eb-progress div {
+  height: 100%;
+  background: #c98797;
+  transition: width .2s;
+}
+.eb-image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill,minmax(100px,1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+.eb-image-item {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f5e8ec;
+}
+.eb-image-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.pm .eb-image-item button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  padding: 5px;
+  background: white;
+  border: none;
+  border-radius: 50%;
+}
+.eb-image-item span {
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+  padding: 4px 8px;
+  background: #ca8b99;
+  color: white;
+  border-radius: 5px;
+  font-size: 10px;
+}

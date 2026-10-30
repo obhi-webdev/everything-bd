@@ -1,3 +1,9 @@
+import marketingRoutes from "./modules/marketing/marketing.routes.js";
+import publicOrderRoutes from "./modules/orders/order.routes.js";
+import adminOrderRoutes from "./modules/orders/order.admin.routes.js";
+import checkoutRoutes from "./modules/checkout/checkout.routes.js";
+import mediaRoutes from "./modules/media/media.routes.js";
+import adminProductRoutes from "./modules/products/product.admin.routes.js";
 import authRoutes from "./modules/auth/auth.routes.js";
 import productRoutes from "./modules/products/product.routes.js";
 import express from "express";
@@ -27,6 +33,16 @@ app.get("/api/health", (req, res) => {
 app.use("/api/products", productRoutes);
 
 app.use("/api/auth", authRoutes);
+
+app.use("/api/admin/products", adminProductRoutes);
+
+app.use("/api/admin/media", mediaRoutes);
+
+app.use("/api/checkout", checkoutRoutes);
+
+app.use("/api/orders", publicOrderRoutes);
+app.use("/api/admin/orders", adminOrderRoutes);
+app.use("/api/marketing", marketingRoutes);
 
 app.use((req, res) => {
   res.status(404).json({

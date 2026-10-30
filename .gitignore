@@ -21,3 +21,36 @@ backups/
 frontend/dist/
 .DS_Store
 *.log
+
+
+# Backups
+backups/
+backup/
+*.bak
+*.backup
+*.orig
+*.save
+*.old
+*.backup.*
+*.bak.*
+
+# Secrets
+.env
+.env.*
+!.env.example
+!.env.sample
+*.pem
+*.key
+
+# Dependencies and build
+node_modules/
+dist/
+build/
+coverage/
+.next/
+.vite/
+
+# Runtime
+backend/uploads/
+*.log
+.DS_Store

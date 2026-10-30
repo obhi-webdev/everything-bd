@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Heart, ShoppingBag, Star } from "lucide-react";
 import { money } from "../../features/products/data/products";
 import { useShopStore } from "../../store/useShopStore";
@@ -29,21 +30,36 @@ export default function ProductCard({ product }) {
       </div>
       <div className="product-info">
         <p className="product-brand">{product.brand}</p>
-        <h3>{product.name}</h3>
+        <h3>
+  {product.slug ? (
+    <Link to={`/product/${product.slug}`}>
+      {product.name}
+    </Link>
+  ) : product.name}
+</h3>
         <div className="product-rating">
-          <Star size={13} fill="currentColor"/>
-          {product.rating}
-          <span> · {product.category}</span>
+          {product.rating != null && (
+            <>
+              <Star size={13} fill="currentColor"/>
+              {product.rating}
+              <span> · </span>
+            </>
+          )}
+          <span>{product.category}</span>
         </div>
         <div className="price-row">
           <strong>{money(product.price)}</strong>
-          <del>{money(product.oldPrice)}</del>
+          {Number(product.oldPrice) > Number(product.price) && (
+            <del>{money(product.oldPrice)}</del>
+          )}
         </div>
         <button
           className="add-btn"
+          disabled={product.stock <= 0}
           onClick={() => addToCart(product)}
         >
-          <ShoppingBag size={16}/> Add to Cart
+          <ShoppingBag size={16}/>
+          {product.stock <= 0 ? "Out of Stock" : "Add to Cart"}
         </button>
       </div>
     </article>

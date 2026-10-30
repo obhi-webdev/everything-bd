@@ -638,3 +638,336 @@ button:focus-visible, a:focus-visible, input:focus-visible {
   .product-info h3 { min-height: 55px; }
   .category-grid { grid-template-columns: repeat(2,1fr); }
 }
+
+
+/* EVERYTHINGBD STEP 42 PREMIUM CART */
+
+.cart-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(40, 20, 31, 0.48);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cart-drawer.ebd-cart-drawer {
+  width: min(100%, 440px);
+  height: 100%;
+  max-height: 100dvh;
+  background: #fffafd;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -16px 0 50px rgba(66, 24, 44, .15);
+  overflow: hidden;
+}
+
+.ebd-cart-drawer .drawer-header {
+  flex-shrink: 0;
+  padding: 25px 24px;
+  border-bottom: 1px solid #f3dce5;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ebd-cart-drawer .drawer-header h2 {
+  color: #632b43;
+  font-size: 22px;
+  font-weight: 750;
+  margin: 0 0 5px;
+}
+
+.ebd-cart-drawer .drawer-header small {
+  color: #a17a8b;
+  font-size: 11px;
+}
+
+.ebd-cart-drawer .drawer-items {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 24px;
+  overscroll-behavior: contain;
+}
+
+.ebd-cart-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #f6e4eb;
+}
+
+.ebd-cart-item > img,
+.ebd-cart-placeholder {
+  width: 88px;
+  height: 104px;
+  flex: 0 0 88px;
+  object-fit: cover;
+  border-radius: 12px;
+  background: #faedf3;
+}
+
+.ebd-cart-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #c0809a;
+}
+
+.ebd-cart-item .cart-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.ebd-cart-item-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ebd-cart-item-heading h3 {
+  margin: 0 0 10px;
+  color: #63334a;
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.ebd-remove-item {
+  border: 0;
+  background: #fff0f5;
+  color: #b95b7f;
+  border-radius: 8px;
+  padding: 7px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.ebd-remove-item:hover {
+  background: #fce1e9;
+}
+
+.ebd-cart-item .cart-item-info > strong {
+  display: block;
+  color: #b84f78;
+  font-size: 16px;
+  margin-bottom: 13px;
+}
+
+.ebd-cart-item .quantity {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #edcbd9;
+  border-radius: 10px;
+  overflow: hidden;
+  background: white;
+}
+
+.ebd-cart-item .quantity button {
+  display: grid;
+  place-items: center;
+  width: 35px;
+  height: 35px;
+  border: 0;
+  background: transparent;
+  color: #82455e;
+  cursor: pointer;
+}
+
+.ebd-cart-item .quantity button:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+
+.ebd-cart-item .quantity span {
+  min-width: 30px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #632b43;
+}
+
+.ebd-stock-note {
+  display: block;
+  margin-top: 10px;
+  color: #9b7184;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.ebd-cart-drawer .drawer-bottom {
+  flex-shrink: 0;
+  padding: 22px 24px;
+  background: white;
+  border-top: 1px solid #f3dce5;
+}
+
+.ebd-cart-drawer .subtotal {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.ebd-cart-drawer .subtotal strong {
+  color: #6c2b46;
+  font-size: 21px;
+}
+
+.ebd-cart-drawer .checkout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 48px;
+  margin-top: 16px;
+  border-radius: 12px;
+  text-align: center;
+  background: #bd547d;
+  color: white;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.ebd-cart-drawer .checkout-btn:hover {
+  background: #a8406a;
+}
+
+.ebd-cart-drawer .empty-cart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  text-align: center;
+}
+
+.ebd-cart-drawer button:focus-visible,
+.ebd-cart-drawer a:focus-visible {
+  outline: 2px solid #bd547d;
+  outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+  .cart-drawer.ebd-cart-drawer {
+    width: 100%;
+    height: 100dvh;
+    border-radius: 0;
+  }
+
+  .ebd-cart-drawer .drawer-header {
+    padding: 20px 17px;
+  }
+
+  .ebd-cart-drawer .drawer-items {
+    padding: 18px 16px;
+  }
+
+  .ebd-cart-drawer .drawer-bottom {
+    padding: 18px 16px;
+    padding-bottom: max(18px, env(safe-area-inset-bottom));
+  }
+
+  .ebd-cart-item > img,
+  .ebd-cart-placeholder {
+    width: 76px;
+    height: 92px;
+    flex-basis: 76px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ebd-cart-drawer *,
+  .ebd-cart-drawer *::before,
+  .ebd-cart-drawer *::after {
+    transition: none;
+    animation: none;
+  }
+}
+
+
+/* EVERYTHINGBD META CONSENT */
+
+.ebd-meta-consent {
+  position: fixed;
+  z-index: 10000;
+  left: 20px;
+  bottom: 20px;
+  width: min(430px, calc(100% - 40px));
+  padding: 20px;
+  border-radius: 18px;
+  border: 1px solid #eed2df;
+  background: #fffafd;
+  box-shadow: 0 14px 45px rgba(82, 35, 55, .18);
+}
+
+.ebd-meta-consent p {
+  margin: 0 0 15px;
+  color: #684357;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.ebd-meta-consent-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.ebd-meta-consent-actions button {
+  border: 1px solid #e8c6d4;
+  border-radius: 10px;
+  padding: 11px 15px;
+  background: #fff;
+  color: #8b4763;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ebd-meta-consent-actions button:last-child {
+  background: #bd547d;
+  border-color: #bd547d;
+  color: white;
+}
+
+@media (max-width: 600px) {
+  .ebd-meta-consent {
+    left: 12px;
+    bottom: 12px;
+    width: calc(100% - 24px);
+    padding: 16px;
+  }
+}
+
+
+/* EVERYTHINGBD META PRIVACY CHOICES */
+
+.ebd-consent-manage {
+  position: fixed;
+  left: 12px;
+  bottom: 12px;
+  z-index: 9998;
+  padding: 7px 11px;
+  border: 1px solid #efd1dc;
+  border-radius: 999px;
+  background: #fffafd;
+  color: #86425d;
+  font-size: 11px;
+  cursor: pointer;
+  box-shadow: 0 3px 12px rgba(80, 30, 50, .08);
+}
+
+.ebd-consent-manage:hover {
+  background: #fff0f6;
+}
+
+.ebd-consent-manage:focus-visible {
+  outline: 2px solid #bd547d;
+  outline-offset: 2px;
+}

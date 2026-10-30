@@ -1,0 +1,97 @@
+
+.ebd-success-page {
+  min-height: 78vh;
+  display: grid;
+  place-items: center;
+  padding: 50px 18px;
+  background: linear-gradient(135deg, #fff8fa, #fcecf1);
+}
+
+.ebd-success-card {
+  max-width: 580px;
+  width: 100%;
+  background: white;
+  border: 1px solid #f0dfe5;
+  border-radius: 22px;
+  padding: 45px 32px;
+  text-align: center;
+  box-shadow: 0 15px 55px #b77e9617;
+}
+
+.ebd-success-icon {
+  color: #c78398;
+  margin: 0 auto 18px;
+}
+
+.ebd-success-label {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: #c78398;
+  font-weight: 700;
+}
+
+.ebd-success-card h1 {
+  font-size: 30px;
+  margin: 14px 0;
+}
+
+.ebd-success-card p {
+  color: #887480;
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.ebd-success-info {
+  text-align: left;
+  margin: 28px 0;
+  border: 1px solid #f0dfe5;
+  border-radius: 14px;
+  padding: 10px 22px;
+  background: #fffafb;
+}
+
+.ebd-success-info > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 14px 0;
+  border-bottom: 1px solid #f2e7eb;
+  font-size: 13px;
+}
+
+.ebd-success-info > div:last-child {
+  border: 0;
+}
+
+.ebd-success-info span {
+  color: #967f88;
+}
+
+.ebd-success-info strong {
+  color: #44343c;
+  overflow-wrap: anywhere;
+}
+
+.ebd-success-shop {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 14px 24px;
+  border-radius: 10px;
+  background: #c98699;
+  color: white;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+@media (max-width: 480px) {
+  .ebd-success-card {
+    padding: 30px 18px;
+  }
+
+  .ebd-success-card h1 {
+    font-size: 25px;
+  }
+}

@@ -1,0 +1,54 @@
+.ebd-orders{width:100%;min-width:0;color:#40313a}
+.ebd-orders-header{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:22px}
+.ebd-orders-header h2{font-size:23px;margin:0 0 7px}
+.ebd-orders-header p{font-size:13px;color:#9b8590;margin:0}
+.ebd-orders button{background:#fff5f8;border:1px solid #ead0d9;border-radius:9px;color:#a3667b;padding:10px 15px;cursor:pointer}
+.ebd-orders button:disabled{opacity:.45;cursor:not-allowed}
+.ebd-orders-filter{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px;font-size:12px}
+.ebd-orders-filter select{border:1px solid #edd8df;border-radius:8px;background:#fff;padding:10px}
+.ebd-orders-filter span{margin-left:auto;color:#9c8590}
+.ebd-orders-table-wrap{width:100%;overflow-x:auto;background:#fff;border:1px solid #f0e1e6;border-radius:14px}
+.ebd-orders-table{border-collapse:collapse;width:100%;min-width:830px;text-align:left}
+.ebd-orders-table th{background:#fff7fa;color:#957985;font-size:11px;padding:16px}
+.ebd-orders-table td{padding:15px;border-top:1px solid #f3e7eb;font-size:12px}
+.ebd-orders-table td strong,.ebd-orders-table td small{display:block}
+.ebd-orders-table td small{margin-top:5px;color:#9b8590}
+.ebd-status{background:#f8ecf0;color:#a26b7e;padding:7px 11px;border-radius:50px;text-transform:capitalize}
+.ebd-orders-empty{text-align:center;padding:40px!important;color:#a58b95}
+.ebd-orders-error{padding:12px;border-radius:8px;background:#fff0f3;color:#b44e65}
+.ebd-orders-pages{display:flex;justify-content:flex-end;align-items:center;gap:15px;margin-top:20px;font-size:12px}
+.ebd-order-backdrop{position:fixed;inset:0;background:#22151dac;display:flex;align-items:center;justify-content:center;padding:20px;z-index:9999}
+.ebd-order-dialog{width:100%;max-width:620px;max-height:88vh;overflow-y:auto;background:#fff;border-radius:17px;padding:28px}
+.ebd-order-dialog p{font-size:13px;line-height:1.6;overflow-wrap:anywhere}
+.ebd-order-dialog h3{margin-top:25px}
+.ebd-order-line{display:flex;justify-content:space-between;gap:15px;padding:13px 0;border-bottom:1px solid #f1e4e9;font-size:13px}
+.ebd-order-total{font-size:17px;font-weight:700;color:#af7184}
+@media(max-width:650px){.ebd-orders-header{align-items:flex-start;flex-direction:column}.ebd-order-dialog{padding:18px}}
+
+.ebd-status-editor {
+  margin: 22px 0;
+  padding: 20px;
+  border: 1px solid #efdbe2;
+  border-radius: 12px;
+  background: #fff8fa;
+}
+.ebd-status-editor h3 {
+  margin: 0 0 15px;
+  font-size: 15px;
+}
+.ebd-status-editor select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #eacdd7;
+  border-radius: 9px;
+  background: white;
+  margin-bottom: 12px;
+}
+.ebd-status-editor button {
+  width: 100%;
+  background: #c98699;
+  color: white;
+}
+.ebd-status-editor p {
+  color: #b4435c;
+}
