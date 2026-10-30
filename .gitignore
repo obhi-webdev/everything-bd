@@ -54,3 +54,28 @@ coverage/
 backend/uploads/
 *.log
 .DS_Store
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Backups
+backups/
+backup/
+*.bak
+*.backup
+*.old
+
+# System files
+.DS_Store
+
+# Logs
+*.log

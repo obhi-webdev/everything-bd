@@ -1,3 +1,8 @@
+import {
+  getValidCoupon,
+  calculateDiscount,
+  redeemCoupon
+} from "../coupons/coupon.logic.js";
 import { sendMetaPurchase } from "../marketing/metaCapi.js";
 import crypto from "node:crypto";
 import mongoose from "mongoose";
@@ -147,6 +152,20 @@ export async function createOrder(req, res) {
         });
       }
 
+      let coupon = null;
+      let discount = 0;
+
+      if (input.couponCode) {
+        try {
+          coupon = await getValidCoupon(
+            input.couponCode, subtotal, session
+          );
+          discount = calculateDiscount(coupon, subtotal);
+        } catch (error) {
+          throw new CheckoutError(400, error.message);
+        }
+      }
+
       const orderNumber =
         "EBD-" + crypto.randomUUID()
           .replaceAll("-", "")
@@ -161,13 +180,22 @@ export async function createOrder(req, res) {
         items,
         subtotal,
         deliveryCharge: rate,
-        discount: 0,
-        total: money(subtotal + rate),
+        couponCode: coupon?.code || "",
+        discount,
+        total: money(subtotal + rate - discount),
         paymentMethod: "cod",
         paymentStatus: "unpaid",
         orderStatus: "pending",
         customerNote: input.customerNote
       }], { session });
+
+      if (coupon) {
+        try {
+          await redeemCoupon(coupon, session);
+        } catch (error) {
+          throw new CheckoutError(409, error.message);
+        }
+      }
 
       order = created[0];
     });

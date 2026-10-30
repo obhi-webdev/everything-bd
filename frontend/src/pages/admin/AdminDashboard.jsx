@@ -1,6 +1,10 @@
+import CouponManager from "../../features/admin/CouponManager";
+import CustomerManager from "../../features/admin/CustomerManager";
+import UnifiedSettings from "../../features/admin/UnifiedSettings";
+import LandingPageManager from "../../features/admin/LandingPageManager";
+import BannerManager from "../../features/admin/BannerManager";
 import AdminOverview from "../../features/admin/AdminOverview";
 import OrderManager from "../../features/admin/OrderManager";
-import MetaMarketingSettings from "../../features/admin/MetaMarketingSettings";
 import ProductManager from "../../features/admin/ProductManager";
 import { useState } from "react";
 import {
@@ -16,6 +20,7 @@ const menus = [
   { name: "Customers", icon: Users },
   { name: "Coupons", icon: TicketPercent },
   { name: "Banners", icon: Image },
+  { name: "Landing Pages", icon: Image },
   { name: "Settings", icon: Settings }
 ];
 
@@ -89,8 +94,16 @@ export default function AdminDashboard({ user, token, onLogout }) {
             <ProductManager token={token} />
           ) : active === "Orders" ? (
             <OrderManager token={token} />
+          ) : active === "Customers" ? (
+            <CustomerManager token={token} />
+          ) : active === "Coupons" ? (
+            <CouponManager token={token} />
+          ) : active === "Banners" ? (
+            <BannerManager token={token} />
+          ) : active === "Landing Pages" ? (
+            <LandingPageManager token={token} />
           ) : active === "Settings" ? (
-            <MetaMarketingSettings token={token} />
+            <UnifiedSettings token={token} />
           ) : active === "Overview" ? (
             <AdminOverview token={token} />
           ) : (

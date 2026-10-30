@@ -1,0 +1,68 @@
+.eb-unified-settings {
+  width: 100%;
+  max-width: 1100px;
+}
+
+.eb-settings-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 8px;
+  margin-bottom: 26px;
+  background: #fff;
+  border: 1px solid #f1dce7;
+  border-radius: 16px;
+}
+
+.eb-settings-tabs button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 170px;
+  padding: 15px 22px;
+  color: #8d7180;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 650;
+  cursor: pointer;
+  transition: background .2s, color .2s, border-color .2s;
+}
+
+.eb-settings-tabs button:hover {
+  background: #fff2f8;
+  color: #bb477d;
+}
+
+.eb-settings-tabs button.active {
+  background: #faeaf1;
+  color: #bc517d;
+  border-color: #efc8d9;
+}
+
+.eb-settings-tabs button:focus-visible {
+  outline: 3px solid #cf86a6;
+  outline-offset: 2px;
+}
+
+.eb-unified-settings .website-settings {
+  max-width: none;
+}
+
+@media (max-width: 600px) {
+  .eb-settings-tabs {
+    gap: 5px;
+    padding: 5px;
+  }
+
+  .eb-settings-tabs button {
+    min-width: 0;
+    padding: 12px 8px;
+    font-size: 12px;
+    gap: 6px;
+  }
+}

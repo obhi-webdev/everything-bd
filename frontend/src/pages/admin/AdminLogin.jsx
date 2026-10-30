@@ -13,6 +13,7 @@ export default function AdminLogin({ onLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -29,7 +30,7 @@ export default function AdminLogin({ onLogin }) {
         throw new Error("Dashboard access denied");
       }
 
-      onLogin(result.token, profile.user);
+      onLogin(result.token, profile.user, rememberMe);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -89,6 +90,16 @@ export default function AdminLogin({ onLogin }) {
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
+
+          <label className="admin-remember-me">
+            <input
+              type="checkbox"
+              checked={rememberMe}
+              onChange={event => setRememberMe(event.target.checked)}
+            />
+            <span>Remember Me</span>
+            <small>Keep me signed in</small>
+          </label>
 
           {error && (
             <p className="admin-error" role="alert">{error}</p>

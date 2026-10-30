@@ -1,0 +1,69 @@
+.eb-dynamic-hero {
+  position: relative;
+}
+
+.eb-dynamic-hero .hero-visual picture {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.eb-dynamic-hero .hero-visual picture img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.eb-dynamic-hero .hero-content h1 {
+  overflow-wrap: anywhere;
+}
+
+.eb-hero-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 12px 0 24px;
+}
+
+.eb-hero-controls > button {
+  width: 35px;
+  height: 35px;
+  border: 1px solid #f0c9dd;
+  color: #bd477f;
+  background: white;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.eb-hero-dots {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.eb-hero-dots button {
+  width: 8px;
+  height: 8px;
+  border: 0;
+  border-radius: 50%;
+  background: #e7bfce;
+  cursor: pointer;
+  padding: 0;
+}
+
+.eb-hero-dots button.active {
+  width: 23px;
+  border-radius: 12px;
+  background: #d94c91;
+}
+
+@media (max-width: 640px) {
+  .eb-dynamic-hero .hero-visual picture {
+    min-height: 280px;
+  }
+}

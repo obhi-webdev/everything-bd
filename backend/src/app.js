@@ -1,3 +1,20 @@
+import {
+  couponAdminRoutes,
+  couponPublicRoutes
+} from "./modules/coupons/coupon.routes.js";
+import customerAdminRoutes from "./modules/customers/customer.admin.routes.js";
+import {
+  publicSiteSettings,
+  adminSiteSettings
+} from "./modules/site-settings/siteSettings.routes.js";
+import {
+  publicLandingRoutes,
+  adminLandingRoutes
+} from "./modules/landing-pages/landing.routes.js";
+import {
+  publicBannerRoutes,
+  adminBannerRoutes
+} from "./modules/banners/banner.routes.js";
 import marketingRoutes from "./modules/marketing/marketing.routes.js";
 import publicOrderRoutes from "./modules/orders/order.routes.js";
 import adminOrderRoutes from "./modules/orders/order.admin.routes.js";
@@ -34,6 +51,18 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+app.use("/api/banners", publicBannerRoutes);
+app.use("/api/admin/banners", adminBannerRoutes);
+
+app.use("/api/landing-pages", publicLandingRoutes);
+app.use("/api/admin/landing-pages", adminLandingRoutes);
+
+app.use("/api/site-settings", publicSiteSettings);
+app.use("/api/admin/site-settings", adminSiteSettings);
+
+app.use("/api/coupons", couponPublicRoutes);
+app.use("/api/admin/coupons", couponAdminRoutes);
+
 app.use("/api/products", productRoutes);
 
 app.use("/api/auth", authRoutes);
@@ -46,6 +75,7 @@ app.use("/api/checkout", checkoutRoutes);
 
 app.use("/api/orders", publicOrderRoutes);
 app.use("/api/admin/orders", adminOrderRoutes);
+app.use("/api/admin/customers", customerAdminRoutes);
 app.use("/api/marketing", marketingRoutes);
 
 app.use((req, res) => {

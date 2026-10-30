@@ -24,6 +24,11 @@ export default function Checkout() {
 
   const [config, setConfig] = useState(null);
   const [configError, setConfigError] = useState("");
+  const [couponInput, setCouponInput] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState("");
+  const [couponDiscount, setCouponDiscount] = useState(0);
+  const [couponError, setCouponError] = useState("");
+  const [couponLoading, setCouponLoading] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -56,13 +61,55 @@ export default function Checkout() {
       sum + Number(item.price) * item.quantity, 0
   );
 
+  useEffect(() => {
+    setAppliedCoupon("");
+    setCouponDiscount(0);
+    setCouponError("");
+  }, [cart]);
+
+  async function applyCoupon() {
+    const code = couponInput.trim().toUpperCase();
+    if (!code) {
+      setCouponError("Enter a coupon code");
+      return;
+    }
+
+    setCouponLoading(true);
+    setCouponError("");
+    setAppliedCoupon("");
+    setCouponDiscount(0);
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL || "http://localhost:5001/api"}/coupons/validate`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code, subtotal })
+        }
+      );
+
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(result.message || "Invalid coupon");
+      }
+
+      setAppliedCoupon(result.data.code);
+      setCouponDiscount(result.data.discount);
+    } catch (error) {
+      setCouponError(error.message);
+    } finally {
+      setCouponLoading(false);
+    }
+  }
+
   const deliveryRate = form.deliveryZone
     ? config?.delivery?.[form.deliveryZone]
     : null;
 
   const estimatedTotal = deliveryRate == null
     ? null
-    : subtotal + deliveryRate;
+    : Math.max(0, subtotal + deliveryRate - couponDiscount);
 
   const totalItems = cart.reduce(
     (sum, item) => sum + item.quantity, 0
@@ -141,6 +188,7 @@ export default function Checkout() {
       },
       items,
       customerNote: form.customerNote.trim(),
+      couponCode: appliedCoupon,
       paymentMethod: "cod",
       marketingConsent: hasMarketingConsent()
     };
@@ -375,6 +423,41 @@ export default function Checkout() {
                 </div>
               )}
 
+              <div className="eb-checkout-coupon">
+                <label htmlFor="coupon-code">Discount Coupon</label>
+                <div className="eb-checkout-coupon-row">
+                  <input
+                    id="coupon-code"
+                    type="text"
+                    value={couponInput}
+                    placeholder="Enter coupon code"
+                    maxLength={30}
+                    onChange={e => {
+                      setCouponInput(e.target.value.toUpperCase());
+                      if (appliedCoupon) {
+                        setAppliedCoupon("");
+                        setCouponDiscount(0);
+                      }
+                    }}
+                  />
+                  <button
+                    type="button"
+                    disabled={couponLoading || !cart.length}
+                    onClick={applyCoupon}
+                  >
+                    {couponLoading ? "Checking..." : "Apply"}
+                  </button>
+                </div>
+                {appliedCoupon && (
+                  <p className="eb-coupon-applied">
+                    {appliedCoupon} applied! Estimated discount: {money(couponDiscount)}
+                  </p>
+                )}
+                {couponError && (
+                  <p className="checkout-order-error">{couponError}</p>
+                )}
+              </div>
+
               <div className="checkout-totals">
                 <div><span>Subtotal</span><strong>{money(subtotal)}</strong></div>
                 <div>
@@ -385,6 +468,12 @@ export default function Checkout() {
                       : money(deliveryRate)}
                   </strong>
                 </div>
+                {appliedCoupon && (
+                  <div>
+                    <span>Coupon Discount ({appliedCoupon})</span>
+                    <strong>-{money(couponDiscount)}</strong>
+                  </div>
+                )}
                 <div className="checkout-total">
                   <span>Grand Total</span>
                   <strong>

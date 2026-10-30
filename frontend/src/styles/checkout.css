@@ -100,3 +100,44 @@
     overflow-wrap: anywhere;
   }
 }
+
+/* EverythingBD checkout coupon */
+.eb-checkout-coupon {
+  margin: 16px 0 22px;
+}
+.eb-checkout-coupon > label {
+  display: block;
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 9px;
+}
+.eb-checkout-coupon-row {
+  display: flex;
+  gap: 8px;
+}
+.eb-checkout-coupon-row input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid #efd5e0;
+  border-radius: 9px;
+  padding: 12px;
+  font: inherit;
+  background: #fff;
+}
+.eb-checkout-coupon-row button {
+  background: #d94c91;
+  border: 0;
+  color: #fff;
+  padding: 12px 17px;
+  border-radius: 9px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.eb-checkout-coupon-row button:disabled {
+  opacity: .5;
+}
+.eb-coupon-applied {
+  color: #187a49;
+  font-size: 12px;
+  margin-top: 8px;
+}

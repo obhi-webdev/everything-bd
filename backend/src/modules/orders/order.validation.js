@@ -45,6 +45,11 @@ export const createOrderSchema = z.object({
     .optional()
     .default(""),
 
+  couponCode: z.string()
+    .trim().max(30)
+    .regex(/^[a-zA-Z0-9_-]*$/)
+    .optional()
+    .default(""),
   paymentMethod: z.literal("cod"),
   marketingConsent: z.boolean().optional().default(false)
 }).strict();
