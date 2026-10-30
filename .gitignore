@@ -1,0 +1,23 @@
+
+# EverythingBD private environment files
+**/.env
+**/.env.*
+!**/.env.example
+backups/
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Environment secrets
+**/.env
+**/.env.*
+!**/.env.example
+
+# Backups
+backups/
+
+# Build output
+frontend/dist/
+.DS_Store
+*.log
