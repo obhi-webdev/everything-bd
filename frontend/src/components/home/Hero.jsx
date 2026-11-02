@@ -1,38 +1,34 @@
 import { useEffect, useState } from "react";
 import {
-  ArrowUpRight,
-  ChevronLeft,
-  ChevronRight,
-  Sparkles
+  ArrowRight, ChevronLeft, ChevronRight, Sparkles
 } from "lucide-react";
 import "./heroBanners.css";
 
-const API =
-  import.meta.env.VITE_API_URL || "http://localhost:5001/api";
+const API = import.meta.env.VITE_API_URL ||
+  "http://localhost:5001/api";
 
-const fallback = {
+const defaultBanner = {
   _id: "default",
   eyebrow: "THE BEAUTY EDIT",
-  title: "Your skin deserves a little extra love.",
-  subtitle:
-    "Discover thoughtfully selected skincare essentials for your everyday glow. Your self-care ritual begins here.",
-  buttonText: "Explore Collection",
+  title: "The secret to your everyday glow.",
+  subtitle: "Discover premium skincare essentials, thoughtful beauty finds and everything your skin deserves.",
+  buttonText: "Shop Collection",
   buttonLink: "/#products",
   desktopImage:
-    "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=1100&q=85",
+    "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=1200&q=85",
   mobileImage: ""
 };
 
 export default function Hero() {
-  const [banners, setBanners] = useState([fallback]);
+  const [banners, setBanners] = useState([defaultBanner]);
   const [active, setActive] = useState(0);
 
   useEffect(() => {
     const controller = new AbortController();
 
     fetch(`${API}/banners`, { signal: controller.signal })
-      .then(async response => {
-        if (!response.ok) throw new Error("Banner API unavailable");
+      .then(response => {
+        if (!response.ok) throw new Error("Banner unavailable");
         return response.json();
       })
       .then(result => {
@@ -47,103 +43,93 @@ export default function Hero() {
   }, []);
 
   useEffect(() => {
-    if (banners.length < 2) return undefined;
+    if (banners.length < 2) return;
 
-    const timer = setInterval(() => {
+    const timer = window.setInterval(() => {
       setActive(index => (index + 1) % banners.length);
     }, 6000);
 
-    return () => clearInterval(timer);
+    return () => window.clearInterval(timer);
   }, [banners.length]);
 
-  const banner = banners[active] || banners[0] || fallback;
+  const banner = banners[active] || defaultBanner;
 
-  function move(direction) {
+  function changeSlide(step) {
     setActive(index =>
-      (index + direction + banners.length) % banners.length
+      (index + step + banners.length) % banners.length
     );
   }
 
   return (
-    <section id="home" className="hero eb-dynamic-hero">
-      <div className="container hero-grid">
-        <div className="hero-content" key={`${banner._id}-text`}>
-          {banner.eyebrow && (
-            <div className="eyebrow">
-              <Sparkles size={15}/>
-              {banner.eyebrow}
-            </div>
-          )}
-
-          {banner.title && <h1>{banner.title}</h1>}
-          {banner.subtitle && <p>{banner.subtitle}</p>}
-
-          {banner.buttonText && banner.buttonLink && (
-            <a href={banner.buttonLink} className="primary-btn">
-              {banner.buttonText} <ArrowUpRight size={18}/>
-            </a>
-          )}
-
-          <div className="hero-note">
-            <span>✦</span> A little care, a lot of glow.
+    <section id="home" className="ebd-prime-hero">
+      <div className="ebd-prime-hero-copy" key={banner._id}>
+        {banner.eyebrow && (
+          <div className="ebd-prime-eyebrow">
+            <Sparkles size={15}/>
+            {banner.eyebrow}
           </div>
+        )}
+
+        <h1>{banner.title || "Everything beautiful starts here."}</h1>
+
+        {banner.subtitle && <p>{banner.subtitle}</p>}
+
+        <div className="ebd-prime-hero-highlights">
+          <span>PREMIUM BEAUTY</span>
+          <span className="ebd-prime-highlight-star">★★★★★</span>
         </div>
 
-        <div className="hero-visual">
-          <div className="hero-blob"/>
-          <picture key={`${banner._id}-image`}>
-            {banner.mobileImage && (
-              <source
-                media="(max-width: 640px)"
-                srcSet={banner.mobileImage}
-              />
-            )}
-            <img
-              src={banner.desktopImage}
-              alt={banner.title || "EverythingBD Skincare"}
-              fetchPriority={active === 0 ? "high" : undefined}
-            />
-          </picture>
+        {banner.buttonLink && (
+          <a href={banner.buttonLink} className="ebd-prime-hero-btn">
+            {banner.buttonText || "Shop Now"}
+            <ArrowRight size={19}/>
+          </a>
+        )}
 
-          {banner._id === "default" && (
-            <div className="hero-sticker">
-              <span>GLOW</span>
-              <strong>EVERY</strong>
-              <span>DAY ✳</span>
-            </div>
+        <small>Thoughtfully selected for your beauty routine.</small>
+      </div>
+
+      <div className="ebd-prime-hero-image">
+        <picture key={`${banner._id}-picture`}>
+          {banner.mobileImage && (
+            <source media="(max-width: 640px)"
+                    srcSet={banner.mobileImage}/>
           )}
-        </div>
+          <img
+            src={banner.desktopImage}
+            alt={banner.title || "EverythingBD skincare"}
+            fetchPriority={active === 0 ? "high" : undefined}
+          />
+        </picture>
+
+        <span className="ebd-prime-hero-image-label">
+          THE BEAUTY COLLECTION
+        </span>
       </div>
 
       {banners.length > 1 && (
-        <div className="eb-hero-controls">
-          <button
-            type="button"
-            aria-label="Previous banner"
-            onClick={() => move(-1)}
-          >
-            <ChevronLeft size={19}/>
+        <div className="ebd-prime-slider-controls">
+          <button type="button" aria-label="Previous banner"
+                  onClick={() => changeSlide(-1)}>
+            <ChevronLeft size={20}/>
           </button>
 
-          <div className="eb-hero-dots">
+          <div className="ebd-prime-slider-dots">
             {banners.map((item, index) => (
               <button
                 type="button"
                 key={item._id}
-                onClick={() => setActive(index)}
+                className={index === active ? "active" : ""}
                 aria-label={`Show banner ${index + 1}`}
                 aria-current={index === active ? "true" : undefined}
-                className={index === active ? "active" : ""}
+                onClick={() => setActive(index)}
               />
             ))}
           </div>
 
-          <button
-            type="button"
-            aria-label="Next banner"
-            onClick={() => move(1)}
-          >
-            <ChevronRight size={19}/>
+          <button type="button" aria-label="Next banner"
+                  onClick={() => changeSlide(1)}>
+            <ChevronRight size={20}/>
           </button>
         </div>
       )}

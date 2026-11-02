@@ -1,3 +1,5 @@
+import PromoCards from "../components/home/PromoCards";
+import "../styles/store-redesign.css";
 import { useEffect, useState } from "react";
 import {
   ArrowRight,
@@ -69,6 +71,7 @@ export default function Home() {
 
       <main id="home">
         <Hero />
+        <PromoCards products={products} />
 
         <section className="benefits">
           <div className="container benefit-grid">

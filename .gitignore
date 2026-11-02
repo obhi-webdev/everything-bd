@@ -79,3 +79,24 @@ backup/
 
 # Logs
 *.log
+
+# Private environment variables
+.env
+.env.*
+!.env.example
+
+# Dependencies and build
+node_modules/
+dist/
+build/
+
+# Backups
+backups/
+backup/
+*.bak
+*.backup
+*.old
+
+# System and logs
+.DS_Store
+*.log
