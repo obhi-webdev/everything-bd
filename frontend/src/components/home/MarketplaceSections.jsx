@@ -66,14 +66,17 @@ export function MarketplaceHero({ products = [], media = {} }) {
 export function MarketplaceCategories({
   products = [],
   media = {},
+  managedCategories = null,
   selected,
   onSelect
 }) {
-  const categories = [...new Set(
-    products
-      .map(product => product.category)
-      .filter(Boolean)
-  )];
+  const categories = managedCategories !== null
+    ? managedCategories.map(item => item.name)
+    : [...new Set(
+        products
+          .map(product => product.category)
+          .filter(Boolean)
+      )];
 
   function selectCategory(category) {
     onSelect(category);
@@ -84,7 +87,12 @@ export function MarketplaceCategories({
       product => product.category === category && product.image
     );
 
+    const managed = managedCategories?.find(
+      item => item.name === category
+    );
+
     const image =
+      managed?.imageUrl ||
       media[`category:${category}`]?.imageUrl ||
       representative?.image;
 

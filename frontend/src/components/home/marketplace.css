@@ -461,3 +461,72 @@
     aspect-ratio: 4 / 3;
   }
 }
+
+
+/* EBD MOBILE HERO LAYOUT FIX */
+@media (max-width: 850px) {
+
+  .em-marketplace-hero {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: 100% !important;
+    gap: 12px !important;
+    align-items: start !important;
+  }
+
+  .em-marketplace-hero-main {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .em-marketplace-side-promo {
+    width: 100% !important;
+    height: 260px !important;
+    min-height: 0 !important;
+    max-height: 260px !important;
+    overflow: hidden !important;
+    border-radius: 12px !important;
+  }
+
+  .em-marketplace-side-link,
+  .em-managed-side-banner {
+    display: block !important;
+    position: relative !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .em-marketplace-side-link > img,
+  .em-managed-side-banner > img {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 260px !important;
+    object-fit: contain !important;
+    object-position: center !important;
+  }
+
+  .em-marketplace-side-copy {
+    max-width: 60% !important;
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  .em-marketplace-side-copy h2 {
+    font-size: clamp(15px, 4vw, 23px) !important;
+    line-height: 1.25 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .em-marketplace-side-promo {
+    height: 220px !important;
+    max-height: 220px !important;
+  }
+
+  .em-marketplace-side-link > img,
+  .em-managed-side-banner > img {
+    max-height: 220px !important;
+  }
+}

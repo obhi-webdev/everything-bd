@@ -90,7 +90,7 @@ export default function Header() {
   }
 
   return (
-    <div className="ebd-header-stage">
+    <div className={`ebd-header-stage ${scrolled && !menuOpen && !categoriesOpen ? "mobile-nav-collapsed" : ""}`}>
     <div className={`ebd-max-header ${scrolled ? "is-scrolled" : ""} ${compactSearchOpen ? "search-open" : ""}`}>
 
       <div className="ebd-max-main">

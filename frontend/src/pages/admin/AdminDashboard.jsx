@@ -1,3 +1,4 @@
+import CategoryManager from "../../features/admin/CategoryManager";
 import "./premiumDashboard.css";
 import WebsiteMediaManager from "../../features/admin/WebsiteMediaManager";
 import CouponManager from "../../features/admin/CouponManager";
@@ -18,6 +19,7 @@ import {
 const menus = [
   { name: "Overview", icon: LayoutDashboard },
   { name: "Products", icon: Package },
+  { name: "Categories", icon: Package },
   { name: "Orders", icon: ShoppingBag },
   { name: "Customers", icon: Users },
   { name: "Coupons", icon: TicketPercent },
@@ -104,6 +106,8 @@ export default function AdminDashboard({ user, token, onLogout }) {
 
           {active === "Products" ? (
             <ProductManager token={token} />
+          ) : active === "Categories" ? (
+            <CategoryManager token={token} />
           ) : active === "Orders" ? (
             <OrderManager token={token} />
           ) : active === "Customers" ? (

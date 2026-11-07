@@ -1,4 +1,8 @@
 import {
+  publicCategoryRoutes,
+  adminCategoryRoutes
+} from "./modules/categories/category.routes.js";
+import {
   publicWebsiteMediaRoutes,
   adminWebsiteMediaRoutes
 } from "./modules/website-media/websiteMedia.routes.js";
@@ -80,6 +84,8 @@ app.use("/api/admin/site-settings", adminSiteSettings);
 app.use("/api/coupons", couponPublicRoutes);
 app.use("/api/admin/coupons", couponAdminRoutes);
 
+app.use("/api/categories", publicCategoryRoutes);
+app.use("/api/admin/categories", adminCategoryRoutes);
 app.use("/api/products", productRoutes);
 
 app.use("/api/auth", authRoutes);

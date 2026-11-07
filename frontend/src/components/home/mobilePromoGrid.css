@@ -1,0 +1,91 @@
+/* Desktop: preserve original homepage design */
+
+.ebd-mobile-four-promos {
+  display: none;
+}
+
+@media (max-width: 850px) {
+
+  /* Existing side promotion moves into the new mobile grid */
+  .em-marketplace-hero .em-marketplace-side-promo {
+    display: none !important;
+  }
+
+  /* Prevent duplicate promotional images */
+  .ebd-prime-promos,
+  .em-managed-promos {
+    display: none !important;
+  }
+
+  .ebd-mobile-four-promos {
+    display: block;
+    width: calc(100% - 24px);
+    max-width: 100%;
+    margin: 18px auto 24px;
+  }
+
+  .ebd-mobile-four-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 13px;
+  }
+
+  .ebd-mobile-four-heading h2 {
+    margin: 0;
+    color: #001c44;
+    font-size: clamp(17px, 4.3vw, 21px);
+    font-weight: 800;
+    letter-spacing: -.4px;
+  }
+
+  .ebd-mobile-four-heading span {
+    color: #64748b;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .ebd-mobile-four-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 11px;
+    width: 100%;
+  }
+
+  .ebd-mobile-four-card {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    aspect-ratio: 4 / 5;
+    background: #f5f6f8;
+    border: 1px solid #edf0f3;
+    border-radius: 12px;
+    overflow: hidden;
+    text-decoration: none;
+    box-shadow: 0 2px 9px rgba(0,28,68,.035);
+  }
+
+  .ebd-mobile-four-card img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+  }
+
+  .ebd-mobile-four-card:focus-visible {
+    outline: 3px solid #2d99ae;
+    outline-offset: 3px;
+  }
+}
+
+@media (max-width: 390px) {
+  .ebd-mobile-four-grid {
+    gap: 8px;
+  }
+
+  .ebd-mobile-four-card {
+    border-radius: 9px;
+  }
+}

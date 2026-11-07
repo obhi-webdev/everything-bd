@@ -1,3 +1,5 @@
+import MobilePromoGrid from "../components/home/MobilePromoGrid";
+import { useCategories } from "../features/categories/useCategories";
 import { useWebsiteMedia } from "../features/website-media/useWebsiteMedia";
 import {
   MarketplaceHero,
@@ -34,6 +36,7 @@ export default function Home() {
   );
   const [category, setCategory] = useState("All");
   const { products, loading, error } = useProducts();
+  const managedCategories = useCategories();
   const media = useWebsiteMedia();
 
   const showWishlist = new URLSearchParams(
@@ -80,6 +83,7 @@ export default function Home() {
 
       <main id="home">
         <MarketplaceHero products={products} media={media}/>
+        <MobilePromoGrid products={products} media={media}/>
         {["promo-1", "promo-2", "promo-3"].some(
           key => media[key]?.imageUrl
         ) ? (
@@ -98,6 +102,7 @@ export default function Home() {
         </section>
 
         <MarketplaceCategories
+          managedCategories={managedCategories}
           products={products}
           media={media}
           selected={category}
