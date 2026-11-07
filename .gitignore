@@ -100,3 +100,18 @@ backup/
 # System and logs
 .DS_Store
 *.log
+
+# EverythingBD generated / backup files
+.env
+.env.*
+!.env.example
+node_modules/
+dist/
+build/
+backup/
+backups/
+*.bak
+*.backup
+*.old
+.DS_Store
+*.log
