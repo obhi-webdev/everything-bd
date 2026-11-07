@@ -1,5 +1,13 @@
+import { useWebsiteMedia } from "../features/website-media/useWebsiteMedia";
+import {
+  MarketplaceHero,
+  MarketplaceCategories,
+  MarketplaceShelves,
+  MarketplacePromoBanners
+} from "../components/home/MarketplaceSections";
 import PromoCards from "../components/home/PromoCards";
 import "../styles/store-redesign.css";
+import "../styles/luxury-header.css";
 import { useEffect, useState } from "react";
 import {
   ArrowRight,
@@ -26,6 +34,7 @@ export default function Home() {
   );
   const [category, setCategory] = useState("All");
   const { products, loading, error } = useProducts();
+  const media = useWebsiteMedia();
 
   const showWishlist = new URLSearchParams(
     window.location.search
@@ -70,8 +79,14 @@ export default function Home() {
       <Header search={search} setSearch={setSearch} />
 
       <main id="home">
-        <Hero />
-        <PromoCards products={products} />
+        <MarketplaceHero products={products} media={media}/>
+        {["promo-1", "promo-2", "promo-3"].some(
+          key => media[key]?.imageUrl
+        ) ? (
+          <MarketplacePromoBanners media={media}/>
+        ) : (
+          <PromoCards products={products}/>
+        )}
 
         <section className="benefits">
           <div className="container benefit-grid">
@@ -82,37 +97,17 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="categories" className="section categories-section">
-          <div className="container">
-            <div className="section-heading center">
-              <p className="section-kicker">PICK YOUR RITUAL</p>
-              <h2>Shop by <em>category</em></h2>
-              <p>Find everything your skin loves.</p>
-            </div>
-
-            <div className="category-grid">
-              {categories.map((item) => (
-                <button
-                  key={item.name}
-                  className={
-                    "category-card " +
-                    (category === item.name ? "selected" : "")
-                  }
-                  onClick={() => {
-                    setCategory(item.name);
-                    document
-                      .getElementById("products")
-                      ?.scrollIntoView({ behavior: "smooth" });
-                  }}
-                >
-                  <span className="category-emoji">{item.icon}</span>
-                  <strong>{item.name}</strong>
-                  <span className="category-arrow">↗</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </section>
+        <MarketplaceCategories
+          products={products}
+          media={media}
+          selected={category}
+          onSelect={value => {
+            setCategory(value);
+            document.getElementById("products")?.scrollIntoView({
+              behavior: "smooth"
+            });
+          }}
+        />
 
         <section id="products" className="section products-section">
           <div className="container">
@@ -175,6 +170,8 @@ export default function Home() {
           </div>
         </section>
 
+        <MarketplaceShelves products={products} media={media}/>
+
         <section className="promo-section">
           <div className="container promo-inner">
             <div>
@@ -202,7 +199,7 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="footer">
+      <footer id="contact" className="footer">
         <div className="container footer-grid">
           <div>
             <div className="brand footer-brand">

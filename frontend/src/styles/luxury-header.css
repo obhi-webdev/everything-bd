@@ -1,0 +1,175 @@
+/* EverythingBD — Luxury Beauty Header */
+
+.ebd-new-announcement {
+  height: 35px;
+  min-height: 35px;
+  background: #f8e9ed;
+  color: #986a7a;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+}
+
+.ebd-new-header {
+  position: sticky !important;
+  top: 0;
+  z-index: 100;
+  background: #fffaf8 !important;
+  border-bottom: 1px solid #f0e3e7;
+  box-shadow: 0 5px 25px rgba(91, 50, 65, .045);
+}
+
+.ebd-header-inner {
+  width: min(1360px, calc(100% - 64px));
+  min-height: 88px;
+  gap: 24px;
+}
+
+.ebd-header-logo {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 29px;
+  font-weight: 700;
+  letter-spacing: -1.5px;
+  color: #403039;
+}
+
+.ebd-header-logo span {
+  color: #c9869a;
+}
+
+.ebd-header-logo small {
+  margin-top: 8px;
+  color: #a88c96;
+  font-family: Arial, sans-serif;
+  font-size: 8px;
+  letter-spacing: 2.3px;
+}
+
+.ebd-header-nav {
+  gap: clamp(15px, 2vw, 30px);
+}
+
+.ebd-header-nav a {
+  color: #65525b;
+  font-size: 12px;
+  font-weight: 600;
+  transition: color .2s ease;
+}
+
+.ebd-header-nav a:hover,
+.ebd-header-nav a:first-child {
+  color: #bd7c91;
+}
+
+.ebd-header-search {
+  background: #fff;
+  border: 1px solid #eddae0;
+  border-radius: 30px;
+  width: clamp(180px, 19vw, 280px);
+  min-height: 43px;
+  overflow: hidden;
+}
+
+.ebd-header-search input {
+  padding: 11px 15px;
+  color: #4b3941;
+  font-size: 12px;
+}
+
+.ebd-header-search input::placeholder {
+  color: #aa969e;
+}
+
+.ebd-header-search button {
+  color: #ae778b;
+  padding: 10px 15px;
+}
+
+.ebd-header-actions {
+  gap: 12px;
+}
+
+.ebd-header-icon {
+  color: #59454e;
+  transition: color .2s ease, transform .2s ease;
+}
+
+.ebd-header-icon:hover {
+  color: #c9869a;
+  transform: translateY(-2px);
+}
+
+.ebd-header-icon b {
+  background: #c9869a;
+}
+
+@media (max-width: 1100px) {
+  .ebd-header-inner {
+    width: calc(100% - 36px);
+    gap: 15px;
+  }
+
+  .ebd-header-actions {
+    gap: 6px;
+  }
+
+  .ebd-header-nav {
+    gap: 14px;
+  }
+}
+
+@media (max-width: 850px) {
+  .ebd-header-inner {
+    min-height: 76px;
+  }
+
+  .ebd-header-nav {
+    background: #fffaf8;
+    box-shadow: 0 15px 30px rgba(80, 45, 55, .08);
+    padding: 18px;
+    gap: 0;
+  }
+
+  .ebd-header-nav a {
+    padding: 13px;
+    border-bottom: 1px solid #f3e8eb;
+  }
+
+  .ebd-mobile-toggle {
+    display: grid;
+  }
+}
+
+@media (max-width: 640px) {
+  .ebd-header-inner {
+    width: calc(100% - 28px);
+    min-height: 70px;
+    padding: 12px 0;
+    gap: 10px;
+  }
+
+  .ebd-header-logo {
+    font-size: 25px;
+  }
+
+  .ebd-header-logo small {
+    font-size: 7px;
+    letter-spacing: 1.6px;
+  }
+
+  .ebd-header-search {
+    display: flex;
+    width: 100%;
+    order: 3;
+    margin: 0;
+  }
+
+  .ebd-header-actions {
+    margin-left: auto;
+    gap: 4px;
+  }
+
+  .ebd-account {
+    display: none;
+  }
+}

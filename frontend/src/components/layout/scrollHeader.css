@@ -1,0 +1,134 @@
+/*
+ EverythingBD — Stable Header
+ Top section always unchanged
+ Only bottom navigation smoothly disappears
+*/
+
+.ebd-max-compact-nav,
+.ebd-max-compact-search-button {
+  display: none !important;
+}
+
+@media (min-width: 851px) {
+
+  /* Keep page content position stable */
+  .ebd-header-stage {
+    height: 216px;
+    position: relative;
+  }
+
+  .ebd-max-header {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 12px rgba(0,28,68,.035);
+  }
+
+  /* Top header never changes size */
+  .ebd-max-main-inner,
+  .ebd-max-header.is-scrolled .ebd-max-main-inner {
+    display: grid;
+    grid-template-columns:
+      250px minmax(0,1fr) 330px !important;
+    min-height: 125px !important;
+    gap: 45px !important;
+  }
+
+  .ebd-max-logo,
+  .ebd-max-header.is-scrolled .ebd-max-logo {
+    grid-column: 1;
+    grid-row: 1;
+    transform: none !important;
+  }
+
+  .ebd-max-search,
+  .ebd-max-header.is-scrolled .ebd-max-search {
+    grid-column: 2;
+    grid-row: 1;
+    display: flex !important;
+    position: static !important;
+    width: 100% !important;
+    height: 65px !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transform: none !important;
+  }
+
+  .ebd-max-top-actions,
+  .ebd-max-header.is-scrolled .ebd-max-top-actions {
+    grid-column: 3;
+    grid-row: 1;
+    justify-content: space-between !important;
+    gap: 16px !important;
+  }
+
+  .ebd-max-header.is-scrolled .ebd-max-contact-icon {
+    display: flex !important;
+  }
+
+  .ebd-original-logo,
+  .ebd-max-header.is-scrolled .ebd-original-logo {
+    font-size: 28px !important;
+  }
+
+  /* Bottom navigation only */
+  .ebd-max-bottom {
+    max-height: 91px;
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      max-height 1100ms cubic-bezier(.22,1,.36,1),
+      opacity 850ms ease,
+      transform 1100ms cubic-bezier(.22,1,.36,1);
+  }
+
+  .ebd-max-bottom-inner {
+    min-height: 91px;
+    transition:
+      min-height 1100ms cubic-bezier(.22,1,.36,1);
+  }
+
+  .ebd-max-header.is-scrolled .ebd-max-bottom {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-20px);
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .ebd-max-header.is-scrolled .ebd-max-bottom-inner {
+    min-height: 0;
+  }
+
+  .ebd-max-header.is-scrolled {
+    box-shadow: 0 6px 20px rgba(0,28,68,.08);
+  }
+
+}
+
+/* Preserve the existing mobile header */
+@media (max-width: 850px) {
+  .ebd-header-stage {
+    height: auto;
+  }
+
+  .ebd-max-header {
+    position: relative !important;
+  }
+
+  .ebd-max-compact-nav,
+  .ebd-max-compact-search-button {
+    display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ebd-max-bottom,
+  .ebd-max-bottom-inner {
+    transition-duration: .01ms !important;
+  }
+}

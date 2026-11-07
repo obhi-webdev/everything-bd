@@ -1,4 +1,8 @@
 import {
+  publicWebsiteMediaRoutes,
+  adminWebsiteMediaRoutes
+} from "./modules/website-media/websiteMedia.routes.js";
+import {
   couponAdminRoutes,
   couponPublicRoutes
 } from "./modules/coupons/coupon.routes.js";
@@ -34,11 +38,22 @@ app.disable("x-powered-by");
 
 app.use(helmet());
 app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "https://everything-bd.com",
-    "https://www.everything-bd.com"
-  ]
+  origin: (origin, callback) => {
+    const productionOrigins = [
+      "https://everything-bd.com",
+      "https://www.everything-bd.com"
+    ];
+
+    const isLocalDev =
+      process.env.NODE_ENV !== "production" &&
+      /^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin || "");
+
+    if (!origin || productionOrigins.includes(origin) || isLocalDev) {
+      return callback(null, true);
+    }
+
+    return callback(new Error("CORS origin not allowed"));
+  }
 }));
 app.use(express.json({ limit: "100kb" }));
 app.use(morgan("dev"));
@@ -53,6 +68,8 @@ app.get("/api/health", (req, res) => {
 
 app.use("/api/banners", publicBannerRoutes);
 app.use("/api/admin/banners", adminBannerRoutes);
+app.use("/api/website-media", publicWebsiteMediaRoutes);
+app.use("/api/admin/website-media", adminWebsiteMediaRoutes);
 
 app.use("/api/landing-pages", publicLandingRoutes);
 app.use("/api/admin/landing-pages", adminLandingRoutes);

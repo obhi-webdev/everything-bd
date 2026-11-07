@@ -13,6 +13,7 @@ import Home from "./pages/Home";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import "./styles/admin.css";
+import "./styles/everythingbd-theme.css";
 
 const SESSION_KEY = "everythingbd_admin_session";
 

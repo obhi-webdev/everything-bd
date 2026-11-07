@@ -1,0 +1,584 @@
+/* EverythingBD - Two-Level Premium E-commerce Header */
+
+.ebd-max-header {
+  --max-dark: #002f20;
+  --max-green: #00523a;
+  --max-accent: #209953;
+  --max-light: #ffffff;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.ebd-max-header *,
+.ebd-max-header *::before,
+.ebd-max-header *::after {
+  box-sizing: border-box;
+}
+
+.ebd-max-container {
+  width: min(1500px, calc(100% - 60px));
+  margin: 0 auto;
+}
+
+/* Top row */
+
+.ebd-max-main {
+  background: linear-gradient(
+    110deg,
+    #002a1c 0%,
+    #00553b 68%,
+    #003522 100%
+  );
+}
+
+.ebd-max-main-inner {
+  min-height: 125px;
+  display: grid;
+  grid-template-columns: 250px minmax(250px, 1fr) 330px;
+  align-items: center;
+  gap: 45px;
+}
+
+.ebd-max-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+  text-decoration: none;
+  color: white;
+  min-width: 0;
+}
+
+.ebd-max-logo strong {
+  font-size: clamp(23px, 2vw, 32px);
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1;
+  color: white;
+}
+
+.ebd-max-logo small {
+  font-size: 9px;
+  color: #b9d7c6;
+  letter-spacing: 3px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Search */
+
+.ebd-max-search {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  height: 65px;
+  background: white;
+  border: 1px solid #e6ece8;
+  border-radius: 11px;
+  padding: 7px;
+  overflow: hidden;
+}
+
+.ebd-max-search input {
+  width: 100%;
+  min-width: 0;
+  flex: 1;
+  height: 100%;
+  background: transparent;
+  border: 0;
+  outline: none;
+  color: #29372f;
+  font: inherit;
+  font-size: 15px;
+  padding: 0 19px;
+}
+
+.ebd-max-search input::placeholder {
+  color: #939393;
+}
+
+.ebd-max-search button {
+  width: 55px;
+  height: 51px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1a9551;
+  color: white;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background .2s;
+}
+
+.ebd-max-search button:hover {
+  background: #147943;
+}
+
+/* Actions */
+
+.ebd-max-top-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.ebd-max-header .ebd-max-action {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  width: 79px;
+  min-width: 0;
+  padding: 6px 0;
+  background: transparent;
+  border: 0;
+  text-decoration: none;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.ebd-max-action-icon {
+  position: relative;
+  display: inline-flex;
+}
+
+.ebd-max-action-icon b {
+  position: absolute;
+  top: -9px;
+  right: -13px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 4px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #e0a82e;
+  color: white;
+  font-size: 10px;
+}
+
+.ebd-max-action small {
+  font-size: 12px;
+  font-weight: 400;
+  color: #b7c4bc;
+  white-space: nowrap;
+}
+
+.ebd-max-action:hover,
+.ebd-max-action:hover small {
+  color: #bcf1d2;
+}
+
+/* Bottom navigation */
+
+.ebd-max-bottom {
+  background: linear-gradient(110deg, #002b1d, #004c34, #002f20);
+  border-top: 1px solid rgba(255,255,255,.09);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.ebd-max-bottom-inner {
+  min-height: 91px;
+  display: grid;
+  grid-template-columns: 256px minmax(0, 1fr) 125px;
+  align-items: center;
+  gap: 38px;
+}
+
+.ebd-max-category-wrap {
+  position: relative;
+}
+
+.ebd-max-header .ebd-max-category-button {
+  width: 100%;
+  min-height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 0 26px;
+  border: 0;
+  border-radius: 8px;
+  background: linear-gradient(100deg, #168e4d, #28a65b);
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.ebd-max-category-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 100%;
+  background: white;
+  border: 1px solid #e4eee8;
+  box-shadow: 0 12px 30px #001d1433;
+  border-radius: 8px;
+  overflow: hidden;
+  z-index: 1001;
+}
+
+.ebd-max-category-dropdown a {
+  display: block;
+  padding: 13px 18px;
+  font-size: 13px;
+  text-decoration: none;
+  color: #294537;
+  border-bottom: 1px solid #edf3ef;
+}
+
+.ebd-max-category-dropdown a:hover {
+  background: #e9f7ed;
+}
+
+.ebd-max-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(18px, 3vw, 52px);
+  min-width: 0;
+}
+
+.ebd-max-nav a {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color .2s;
+}
+
+.ebd-max-nav a:hover {
+  color: #a3ecc0;
+}
+
+.ebd-max-contact-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  background: #29a65d;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.ebd-max-contact-button:hover {
+  background: #1d8c4b;
+}
+
+.ebd-max-header .ebd-max-mobile-menu {
+  display: none;
+}
+
+.ebd-max-header a:focus-visible,
+.ebd-max-header button:focus-visible,
+.ebd-max-header input:focus-visible {
+  outline: 2px solid #bbf7d0;
+  outline-offset: 3px;
+}
+
+/* Tablet */
+
+@media (max-width: 1150px) {
+  .ebd-max-main-inner {
+    grid-template-columns: 205px minmax(200px, 1fr) 225px;
+    gap: 20px;
+  }
+
+  .ebd-max-logo strong {
+    font-size: 25px;
+  }
+
+  .ebd-max-top-actions {
+    gap: 5px;
+  }
+
+  .ebd-max-header .ebd-max-action {
+    width: 68px;
+  }
+
+  .ebd-max-bottom-inner {
+    grid-template-columns: 205px minmax(0, 1fr) 110px;
+    gap: 18px;
+  }
+
+  .ebd-max-nav {
+    gap: 20px;
+  }
+
+  .ebd-max-nav a {
+    font-size: 13px;
+  }
+}
+
+/* Mobile and small tablets */
+
+@media (max-width: 850px) {
+  .ebd-max-container {
+    width: calc(100% - 30px);
+  }
+
+  .ebd-max-main-inner {
+    min-height: 0;
+    padding: 16px 0;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+  }
+
+  .ebd-max-logo strong {
+    font-size: 24px;
+  }
+
+  .ebd-max-logo small {
+    font-size: 7px;
+    letter-spacing: 2px;
+  }
+
+  .ebd-max-search {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    height: 52px;
+  }
+
+  .ebd-max-search button {
+    width: 43px;
+    height: 40px;
+  }
+
+  .ebd-max-top-actions {
+    gap: 7px;
+  }
+
+  .ebd-max-header .ebd-max-action {
+    width: 37px;
+  }
+
+  .ebd-max-action small,
+  .ebd-max-contact-icon {
+    display: none !important;
+  }
+
+  .ebd-max-header .ebd-max-mobile-menu {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: 0;
+    background: transparent;
+    color: white;
+    cursor: pointer;
+  }
+
+  .ebd-max-bottom-inner {
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    min-height: 66px;
+  }
+
+  .ebd-max-category-button {
+    max-width: 220px;
+  }
+
+  .ebd-max-contact-button {
+    width: 105px;
+    min-height: 44px;
+  }
+
+  .ebd-max-nav {
+    display: none;
+    grid-column: 1 / -1;
+    grid-row: 2;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding-bottom: 15px;
+  }
+
+  .ebd-max-nav.is-open {
+    display: flex;
+  }
+
+  .ebd-max-nav a {
+    padding: 14px 8px;
+    border-bottom: 1px solid #ffffff20;
+  }
+}
+
+@media (max-width: 480px) {
+  .ebd-max-logo strong {
+    font-size: 21px;
+  }
+
+  .ebd-max-main-inner {
+    gap: 12px;
+  }
+
+  .ebd-max-category-button {
+    min-height: 47px !important;
+    padding: 0 12px !important;
+    font-size: 11px !important;
+    gap: 7px !important;
+  }
+
+  .ebd-max-contact-button {
+    width: 88px;
+    font-size: 12px;
+  }
+
+  .ebd-max-search input {
+    padding-left: 12px;
+    font-size: 13px;
+  }
+
+  .ebd-max-header .ebd-max-action {
+    width: 31px;
+  }
+}
+
+/* EVERYTHINGBD ORIGINAL PINK BRAND OVERRIDES */
+
+.ebd-max-header {
+  --max-dark: #fffaf8;
+  --max-green: #fff5f7;
+  --max-accent: #d18c95;
+}
+
+.ebd-max-main {
+  background: linear-gradient(
+    110deg, #fffaf8, #fff0f3, #fffaf8
+  );
+}
+
+.ebd-max-bottom {
+  background: #fff7f8;
+  border-top: 1px solid #f0dfe3;
+  border-bottom: 1px solid #f0dfe3;
+}
+
+.ebd-max-logo,
+.ebd-max-logo strong {
+  color: #48363e;
+}
+
+.ebd-max-logo small {
+  color: #a77d8b;
+}
+
+.ebd-max-search {
+  background: #ffffff;
+  border-color: #ecd7dd;
+}
+
+.ebd-max-search button,
+.ebd-max-header .ebd-max-category-button,
+.ebd-max-contact-button {
+  background: #d18c95;
+  color: #ffffff;
+}
+
+.ebd-max-search button:hover,
+.ebd-max-header .ebd-max-category-button:hover,
+.ebd-max-contact-button:hover {
+  background: #bb7486;
+}
+
+.ebd-max-header .ebd-max-action,
+.ebd-max-nav a {
+  color: #523e47;
+}
+
+.ebd-max-action small {
+  color: #917781;
+}
+
+.ebd-max-action:hover,
+.ebd-max-action:hover small,
+.ebd-max-nav a:hover {
+  color: #bd7489;
+}
+
+.ebd-max-action-icon b {
+  background: #d18c95;
+  color: #fff;
+}
+
+.ebd-max-category-dropdown {
+  background: #ffffff;
+  border-color: #efdde3;
+}
+
+.ebd-max-category-dropdown a {
+  color: #604650;
+  border-bottom-color: #f4e9ed;
+}
+
+.ebd-max-category-dropdown a:hover {
+  background: #fff0f4;
+}
+
+.ebd-max-header .ebd-max-mobile-menu {
+  color: #523e47;
+}
+
+.ebd-max-header a:focus-visible,
+.ebd-max-header button:focus-visible,
+.ebd-max-header input:focus-visible {
+  outline-color: #bd7489;
+}
+
+@media (max-width: 850px) {
+  .ebd-max-nav a {
+    border-bottom-color: #f0dfe3;
+  }
+}
+
+/* ORIGINAL EVERYTHINGBD LOGO */
+.ebd-max-logo .ebd-original-logo {
+  font-family: inherit;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -1.7px;
+  line-height: 1;
+  color: #403039;
+  white-space: nowrap;
+}
+
+.ebd-max-logo .ebd-original-logo span,
+.ebd-max-logo .ebd-original-logo i {
+  color: #d18c95;
+}
+
+.ebd-max-logo .ebd-original-logo i {
+  font-style: normal;
+}
+
+.ebd-max-logo small {
+  color: #a98b8e;
+  letter-spacing: 3px;
+  font-size: 8px;
+}
+
+@media (max-width: 480px) {
+  .ebd-max-logo .ebd-original-logo {
+    font-size: 23px;
+  }
+
+  .ebd-max-logo small {
+    font-size: 7px;
+    letter-spacing: 2px;
+  }
+}

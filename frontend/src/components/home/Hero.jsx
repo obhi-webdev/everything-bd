@@ -1,138 +1,217 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
-  ArrowRight, ChevronLeft, ChevronRight, Sparkles
+  ChevronLeft,
+  ChevronRight,
+  Pause,
+  Play
 } from "lucide-react";
 import "./heroBanners.css";
 
-const API = import.meta.env.VITE_API_URL ||
+const API =
+  import.meta.env.VITE_API_URL ||
   "http://localhost:5001/api";
 
-const defaultBanner = {
+const SLIDE_TIME = 3000;
+
+const fallbackBanner = {
   _id: "default",
-  eyebrow: "THE BEAUTY EDIT",
-  title: "The secret to your everyday glow.",
-  subtitle: "Discover premium skincare essentials, thoughtful beauty finds and everything your skin deserves.",
-  buttonText: "Shop Collection",
-  buttonLink: "/#products",
+  title: "EverythingBD Beauty Collection",
   desktopImage:
-    "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=1200&q=85",
-  mobileImage: ""
+    "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=1600&q=85",
+  mobileImage: "",
+  buttonLink: "/#products"
 };
 
 export default function Hero() {
-  const [banners, setBanners] = useState([defaultBanner]);
+  const [banners, setBanners] = useState([fallbackBanner]);
   const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [pageHidden, setPageHidden] = useState(false);
 
+  const touchStartX = useRef(null);
+
+  // Load active banners from the existing backend.
   useEffect(() => {
     const controller = new AbortController();
 
-    fetch(`${API}/banners`, { signal: controller.signal })
-      .then(response => {
-        if (!response.ok) throw new Error("Banner unavailable");
-        return response.json();
-      })
-      .then(result => {
-        if (Array.isArray(result.data) && result.data.length) {
-          setBanners(result.data);
-          setActive(0);
+    async function loadBanners() {
+      try {
+        const response = await fetch(`${API}/banners`, {
+          signal: controller.signal,
+          cache: "no-store"
+        });
+
+        if (!response.ok) {
+          throw new Error("Unable to load banners");
         }
-      })
-      .catch(() => {});
+
+        const result = await response.json();
+
+        if (
+          Array.isArray(result.data) &&
+          result.data.length > 0
+        ) {
+          const valid = result.data.filter(
+            item => item.desktopImage
+          );
+
+          if (valid.length > 0 && !controller.signal.aborted) {
+            setBanners(valid);
+            setActive(0);
+          }
+        }
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          console.warn("Using fallback banner:", error.message);
+        }
+      }
+    }
+
+    loadBanners();
 
     return () => controller.abort();
   }, []);
 
+  // Pause automatic transitions when browser tab is hidden.
   useEffect(() => {
-    if (banners.length < 2) return;
+    function onVisibilityChange() {
+      setPageHidden(document.hidden);
+    }
 
-    const timer = window.setInterval(() => {
-      setActive(index => (index + 1) % banners.length);
-    }, 6000);
+    document.addEventListener(
+      "visibilitychange",
+      onVisibilityChange
+    );
 
-    return () => window.clearInterval(timer);
-  }, [banners.length]);
+    onVisibilityChange();
 
-  const banner = banners[active] || defaultBanner;
+    return () => {
+      document.removeEventListener(
+        "visibilitychange",
+        onVisibilityChange
+      );
+    };
+  }, []);
 
-  function changeSlide(step) {
-    setActive(index =>
-      (index + step + banners.length) % banners.length
+  // Change banner automatically every 5 seconds.
+  useEffect(() => {
+    if (banners.length <= 1 || paused || hovered || pageHidden) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      setActive(current => (current + 1) % banners.length);
+    }, SLIDE_TIME);
+
+    return () => window.clearTimeout(timer);
+  }, [active, banners.length, paused, hovered, pageHidden]);
+
+  function changeSlide(direction) {
+    if (banners.length <= 1) return;
+
+    setActive(current =>
+      (current + direction + banners.length) % banners.length
     );
   }
 
+  function goToSlide(index) {
+    setActive(index);
+  }
+
+  function handleTouchStart(event) {
+    touchStartX.current = event.touches[0]?.clientX ?? null;
+  }
+
+  function handleTouchEnd(event) {
+    if (touchStartX.current === null) return;
+
+    const endX = event.changedTouches[0]?.clientX;
+    if (typeof endX !== "number") return;
+
+    const difference = touchStartX.current - endX;
+
+    if (Math.abs(difference) > 45) {
+      changeSlide(difference > 0 ? 1 : -1);
+    }
+
+    touchStartX.current = null;
+  }
+
   return (
-    <section id="home" className="ebd-prime-hero">
-      <div className="ebd-prime-hero-copy" key={banner._id}>
-        {banner.eyebrow && (
-          <div className="ebd-prime-eyebrow">
-            <Sparkles size={15}/>
-            {banner.eyebrow}
-          </div>
-        )}
+    <section
+      id="home"
+      className="ebd-premium-slider"
+      aria-label="EverythingBD promotional banners"
+      aria-roledescription="carousel"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onFocus={() => setHovered(true)}
+      onBlur={event => {
+        if (!event.currentTarget.contains(event.relatedTarget)) {
+          setHovered(false);
+        }
+      }}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
+      <div className="ebd-premium-slider-track">
+        {banners.map((banner, index) => {
+          const isActive = index === active;
 
-        <h1>{banner.title || "Everything beautiful starts here."}</h1>
+          const image = (
+            <picture>
+              {banner.mobileImage && (
+                <source
+                  media="(max-width: 640px)"
+                  srcSet={banner.mobileImage}
+                />
+              )}
 
-        {banner.subtitle && <p>{banner.subtitle}</p>}
-
-        <div className="ebd-prime-hero-highlights">
-          <span>PREMIUM BEAUTY</span>
-          <span className="ebd-prime-highlight-star">★★★★★</span>
-        </div>
-
-        {banner.buttonLink && (
-          <a href={banner.buttonLink} className="ebd-prime-hero-btn">
-            {banner.buttonText || "Shop Now"}
-            <ArrowRight size={19}/>
-          </a>
-        )}
-
-        <small>Thoughtfully selected for your beauty routine.</small>
-      </div>
-
-      <div className="ebd-prime-hero-image">
-        <picture key={`${banner._id}-picture`}>
-          {banner.mobileImage && (
-            <source media="(max-width: 640px)"
-                    srcSet={banner.mobileImage}/>
-          )}
-          <img
-            src={banner.desktopImage}
-            alt={banner.title || "EverythingBD skincare"}
-            fetchPriority={active === 0 ? "high" : undefined}
-          />
-        </picture>
-
-        <span className="ebd-prime-hero-image-label">
-          THE BEAUTY COLLECTION
-        </span>
-      </div>
-
-      {banners.length > 1 && (
-        <div className="ebd-prime-slider-controls">
-          <button type="button" aria-label="Previous banner"
-                  onClick={() => changeSlide(-1)}>
-            <ChevronLeft size={20}/>
-          </button>
-
-          <div className="ebd-prime-slider-dots">
-            {banners.map((item, index) => (
-              <button
-                type="button"
-                key={item._id}
-                className={index === active ? "active" : ""}
-                aria-label={`Show banner ${index + 1}`}
-                aria-current={index === active ? "true" : undefined}
-                onClick={() => setActive(index)}
+              <img
+                src={banner.desktopImage}
+                alt={
+                  banner.title ||
+                  `EverythingBD promotional banner ${index + 1}`
+                }
+                loading={index < 2 ? "eager" : "lazy"}
+                fetchPriority={
+                  index === 0 ? "high" : undefined
+                }
+                draggable="false"
               />
-            ))}
-          </div>
+            </picture>
+          );
 
-          <button type="button" aria-label="Next banner"
-                  onClick={() => changeSlide(1)}>
-            <ChevronRight size={20}/>
-          </button>
-        </div>
-      )}
+          return (
+            <div
+              key={banner._id || index}
+              className={
+                "ebd-premium-slide " +
+                (isActive ? "is-active" : "")
+              }
+              aria-hidden={!isActive}
+            >
+              {banner.buttonLink ? (
+                <a
+                  href={banner.buttonLink}
+                  className="ebd-premium-slide-link"
+                  tabIndex={isActive ? 0 : -1}
+                  aria-label={
+                    `Explore ${banner.title || "EverythingBD collection"}`
+                  }
+                >
+                  {image}
+                </a>
+              ) : (
+                <div className="ebd-premium-slide-image">
+                  {image}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </section>
   );
 }

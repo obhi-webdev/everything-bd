@@ -115,8 +115,13 @@ export default function BannerManager({ token }) {
         })
       });
 
+      const wasEditing = Boolean(editingId);
       reset();
-      setNotice(editingId ? "Banner updated" : "Banner created");
+      setNotice(
+        wasEditing
+          ? "Banner updated successfully"
+          : "Banner published successfully"
+      );
       await load();
     } catch (err) {
       setError(err.message);
@@ -216,7 +221,7 @@ export default function BannerManager({ token }) {
         <div className="eb-banner-section-heading">
           <div>
             <h2>{editingId ? "Edit Banner" : "Create New Banner"}</h2>
-            <p>Manage homepage visuals directly from your dashboard.</p>
+            <p>Upload your finished banner design. The homepage slider automatically changes every 3 seconds.</p>
           </div>
           {editingId && (
             <button className="eb-banner-secondary" type="button" onClick={reset}>
@@ -231,55 +236,17 @@ export default function BannerManager({ token }) {
         </div>
 
         <div className="eb-banner-fields">
-          <label>
-            Eyebrow / Tagline
-            <input
-              value={form.eyebrow}
-              maxLength={70}
-              onChange={e => update("eyebrow", e.target.value)}
-              placeholder="THE BEAUTY EDIT"
-            />
-          </label>
-
-          <label>
-            Banner Title
-            <input
-              value={form.title}
-              maxLength={120}
-              onChange={e => update("title", e.target.value)}
-              placeholder="Your skin deserves extra love"
-            />
-          </label>
-
           <label className="eb-banner-full">
-            Subtitle / Description
-            <textarea
-              value={form.subtitle}
-              maxLength={350}
-              rows={3}
-              onChange={e => update("subtitle", e.target.value)}
-              placeholder="Discover premium Korean skincare..."
-            />
-          </label>
-
-          <label>
-            Button Text
-            <input
-              value={form.buttonText}
-              maxLength={50}
-              onChange={e => update("buttonText", e.target.value)}
-              placeholder="Shop Now"
-            />
-          </label>
-
-          <label>
-            Button Link
+            Banner Click Link
             <input
               value={form.buttonLink}
               maxLength={500}
               onChange={e => update("buttonLink", e.target.value)}
               placeholder="/#products"
             />
+            <small>
+              Optional. Clicking the banner opens this link.
+            </small>
           </label>
 
           <label>
@@ -299,7 +266,7 @@ export default function BannerManager({ token }) {
               checked={form.isActive}
               onChange={e => update("isActive", e.target.checked)}
             />
-            Active (visible on homepage)
+            Active — show banner on homepage
           </label>
         </div>
 
@@ -311,7 +278,7 @@ export default function BannerManager({ token }) {
           type="submit"
           disabled={saving || !!uploading}
         >
-          {saving ? "Saving..." : editingId ? "Update Banner" : "Publish Banner"}
+          {saving ? "Saving..." : editingId ? "Save Changes" : "Publish Banner"}
         </button>
       </form>
 

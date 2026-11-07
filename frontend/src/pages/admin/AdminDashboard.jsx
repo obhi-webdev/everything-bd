@@ -1,3 +1,5 @@
+import "./premiumDashboard.css";
+import WebsiteMediaManager from "../../features/admin/WebsiteMediaManager";
 import CouponManager from "../../features/admin/CouponManager";
 import CustomerManager from "../../features/admin/CustomerManager";
 import UnifiedSettings from "../../features/admin/UnifiedSettings";
@@ -20,6 +22,7 @@ const menus = [
   { name: "Customers", icon: Users },
   { name: "Coupons", icon: TicketPercent },
   { name: "Banners", icon: Image },
+  { name: "Website Media", icon: Image },
   { name: "Landing Pages", icon: Image },
   { name: "Settings", icon: Settings }
 ];
@@ -62,6 +65,15 @@ export default function AdminDashboard({ user, token, onLogout }) {
         </button>
       </aside>
 
+      {menuOpen && (
+        <button
+          type="button"
+          className="admin-mobile-backdrop"
+          aria-label="Close navigation menu"
+          onClick={() => setMenuOpen(false)}
+        />
+      )}
+
       <div className="admin-main">
         <header className="admin-topbar">
           <button
@@ -100,6 +112,8 @@ export default function AdminDashboard({ user, token, onLogout }) {
             <CouponManager token={token} />
           ) : active === "Banners" ? (
             <BannerManager token={token} />
+          ) : active === "Website Media" ? (
+            <WebsiteMediaManager token={token} />
           ) : active === "Landing Pages" ? (
             <LandingPageManager token={token} />
           ) : active === "Settings" ? (
