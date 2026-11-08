@@ -150,6 +150,143 @@
   white-space: nowrap;
 }
 
+
+/* EVERYTHINGBD CATEGORY DOUBLE MARQUEE */
+
+.em-category-double-marquee {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.em-category-marquee {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.em-category-marquee-track {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  width: max-content;
+  max-width: none;
+  gap: 20px;
+  will-change: transform;
+}
+
+.em-category-marquee-group {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  gap: 20px;
+  width: max-content;
+}
+
+.em-category-marquee-group .em-category-circle {
+  flex: 0 0 155px;
+  width: 155px;
+  min-width: 155px;
+  max-width: 155px;
+  margin: 0;
+}
+
+.em-category-marquee-group .em-category-photo {
+  width: 125px;
+  height: 125px;
+  aspect-ratio: 1;
+  margin-inline: auto;
+}
+
+.em-category-marquee-group .em-category-circle strong {
+  font-size: 13px;
+  line-height: 1.4;
+  max-width: 100%;
+}
+
+@keyframes ebd-category-move-rtl {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-50% - 10px));
+  }
+}
+
+@keyframes ebd-category-move-ltr {
+  from {
+    transform: translateX(calc(-50% - 10px));
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.em-category-rtl .em-category-marquee-track {
+  animation: ebd-category-move-rtl 32s linear infinite;
+}
+
+.em-category-ltr .em-category-marquee-track {
+  animation: ebd-category-move-ltr 32s linear infinite;
+}
+
+.em-category-marquee:hover .em-category-marquee-track,
+.em-category-marquee:focus-within .em-category-marquee-track {
+  animation-play-state: paused;
+}
+
+/* Mobile categories */
+@media (max-width: 850px) {
+  .em-category-double-marquee {
+    gap: 16px;
+  }
+
+  .em-category-marquee-track,
+  .em-category-marquee-group {
+    gap: 12px;
+  }
+
+  .em-category-marquee-group .em-category-circle {
+    flex: 0 0 105px;
+    width: 105px;
+    min-width: 105px;
+    max-width: 105px;
+  }
+
+  .em-category-marquee-group .em-category-photo {
+    width: 88px;
+    height: 88px;
+  }
+
+  .em-category-marquee-group .em-category-circle strong {
+    font-size: 11px;
+  }
+
+  .em-category-rtl .em-category-marquee-track {
+    animation-duration: 27s;
+  }
+
+  .em-category-ltr .em-category-marquee-track {
+    animation-duration: 27s;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .em-category-marquee-track {
+    animation: none !important;
+  }
+
+  .em-category-marquee {
+    overflow-x: auto;
+  }
+}
+
 .em-category-scroll {
   display: flex;
   gap: clamp(12px, 2vw, 30px);

@@ -586,3 +586,14 @@ body {
   }
   .ebd-header-nav { top: 100%; }
 }
+
+
+/* EBD FOOTER LOGO CONTRAST */
+.footer .brand.footer-brand {
+  color: #001C44 !important;
+}
+
+.footer .brand.footer-brand span,
+.footer .brand.footer-brand i {
+  color: #2D99AE !important;
+}

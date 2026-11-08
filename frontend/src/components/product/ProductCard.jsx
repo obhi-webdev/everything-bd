@@ -1,21 +1,38 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Heart, ShoppingBag, Star } from "lucide-react";
 import { money } from "../../features/products/data/products";
 import { useShopStore } from "../../store/useShopStore";
 
 export default function ProductCard({ product }) {
+  const navigate = useNavigate();
+
+  const openProduct = () => {
+    if (product.slug) {
+      navigate(`/product/${encodeURIComponent(product.slug)}`);
+    }
+  };
   const wishlist = useShopStore((state) => state.wishlist);
   const toggleWishlist = useShopStore((state) => state.toggleWishlist);
   const addToCart = useShopStore((state) => state.addToCart);
   const liked = wishlist.includes(product.id);
 
   return (
-    <article className="product-card">
+    <article
+      className="product-card"
+      onClick={event => {
+        if (event.target.closest("button, a")) return;
+        openProduct();
+      }}
+      style={{ cursor: product.slug ? "pointer" : "default" }}
+    >
       <div className="product-image">
         <span className="product-badge">{product.badge}</span>
         <button
           className={`wishlist-btn ${liked ? "liked" : ""}`}
-          onClick={() => toggleWishlist(product.id)}
+          onClick={event => {
+            event.stopPropagation();
+            toggleWishlist(product.id);
+          }}
           aria-label={liked ? "Remove from wishlist" : "Add to wishlist"}
           aria-pressed={liked}
         >
@@ -56,7 +73,10 @@ export default function ProductCard({ product }) {
         <button
           className="add-btn"
           disabled={product.stock <= 0}
-          onClick={() => addToCart(product)}
+          onClick={event => {
+            event.stopPropagation();
+            addToCart(product);
+          }}
         >
           <ShoppingBag size={16}/>
           {product.stock <= 0 ? "Out of Stock" : "Add to Cart"}
