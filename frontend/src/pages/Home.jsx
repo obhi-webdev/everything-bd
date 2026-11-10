@@ -30,6 +30,7 @@ import {
   categories
 } from "../features/products/data/products";
 import { useProducts } from "../features/products/hooks/useProducts";
+import "../styles/reference-product-grid.css";
 
 export default function Home() {
   const [search, setSearch] = useState(

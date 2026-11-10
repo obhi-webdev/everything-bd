@@ -180,11 +180,46 @@ export async function updateAdminOrderStatus(req, res, next) {
         const Product = mongoose.model("Product");
 
         for (const item of order.items) {
-          await Product.updateOne(
-            { _id: item.product },
-            { $inc: { stock: item.quantity } },
+          const size = String(item.size || "").trim();
+          const quantity = Number(item.quantity);
+
+          if (!Number.isInteger(quantity) || quantity < 1) {
+            const error = new Error("Invalid order item quantity");
+            error.statusCode = 409;
+            throw error;
+          }
+
+          const filter = { _id: item.product };
+          const increments = {
+            stock: quantity,
+            __v: 1
+          };
+
+          if (size) {
+            filter.hasSizeVariants = true;
+            filter.sizeVariants = {
+              $elemMatch: { size }
+            };
+            increments["sizeVariants.$.stock"] = quantity;
+          } else {
+            filter.hasSizeVariants = { $ne: true };
+          }
+
+          const result = await Product.updateOne(
+            filter,
+            { $inc: increments },
             { session }
           );
+
+          if (result.matchedCount !== 1) {
+            const error = new Error(
+              size
+                ? `Cannot restore size ${size}: product or size missing`
+                : "Cannot restore stock: product missing or changed"
+            );
+            error.statusCode = 409;
+            throw error;
+          }
         }
       }
     });

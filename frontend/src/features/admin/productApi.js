@@ -39,9 +39,12 @@ export const productApi = {
     });
   },
 
-  update(token, id, product) {
+  update(token, id, product, version) {
     return apiRequest(`/admin/products/${id}`, token, {
       method: "PATCH",
+      headers: {
+        "If-Match": String(version)
+      },
       body: JSON.stringify(product)
     });
   },

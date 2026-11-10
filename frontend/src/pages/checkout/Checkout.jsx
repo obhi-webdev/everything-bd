@@ -160,7 +160,10 @@ export default function Checkout() {
 
     const items = cart.map(item => ({
       productId: String(item.id),
-      quantity: Number(item.quantity)
+      quantity: Number(item.quantity),
+      ...(item.size
+        ? { size: String(item.size).trim().toUpperCase() }
+        : {})
     }));
 
     if (!items.every(item =>
@@ -407,7 +410,7 @@ export default function Checkout() {
               ) : (
                 <div className="checkout-items">
                   {cart.map(item => (
-                    <div className="checkout-item" key={item.id}>
+                    <div className="checkout-item" key={`${item.id}::${item.size || ""}`}>
                       {item.image
                         ? <img src={item.image} alt={item.name}/>
                         : <div className="checkout-image-placeholder">
@@ -415,6 +418,9 @@ export default function Checkout() {
                           </div>}
                       <div>
                         <strong>{item.name}</strong>
+                        {item.size && (
+                          <span>Size: {item.size}</span>
+                        )}
                         <span>Qty: {item.quantity}</span>
                         <b>{money(item.price * item.quantity)}</b>
                       </div>

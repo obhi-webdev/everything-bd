@@ -1,0 +1,192 @@
+
+/* EverythingBD - Premium Reference Product Grid */
+
+/* Main homepage catalog */
+#products .product-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+  align-items: stretch;
+}
+
+#products .product-grid > .product-card {
+  min-width: 0;
+  height: 100%;
+}
+
+/* Product card structure */
+#products .product-card,
+.em-product-shelf .product-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #e8ebee;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(18, 39, 62, .045);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+#products .product-card:hover,
+.em-product-shelf .product-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 9px 24px rgba(18, 39, 62, .09);
+}
+
+#products .product-image {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: #f7f8fa;
+}
+
+#products .product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+#products .product-info,
+.em-product-shelf .product-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  padding: 11px;
+}
+
+#products .product-info h3,
+.em-product-shelf .product-info h3 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  line-height: 1.45;
+  min-height: 2.9em;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+#products .price-row,
+.em-product-shelf .price-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: auto;
+  margin-bottom: 11px;
+}
+
+#products .price-row strong,
+.em-product-shelf .price-row strong {
+  font-size: 16px;
+  color: #102238;
+}
+
+#products .price-row del,
+.em-product-shelf .price-row del {
+  font-size: 11px;
+  color: #97a2ae;
+}
+
+/* Two equally sized purchase buttons */
+.ebd-card-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  width: 100%;
+}
+
+.ebd-card-actions .ebd-card-add,
+.ebd-card-actions .ebd-card-buy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: 100%;
+  min-width: 0;
+  min-height: 37px;
+  margin: 0;
+  padding: 7px 5px;
+  border-radius: 5px;
+  font-size: 11px;
+  line-height: 1.25;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+}
+
+.ebd-card-actions .ebd-card-add {
+  border: 1px solid #0d3650;
+  color: #0d3650;
+  background: #fff;
+}
+
+.ebd-card-actions .ebd-card-buy {
+  border: 1px solid #0c5776;
+  color: #fff;
+  background: #0c5776;
+}
+
+.ebd-card-actions .ebd-card-add:hover:not(:disabled) {
+  background: #edf8fb;
+}
+
+.ebd-card-actions .ebd-card-buy:hover:not(:disabled) {
+  background: #083e55;
+}
+
+.ebd-card-actions button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+/* Tablet */
+@media (max-width: 1100px) and (min-width: 701px) {
+  #products .product-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 700px) {
+  #products .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  #products .product-info,
+  .em-product-shelf .product-info {
+    padding: 9px;
+  }
+
+  .ebd-card-actions {
+    gap: 5px;
+  }
+
+  .ebd-card-actions .ebd-card-add,
+  .ebd-card-actions .ebd-card-buy {
+    min-height: 36px;
+    padding: 6px 3px;
+    font-size: 10px;
+  }
+
+  .ebd-card-actions svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  #products .price-row strong {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 365px) {
+  .ebd-card-actions .ebd-card-add,
+  .ebd-card-actions .ebd-card-buy {
+    font-size: 9px;
+  }
+}

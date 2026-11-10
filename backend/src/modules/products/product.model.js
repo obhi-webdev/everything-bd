@@ -6,6 +6,22 @@ const imageSchema = new mongoose.Schema({
   publicId: { type: String, default: "" }
 }, { _id: false });
 
+
+const sizeVariantSchema = new mongoose.Schema({
+  size: {
+    type: String,
+    required: true,
+    trim: true,
+    maxlength: 30
+  },
+  stock: {
+    type: Number,
+    required: true,
+    min: 0,
+    validate: Number.isInteger
+  }
+}, { _id: false });
+
 const productSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -53,6 +69,14 @@ const productSchema = new mongoose.Schema({
     type: Number,
     default: 0,
     min: 0
+  },
+  hasSizeVariants: {
+    type: Boolean,
+    default: false
+  },
+  sizeVariants: {
+    type: [sizeVariantSchema],
+    default: []
   },
   isFeatured: {
     type: Boolean,

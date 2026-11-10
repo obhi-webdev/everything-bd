@@ -14,6 +14,12 @@ const orderItemSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  size: {
+    type: String,
+    default: "",
+    trim: true,
+    maxlength: 30
+  },
   image: {
     type: String,
     default: ""

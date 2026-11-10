@@ -71,7 +71,7 @@ export default function CartDrawer() {
             const maxReached = item.quantity >= stock;
 
             return (
-              <div className="cart-item ebd-cart-item" key={item.id}>
+              <div className="cart-item ebd-cart-item" key={`${item.id}::${item.size || ""}`}>
                 {item.image ? (
                   <img src={item.image} alt={item.name}/>
                 ) : (
@@ -87,11 +87,19 @@ export default function CartDrawer() {
                       type="button"
                       className="ebd-remove-item"
                       aria-label={`Remove ${item.name}`}
-                      onClick={() => removeFromCart(item.id)}
+                      onClick={() => removeFromCart(
+                        `${item.id}::${item.size || ""}`
+                      )}
                     >
                       <Trash2 size={16}/>
                     </button>
                   </div>
+
+                  {item.size && (
+                    <small className="ebd-cart-size">
+                      Size: <strong>{item.size}</strong>
+                    </small>
+                  )}
 
                   <strong>{money(item.price)}</strong>
 
@@ -99,7 +107,9 @@ export default function CartDrawer() {
                     <button
                       type="button"
                       aria-label="Decrease quantity"
-                      onClick={() => changeQuantity(item.id, -1)}
+                      onClick={() => changeQuantity(
+                        `${item.id}::${item.size || ""}`, -1
+                      )}
                     >
                       <Minus size={14}/>
                     </button>
@@ -110,7 +120,9 @@ export default function CartDrawer() {
                       type="button"
                       aria-label="Increase quantity"
                       disabled={maxReached}
-                      onClick={() => changeQuantity(item.id, 1)}
+                      onClick={() => changeQuantity(
+                        `${item.id}::${item.size || ""}`, 1
+                      )}
                     >
                       <Plus size={14}/>
                     </button>

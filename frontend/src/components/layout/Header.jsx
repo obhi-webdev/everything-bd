@@ -24,6 +24,7 @@ const categoryLinks = [
 ];
 
 export default function Header() {
+  const [headerFavicon, setHeaderFavicon] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [compactSearchOpen, setCompactSearchOpen] = useState(false);
@@ -31,6 +32,60 @@ export default function Header() {
   const [search, setSearch] = useState(
     () => new URLSearchParams(window.location.search).get("q") || ""
   );
+
+  // Use the same public favicon setting as DynamicFavicon.
+  useEffect(() => {
+    let active = true;
+    let controller = null;
+
+    const API = import.meta.env.VITE_API_URL ||
+      "http://localhost:5001/api";
+
+    async function loadHeaderFavicon() {
+      if (controller) controller.abort();
+      controller = new AbortController();
+
+      try {
+        const response = await fetch(
+          `${API}/site-settings`,
+          {
+            cache: "no-store",
+            signal: controller.signal
+          }
+        );
+
+        if (!response.ok) return;
+
+        const result = await response.json();
+
+        if (active) {
+          const url = result.data?.faviconUrl;
+          setHeaderFavicon(
+            typeof url === "string" &&
+            url.startsWith("https://") ? url : ""
+          );
+        }
+      } catch {
+        // Keep existing image on network failure.
+      }
+    }
+
+    loadHeaderFavicon();
+
+    window.addEventListener(
+      "everythingbd:settings-updated",
+      loadHeaderFavicon
+    );
+
+    return () => {
+      active = false;
+      controller?.abort();
+      window.removeEventListener(
+        "everythingbd:settings-updated",
+        loadHeaderFavicon
+      );
+    };
+  }, []);
 
   const cart = useShopStore(state => state.cart);
   const wishlist = useShopStore(state => state.wishlist);
@@ -97,8 +152,18 @@ export default function Header() {
         <div className="ebd-max-container ebd-max-main-inner">
 
           <a href="/" className="ebd-max-logo" aria-label="EverythingBD Home">
-            <span className="ebd-original-logo">
-              everything<span>bd</span><i>.</i>
+            <span className="ebd-logo-lockup">
+              {headerFavicon && (
+                <img
+                  className="ebd-header-favicon"
+                  src={headerFavicon}
+                  alt=""
+                  aria-hidden="true"
+                />
+              )}
+              <span className="ebd-original-logo">
+                everything<span>bd</span><i>.</i>
+              </span>
             </span>
             <small>BEAUTY & SKINCARE</small>
           </a>

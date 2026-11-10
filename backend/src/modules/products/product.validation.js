@@ -9,6 +9,33 @@ const imageSchema = z.object({
   publicId: z.string().max(250).default("")
 }).strict();
 
+
+const sizeVariantSchema = z.object({
+  size: z.string().trim().min(1).max(30)
+    .regex(/^[a-zA-Z0-9 -]+$/),
+  stock: z.number().int().nonnegative()
+}).strict();
+
+const sizeVariantsSchema = z.array(sizeVariantSchema)
+  .max(30)
+  .superRefine((variants, ctx) => {
+    const seen = new Set();
+
+    variants.forEach((variant, index) => {
+      const key = variant.size.toUpperCase();
+
+      if (seen.has(key)) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Duplicate size is not allowed",
+          path: [index, "size"]
+        });
+      }
+
+      seen.add(key);
+    });
+  });
+
 const baseProductSchema = z.object({
   name: z.string().trim().min(3).max(200),
 
@@ -37,6 +64,10 @@ const baseProductSchema = z.object({
     .nonnegative().nullable().default(null),
 
   stock: z.number().int().nonnegative(),
+
+  hasSizeVariants: z.boolean().default(false),
+
+  sizeVariants: sizeVariantsSchema.default([]),
 
   isFeatured: z.boolean().default(false),
 

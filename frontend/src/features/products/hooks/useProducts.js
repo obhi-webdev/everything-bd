@@ -38,6 +38,8 @@ export function useProducts() {
           price: p.price,
           oldPrice: p.compareAtPrice,
           stock: p.stock,
+          hasSizeVariants: Boolean(p.hasSizeVariants),
+          sizeVariants: p.sizeVariants || [],
           rating: null,
           badge: p.isFeatured ? "FEATURED" : "NEW",
           image: p.images?.[0]?.url || "",

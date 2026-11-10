@@ -18,6 +18,9 @@ const save = (key, value) => {
   }
 };
 
+const cartKey = item =>
+  `${String(item.id)}::${String(item.size || "")}`;
+
 export const useShopStore = create((set) => ({
   cart: readSaved("everythingbd_cart", []),
   wishlist: readSaved("everythingbd_wishlist", []),
@@ -39,7 +42,10 @@ export const useShopStore = create((set) => ({
       const stock = Math.max(0, Math.floor(Number(product.stock) || 0));
       if (stock < 1) return state;
 
-      const existing = state.cart.find(item => item.id === product.id);
+      const key = cartKey(product);
+      const existing = state.cart.find(item =>
+        cartKey(item) === key
+      );
       const current = Number(existing?.quantity) || 0;
 
       if (current >= stock) {
@@ -48,11 +54,16 @@ export const useShopStore = create((set) => ({
 
       const cart = existing
         ? state.cart.map(item =>
-            item.id === product.id
-              ? { ...item, stock, quantity: current + 1 }
+            cartKey(item) === key
+              ? { ...item, cartKey: key, stock, quantity: current + 1 }
               : item
           )
-        : [...state.cart, { ...product, stock, quantity: 1 }];
+        : [...state.cart, {
+            ...product,
+            cartKey: key,
+            stock,
+            quantity: 1
+          }];
 
       trackMetaEvent("AddToCart", {
         content_ids: [String(product.id)],
@@ -75,7 +86,7 @@ export const useShopStore = create((set) => ({
     set(state => {
       const cart = state.cart
         .map(item => {
-          if (item.id !== id) return item;
+          if (cartKey(item) !== id && item.id !== id) return item;
 
           const current = Number(item.quantity) || 0;
           const stock = Math.max(0, Math.floor(Number(item.stock) || 0));
@@ -94,7 +105,9 @@ export const useShopStore = create((set) => ({
 
   removeFromCart: (id) =>
     set(state => {
-      const cart = state.cart.filter(item => item.id !== id);
+      const cart = state.cart.filter(item =>
+        cartKey(item) !== id && item.id !== id
+      );
       save("everythingbd_cart", cart);
       return { cart };
     }),

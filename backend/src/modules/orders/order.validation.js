@@ -36,7 +36,14 @@ export const createOrderSchema = z.object({
     z.object({
       productId: z.string()
         .regex(/^[a-fA-F0-9]{24}$/),
-      quantity: z.number().int().min(1).max(20)
+      quantity: z.number().int().min(1).max(20),
+      size: z.string()
+        .trim()
+        .min(1)
+        .max(30)
+        .regex(/^[a-zA-Z0-9 -]+$/)
+        .transform(value => value.toUpperCase())
+        .optional()
     }).strict()
   ).min(1).max(30),
 

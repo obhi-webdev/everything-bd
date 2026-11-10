@@ -236,7 +236,11 @@ export default function OrderManager({ token }) {
             <h3>Products</h3>
             {(selected.items || []).map((item, index) => (
               <div className="ebd-order-line" key={index}>
-                <span>{item.name} × {item.quantity}</span>
+                <span>
+                  {item.name}
+                  {item.size ? ` — Size: ${item.size}` : ""}
+                  {" × "}{item.quantity}
+                </span>
                 <b>{money(item.subtotal)}</b>
               </div>
             ))}

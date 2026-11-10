@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
+import { validateProductInventory } from "./product.inventory.js";
 import { Product } from "./product.model.js";
+import { Order } from "../orders/order.model.js";
 import {
   productSchema,
   updateProductSchema
@@ -59,6 +61,15 @@ export async function adminCreateProduct(req, res) {
     });
   }
 
+  const inventoryError = validateProductInventory(parsed.data);
+
+  if (inventoryError) {
+    return res.status(400).json({
+      success: false,
+      message: inventoryError
+    });
+  }
+
   try {
     const product = await Product.create(parsed.data);
 
@@ -85,49 +96,171 @@ export async function adminUpdateProduct(req, res) {
     });
   }
 
-  try {
-    const product = await Product.findById(req.params.id);
+  const versionHeader = req.get("If-Match");
 
-    if (!product) {
-      return res.status(404).json({
-        success: false,
-        message: "Product not found"
-      });
-    }
+  if (!/^(0|[1-9][0-9]*)$/.test(versionHeader || "") ||
+      !Number.isSafeInteger(Number(versionHeader))) {
+    return res.status(428).json({
+      success: false,
+      message: "Product version required. Refresh and try again."
+    });
+  }
 
-    const nextPrice = parsed.data.price ?? product.price;
-    const nextCompare = Object.hasOwn(
-      parsed.data, "compareAtPrice"
+  const expectedVersion = Number(versionHeader);
+
+  // Do not apply defaults for fields omitted from PATCH.
+  const patch = Object.fromEntries(
+    Object.entries(parsed.data).filter(([key]) =>
+      Object.prototype.hasOwnProperty.call(req.body, key)
     )
-      ? parsed.data.compareAtPrice
-      : product.compareAtPrice;
+  );
 
-    if (
-      nextCompare != null &&
-      nextCompare < nextPrice
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "Compare price cannot be below selling price"
-      });
-    }
+  const reject = (statusCode, message) => {
+    const error = new Error(message);
+    error.statusCode = statusCode;
+    return error;
+  };
 
-    Object.assign(product, parsed.data);
-    await product.save();
+  try {
+    const updated = await mongoose.connection.transaction(
+      async session => {
+        const product = await Product.findById(req.params.id)
+          .session(session);
 
-    res.json({
+        if (!product) {
+          throw reject(404, "Product not found");
+        }
+
+        if (product.__v !== expectedVersion) {
+          throw reject(
+            409,
+            "Product changed. Refresh and edit again."
+          );
+        }
+
+        const nextPrice = patch.price ?? product.price;
+        const nextCompare = Object.hasOwn(
+          patch, "compareAtPrice"
+        )
+          ? patch.compareAtPrice
+          : product.compareAtPrice;
+
+        if (nextCompare != null &&
+            nextCompare < nextPrice) {
+          throw reject(
+            400,
+            "Compare price cannot be below selling price"
+          );
+        }
+
+        const nextProduct = {
+          ...product.toObject(),
+          ...patch
+        };
+
+        const inventoryError =
+          validateProductInventory(nextProduct);
+
+        if (inventoryError) {
+          throw reject(400, inventoryError);
+        }
+
+        const nextMode = Object.hasOwn(
+          patch, "hasSizeVariants"
+        )
+          ? patch.hasSizeVariants
+          : product.hasSizeVariants;
+
+        const currentLabels = (product.sizeVariants || [])
+          .map(v => String(v.size).trim().toUpperCase())
+          .sort();
+
+        const nextLabels = Object.hasOwn(
+          patch, "sizeVariants"
+        )
+          ? patch.sizeVariants
+              .map(v => String(v.size).trim().toUpperCase())
+              .sort()
+          : currentLabels;
+
+        const configurationChanged =
+          Boolean(nextMode) !== Boolean(product.hasSizeVariants) ||
+          JSON.stringify(currentLabels) !== JSON.stringify(nextLabels);
+
+        if (configurationChanged) {
+          const existingOrder = await Order.exists({
+            "items.product": product._id
+          }).session(session);
+
+          if (existingOrder) {
+            throw reject(
+              409,
+              "Product has order history. Size mode and labels cannot change."
+            );
+          }
+        }
+
+        const result = await Product.findOneAndUpdate(
+          {
+            _id: product._id,
+            __v: expectedVersion
+          },
+          {
+            $set: patch,
+            $inc: { __v: 1 }
+          },
+          {
+            returnDocument: "after",
+            runValidators: true,
+            session
+          }
+        );
+
+        if (!result) {
+          throw reject(
+            409,
+            "Product changed. Refresh and retry."
+          );
+        }
+
+        return result;
+      }
+    );
+
+    res.set("Cache-Control", "no-store");
+
+    return res.json({
       success: true,
       message: "Product updated successfully",
-      data: product
+      data: updated
     });
+
   } catch (error) {
+    if (error.statusCode) {
+      return res.status(error.statusCode).json({
+        success: false,
+        message: error.message
+      });
+    }
+
     if (error.name === "ValidationError") {
       return res.status(400).json({
         success: false,
         message: "Product validation failed"
       });
     }
-    sendError(res, error);
+
+    if (
+      error.hasErrorLabel?.("TransientTransactionError") ||
+      error.code === 112
+    ) {
+      return res.status(409).json({
+        success: false,
+        message: "Product changed concurrently. Refresh and retry."
+      });
+    }
+
+    return sendError(res, error);
   }
 }
 

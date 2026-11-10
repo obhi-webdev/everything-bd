@@ -78,14 +78,14 @@ export async function createOrder(req, res) {
     });
   }
 
-  const ids = input.items.map(item =>
-    item.productId.toLowerCase()
+  const itemKeys = input.items.map(item =>
+    `${item.productId.toLowerCase()}::${item.size || ""}`
   );
 
-  if (new Set(ids).size !== ids.length) {
+  if (new Set(itemKeys).size !== itemKeys.length) {
     return res.status(400).json({
       success: false,
-      message: "Duplicate product entries are not allowed"
+      message: "Duplicate product and size entries are not allowed"
     });
   }
 
@@ -108,13 +108,39 @@ export async function createOrder(req, res) {
       let subtotal = 0;
 
       for (const requested of input.items) {
+        const requestedSize = requested.size || "";
+
+        const stockFilter = {
+          _id: requested.productId,
+          status: "active",
+          stock: { $gte: requested.quantity }
+        };
+
+        const stockUpdate = {
+          $inc: {
+            stock: -requested.quantity,
+            __v: 1
+          }
+        };
+
+        if (requestedSize) {
+          stockFilter.hasSizeVariants = true;
+          stockFilter.sizeVariants = {
+            $elemMatch: {
+              size: requestedSize,
+              stock: { $gte: requested.quantity }
+            }
+          };
+
+          stockUpdate.$inc["sizeVariants.$.stock"] =
+            -requested.quantity;
+        } else {
+          stockFilter.hasSizeVariants = { $ne: true };
+        }
+
         const product = await Product.findOneAndUpdate(
-          {
-            _id: requested.productId,
-            status: "active",
-            stock: { $gte: requested.quantity }
-          },
-          { $inc: { stock: -requested.quantity } },
+          stockFilter,
+          stockUpdate,
           { returnDocument: "before", session }
         );
 
@@ -145,6 +171,7 @@ export async function createOrder(req, res) {
           product: product._id,
           sku: product.sku,
           name: product.name,
+          size: requestedSize,
           image: product.images?.[0]?.url || "",
           price: product.price,
           quantity: requested.quantity,
@@ -202,13 +229,16 @@ export async function createOrder(req, res) {
 
     res.set("Cache-Control", "no-store");
 
-    try {
-      await sendMetaPurchase(order, req);
-    } catch (metaError) {
-      console.error(
-        "Meta Purchase tracking failed:",
-        metaError.message
-      );
+    // Never send real Meta events from the isolated size test DB.
+    if (mongoose.connection.name !== "everythingbd_size_variation_test") {
+      try {
+        await sendMetaPurchase(order, req);
+      } catch (metaError) {
+        console.error(
+          "Meta Purchase tracking failed:",
+          metaError.message
+        );
+      }
     }
 
     return res.status(201).json({

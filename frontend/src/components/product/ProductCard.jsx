@@ -70,17 +70,47 @@ export default function ProductCard({ product }) {
             <del>{money(product.oldPrice)}</del>
           )}
         </div>
-        <button
-          className="add-btn"
-          disabled={product.stock <= 0}
-          onClick={event => {
-            event.stopPropagation();
-            addToCart(product);
-          }}
-        >
-          <ShoppingBag size={16}/>
-          {product.stock <= 0 ? "Out of Stock" : "Add to Cart"}
-        </button>
+        <div className="ebd-card-actions">
+          <button
+            type="button"
+            className="add-btn ebd-card-add"
+            disabled={Number(product.stock) <= 0}
+            onClick={event => {
+              event.stopPropagation();
+              if (product.hasSizeVariants) {
+                openProduct();
+                return;
+              }
+              addToCart(product);
+            }}
+          >
+            <ShoppingBag size={15}/>
+            {Number(product.stock) <= 0
+              ? "Out of Stock"
+              : product.hasSizeVariants
+                ? "Select Size"
+                : "Add to Cart"}
+          </button>
+
+          <button
+            type="button"
+            className="ebd-card-buy"
+            disabled={Number(product.stock) <= 0}
+            onClick={event => {
+              event.stopPropagation();
+
+              if (product.hasSizeVariants) {
+                openProduct();
+                return;
+              }
+
+              addToCart(product);
+              navigate("/checkout");
+            }}
+          >
+            Buy Now
+          </button>
+        </div>
       </div>
     </article>
   );

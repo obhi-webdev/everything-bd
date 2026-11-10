@@ -582,3 +582,52 @@
     letter-spacing: 2px;
   }
 }
+
+
+/* EBD HEADER FAVICON LOCKUP */
+.ebd-max-logo .ebd-logo-lockup {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.ebd-max-logo .ebd-header-favicon {
+  display: block;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  object-fit: contain;
+  border-radius: 5px;
+}
+
+.ebd-max-logo .ebd-logo-lockup .ebd-original-logo {
+  display: inline-block;
+  min-width: 0;
+}
+
+@media (max-width: 850px) {
+  .ebd-max-logo .ebd-logo-lockup {
+    gap: 6px;
+  }
+
+  .ebd-max-logo .ebd-header-favicon {
+    width: 30px;
+    height: 30px;
+    flex-basis: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ebd-max-logo .ebd-header-favicon {
+    width: 26px;
+    height: 26px;
+    flex-basis: 26px;
+  }
+
+  .ebd-max-logo .ebd-logo-lockup .ebd-original-logo {
+    font-size: clamp(16px, 4.5vw, 23px);
+    letter-spacing: -1px;
+  }
+}

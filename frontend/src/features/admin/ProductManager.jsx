@@ -7,6 +7,8 @@ const empty = {
   name: "", slug: "", sku: "", brand: "",
   category: "", description: "", price: "",
   compareAtPrice: "", stock: "0",
+  version: 0,
+  hasSizeVariants: false, sizeVariants: [],
   status: "draft", isFeatured: false,
   imagesText: "", ingredientsText: "", benefitsText: "",
   seoTitle: "", seoDescription: ""
@@ -25,6 +27,12 @@ const toForm = (p) => ({
   price: String(p.price ?? ""),
   compareAtPrice: String(p.compareAtPrice ?? ""),
   stock: String(p.stock ?? 0),
+  version: Number(p.__v ?? 0),
+  hasSizeVariants: Boolean(p.hasSizeVariants),
+  sizeVariants: (p.sizeVariants || []).map(v => ({
+    size: String(v.size || ""),
+    stock: String(v.stock ?? 0)
+  })),
   status: p.status || "draft",
   isFeatured: Boolean(p.isFeatured),
   imagesText: (p.images || []).map(x => x.url).join("\n"),
@@ -51,7 +59,18 @@ function toPayload(form) {
     price: Number(form.price),
     compareAtPrice: form.compareAtPrice === ""
       ? null : Number(form.compareAtPrice),
-    stock: Number(form.stock),
+    stock: form.hasSizeVariants
+      ? form.sizeVariants.reduce(
+          (sum, v) => sum + Number(v.stock), 0
+        )
+      : Number(form.stock),
+    hasSizeVariants: form.hasSizeVariants,
+    sizeVariants: form.hasSizeVariants
+      ? form.sizeVariants.map(v => ({
+          size: v.size.trim().toUpperCase(),
+          stock: Number(v.stock)
+        }))
+      : [],
     status: form.status,
     isFeatured: form.isFeatured,
     images,
@@ -94,6 +113,32 @@ export default function ProductManager({ token }) {
     setForm(prev => ({ ...prev, [key]: value }));
   }
 
+  function addSize(size = "") {
+    setForm(prev => ({
+      ...prev,
+      sizeVariants: [
+        ...prev.sizeVariants,
+        { size, stock: "0" }
+      ]
+    }));
+  }
+
+  function updateSize(index, key, value) {
+    setForm(prev => ({
+      ...prev,
+      sizeVariants: prev.sizeVariants.map((v, i) =>
+        i === index ? { ...v, [key]: value } : v
+      )
+    }));
+  }
+
+  function removeSize(index) {
+    setForm(prev => ({
+      ...prev,
+      sizeVariants: prev.sizeVariants.filter((_, i) => i !== index)
+    }));
+  }
+
   function startCreate() {
     setEditingId(null);
     setForm(empty);
@@ -118,9 +163,34 @@ export default function ProductManager({ token }) {
     setNotice("");
 
     try {
+      if (form.hasSizeVariants) {
+        const variants = form.sizeVariants;
+        const names = variants.map(v => v.size.trim().toUpperCase());
+
+        if (
+          variants.length === 0 ||
+          names.some(name =>
+            !/^[A-Z0-9 -]{1,30}$/.test(name)
+          ) ||
+          new Set(names).size !== names.length ||
+          variants.some(v =>
+            v.stock === "" ||
+            !Number.isInteger(Number(v.stock)) ||
+            Number(v.stock) < 0
+          )
+        ) {
+          throw new Error(
+            "Add unique sizes with valid, non-negative stock."
+          );
+        }
+
+      }
+
       const payload = toPayload(form);
       if (editingId) {
-        await productApi.update(token, editingId, payload);
+        await productApi.update(
+          token, editingId, payload, form.version
+        );
       } else {
         await productApi.create(token, payload);
       }
@@ -228,12 +298,110 @@ export default function ProductManager({ token }) {
                   value={form.stock}
                   onChange={e => change("stock", e.target.value)}/>
               </label>
+              <div className="pm-size-control">
+                <label className="pm-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={form.hasSizeVariants}
+                    onChange={e =>
+                      change("hasSizeVariants", e.target.checked)
+                    }
+                  />
+                  Enable Size Variations (Optional)
+                </label>
+              </div>
+
               <label className="pm-checkbox">
                 <input type="checkbox" checked={form.isFeatured}
                   onChange={e => change("isFeatured", e.target.checked)}/>
                 Featured Product
               </label>
             </div>
+
+            {form.hasSizeVariants && (
+              <div className="pm-size-panel">
+                <h4>Available Sizes & Stock</h4>
+                <p>
+                  Add the sizes offered for this product.
+                  Total stock is calculated automatically.
+                </p>
+
+                <div className="pm-size-presets">
+                  {["XS", "S", "M", "L", "XL", "XXL"].map(size => (
+                    <button
+                      key={size}
+                      type="button"
+                      disabled={form.sizeVariants.some(v =>
+                        v.size.trim().toUpperCase() === size
+                      )}
+                      onClick={() => addSize(size)}
+                    >
+                      + {size}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => addSize()}
+                  >
+                    + Custom Size
+                  </button>
+                </div>
+
+                <div className="pm-size-rows">
+                  {form.sizeVariants.map((variant, index) => (
+                    <div className="pm-size-row" key={index}>
+                      <label>
+                        Size
+                        <input
+                          value={variant.size}
+                          maxLength={30}
+                          placeholder="e.g. M, 38, 42"
+                          onChange={e =>
+                            updateSize(index, "size", e.target.value)
+                          }
+                        />
+                      </label>
+
+                      <label>
+                        Stock
+                        <input
+                          type="number"
+                          min="0"
+                          step="1"
+                          value={variant.stock}
+                          onChange={e =>
+                            updateSize(index, "stock", e.target.value)
+                          }
+                        />
+                      </label>
+
+                      <button
+                        type="button"
+                        className="pm-size-remove"
+                        onClick={() => removeSize(index)}
+                        aria-label="Remove size"
+                      >
+                        <X size={17}/>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                <strong>
+                  Total Stock: {form.sizeVariants.reduce(
+                    (sum, v) => sum + (
+                      Number.isFinite(Number(v.stock))
+                        ? Number(v.stock) : 0
+                    ), 0
+                  )}
+                </strong>
+
+                <p>
+                  Size variations can only be saved as Draft
+                  until size-aware checkout is completed.
+                </p>
+              </div>
+            )}
 
             <label>Description
               <textarea rows={3} value={form.description}

@@ -1,4 +1,6 @@
 import "./productDetails.css";
+import "./desktop-purchase-layout.css";
+import "./productDetails-mobile-reference.css";
 import { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import {
@@ -21,6 +23,15 @@ const money = value =>
 
 export default function ProductDetails() {
   const { slug } = useParams();
+
+  // Always open a new product at the top of its page.
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "instant"
+    });
+  }, [slug]);
   const { products: allProducts } = useProducts();
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
@@ -29,6 +40,7 @@ export default function ProductDetails() {
   const [activeImage, setActiveImage] = useState(0);
 
   const [quantity, setQuantity] = useState(1);
+  const [selectedSize, setSelectedSize] = useState("");
 
   const addToCart = useShopStore(s => s.addToCart);
   const wishlist = useShopStore(s => s.wishlist);
@@ -43,6 +55,7 @@ export default function ProductDetails() {
       setProduct(null);
       setActiveImage(0);
       setQuantity(1);
+      setSelectedSize("");
 
       try {
         const data = await getProductBySlug(
@@ -85,7 +98,15 @@ export default function ProductDetails() {
 
   const images = product?.images?.filter(img => img.url) || [];
   const currentImage = images[activeImage];
-  const stock = product?.stock ?? 0;
+  const hasSizes = Boolean(product?.hasSizeVariants);
+  const sizeVariants = hasSizes ? (product?.sizeVariants || []) : [];
+  const selectedVariant = sizeVariants.find(
+    v => v.size === selectedSize
+  );
+  const stock = hasSizes
+    ? Math.max(0, Number(selectedVariant?.stock) || 0)
+    : Math.max(0, Number(product?.stock) || 0);
+  const sizeRequired = hasSizes && !selectedVariant;
   const liked = product
     ? wishlist.includes(product._id)
     : false;
@@ -114,7 +135,7 @@ export default function ProductDetails() {
   }
 
   function handleAddToCart() {
-    if (!product || stock < 1) return;
+    if (!product || stock < 1 || sizeRequired) return;
 
     const item = {
       id: product._id,
@@ -123,7 +144,8 @@ export default function ProductDetails() {
       brand: product.brand,
       price: product.price,
       image: images[0]?.url || "",
-      stock
+      stock,
+      ...(hasSizes ? { size: selectedSize } : {})
     };
 
     for (let i = 0; i < Math.min(quantity, stock); i++) {
@@ -133,7 +155,7 @@ export default function ProductDetails() {
 
 
   function handleBuyNow() {
-    if (!product || stock < 1) return;
+    if (!product || stock < 1 || sizeRequired) return;
     handleAddToCart();
     navigate("/checkout");
   }
@@ -228,10 +250,56 @@ export default function ProductDetails() {
                   )}
                 </div>
 
+                {hasSizes && (
+                  <div className="pd-size-section">
+                    <div className="pd-size-heading">
+                      <strong>Select Size *</strong>
+                      {selectedSize && (
+                        <span>Selected: {selectedSize}</span>
+                      )}
+                    </div>
+
+                    <div
+                      className="pd-size-options"
+                      role="group"
+                      aria-label="Select product size"
+                    >
+                      {sizeVariants.map(variant => {
+                        const available = Number(variant.stock) > 0;
+                        const active = selectedSize === variant.size;
+
+                        return (
+                          <button
+                            key={variant.size}
+                            type="button"
+                            className={active ? "active" : ""}
+                            disabled={!available}
+                            aria-pressed={active}
+                            onClick={() => {
+                              setSelectedSize(variant.size);
+                              setQuantity(1);
+                            }}
+                          >
+                            {variant.size}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {!selectedSize && (
+                      <p className="pd-size-hint">
+                        Please select an available size.
+                      </p>
+                    )}
+                  </div>
+                )}
+
                 <p className="pd-stock">
-                  {stock > 0
-                    ? `${stock} items available`
-                    : "Currently out of stock"}
+                  {sizeRequired
+                    ? "Select a size to check availability"
+                    : stock > 0
+                      ? `${stock} items available`
+                      : "Currently out of stock"}
                 </p>
 
 
@@ -258,11 +326,39 @@ export default function ProductDetails() {
 
                   <button
                     className="pd-primary"
-                    disabled={stock <= 0}
+                    disabled={stock <= 0 || sizeRequired}
                     onClick={handleAddToCart}
                   >
                     <ShoppingBag size={19}/>
-                    {stock > 0 ? "Add to Cart" : "Out of Stock"}
+                    {sizeRequired
+                      ? "Select Size"
+                      : stock > 0 ? "Add to Cart" : "Out of Stock"}
+                  </button>
+
+                  <button
+                    type="button"
+                    className="pd-buy-now pd-buy-now-mobile"
+                    disabled={stock <= 0 || sizeRequired}
+                    onClick={handleBuyNow}
+                  >
+                    <ShoppingBag size={18}/>
+                    {sizeRequired
+                      ? "Select Size"
+                      : stock > 0 ? "Buy Now" : "Out of Stock"}
+                  </button>
+
+                  <button
+                  type="button"
+                  className="pd-buy-now pd-buy-now-desktop"
+                  disabled={stock <= 0 || sizeRequired}
+                  onClick={handleBuyNow}
+                  >
+                  <ShoppingBag size={19}/>
+                  {sizeRequired
+                  ? "Select Size to Buy"
+                  : stock > 0
+                  ? "Buy Now — Order Today"
+                  : "Out of Stock"}
                   </button>
 
                   <button
@@ -278,15 +374,7 @@ export default function ProductDetails() {
                   </button>
                 </div>
 
-                <button
-                  type="button"
-                  className="pd-buy-now"
-                  disabled={stock <= 0}
-                  onClick={handleBuyNow}
-                >
-                  <ShoppingBag size={19}/>
-                  {stock > 0 ? "Buy Now — Order Today" : "Out of Stock"}
-                </button>
+
 
                 <div className="pd-service-info">
                   <span><Truck size={18}/> Nationwide Delivery</span>
