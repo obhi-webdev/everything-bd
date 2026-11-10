@@ -3,6 +3,34 @@ import { Plus, Pencil, Archive, RefreshCw, X } from "lucide-react";
 import { productApi } from "./productApi";
 import ImageUploader from "./ImageUploader";
 
+const CLOTHING_SIZE_PRESETS = {
+  Men: ["XS", "S", "M", "L", "XL", "XXL"],
+  Women: [
+    "XS", "S", "M", "L", "XL",
+    "32", "34", "36", "38", "40", "42", "44"
+  ],
+  Kids: [
+    "0-1Y", "1-2Y", "3-4Y", "5-6Y",
+    "7-8Y", "9-10Y", "11-12Y", "13-14Y"
+  ]
+};
+
+function inferClothingType(variants = []) {
+  const sizes = variants.map(
+    item => String(item.size || "").toUpperCase()
+  );
+
+  if (sizes.some(size => /^[0-9]+-[0-9]+Y$/.test(size))) {
+    return "Kids";
+  }
+
+  if (sizes.some(size => /^[0-9]{2}$/.test(size))) {
+    return "Women";
+  }
+
+  return "Men";
+}
+
 const empty = {
   name: "", slug: "", sku: "", brand: "",
   category: "", description: "", price: "",
@@ -84,6 +112,7 @@ function toPayload(form) {
 }
 
 export default function ProductManager({ token }) {
+  const [clothingType, setClothingType] = useState("Men");
   const [products, setProducts] = useState([]);
   const [form, setForm] = useState(empty);
   const [editingId, setEditingId] = useState(null);
@@ -114,13 +143,26 @@ export default function ProductManager({ token }) {
   }
 
   function addSize(size = "") {
-    setForm(prev => ({
-      ...prev,
-      sizeVariants: [
-        ...prev.sizeVariants,
-        { size, stock: "0" }
-      ]
-    }));
+    setForm(prev => {
+      const normalized = size.trim().toUpperCase();
+
+      if (
+        normalized &&
+        prev.sizeVariants.some(
+          item => item.size.trim().toUpperCase() === normalized
+        )
+      ) {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        sizeVariants: [
+          ...prev.sizeVariants,
+          { size, stock: "0" }
+        ]
+      };
+    });
   }
 
   function updateSize(index, key, value) {
@@ -140,6 +182,7 @@ export default function ProductManager({ token }) {
   }
 
   function startCreate() {
+    setClothingType("Men");
     setEditingId(null);
     setForm(empty);
     setError("");
@@ -148,6 +191,9 @@ export default function ProductManager({ token }) {
   }
 
   function startEdit(product) {
+    setClothingType(
+      inferClothingType(product.sizeVariants || [])
+    );
     setEditingId(product._id);
     setForm(toForm(product));
     setError("");
@@ -326,8 +372,39 @@ export default function ProductManager({ token }) {
                   Total stock is calculated automatically.
                 </p>
 
+                <div className="pm-clothing-type">
+                  <span className="pm-clothing-type-label">
+                    Clothing Type
+                  </span>
+
+                  <div
+                    className="pm-clothing-type-options"
+                    role="group"
+                    aria-label="Clothing size category"
+                  >
+                    {Object.keys(CLOTHING_SIZE_PRESETS).map(type => (
+                      <button
+                        key={type}
+                        type="button"
+                        className={
+                          clothingType === type ? "is-active" : ""
+                        }
+                        aria-pressed={clothingType === type}
+                        onClick={() => setClothingType(type)}
+                      >
+                        {type}
+                      </button>
+                    ))}
+                  </div>
+
+                  <p>
+                    Select a clothing type to show suggested sizes.
+                    Existing sizes and stock are preserved.
+                  </p>
+                </div>
+
                 <div className="pm-size-presets">
-                  {["XS", "S", "M", "L", "XL", "XXL"].map(size => (
+                  {CLOTHING_SIZE_PRESETS[clothingType].map(size => (
                     <button
                       key={size}
                       type="button"
@@ -397,8 +474,8 @@ export default function ProductManager({ token }) {
                 </strong>
 
                 <p>
-                  Size variations can only be saved as Draft
-                  until size-aware checkout is completed.
+                  Stock is tracked separately for each size.
+                  Customers select a size before checkout.
                 </p>
               </div>
             )}

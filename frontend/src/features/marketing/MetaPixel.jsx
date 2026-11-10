@@ -196,6 +196,12 @@ export default function MetaPixel() {
 
     setConsent(value);
     setShowChoices(false);
+
+    if (value === "accepted") {
+      window.dispatchEvent(
+        new Event("everythingbd:marketing-consent-accepted")
+      );
+    }
   }
 
   if (!pixelId) return null;

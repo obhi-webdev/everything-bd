@@ -2,6 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { CheckCircle2, ShieldCheck, Truck } from "lucide-react";
 import { getCheckoutConfig, submitOrder } from "../../features/checkout/checkoutApi";
+import {
+  hasMarketingConsent,
+  trackMetaEvent
+} from "../../features/marketing/MetaPixel";
 import "./landing.css";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:5001/api";
@@ -28,6 +32,25 @@ export default function LandingPage() {
   const [orderNumber, setOrderNumber] = useState("");
   const requestId = useRef(null);
   const orderRef = useRef(null);
+  const checkoutTrackedRef = useRef("");
+
+  function trackLandingCheckout() {
+    if (!page || !hasMarketingConsent()) return;
+
+    const key = String(page.slug || slug);
+
+    if (checkoutTrackedRef.current === key) return;
+
+    const tracked = trackMetaEvent("InitiateCheckout", {
+      currency: "BDT",
+      content_type: "product",
+      content_ids: [String(page.productId)],
+      num_items: Number(quantity) || 1
+    });
+
+    if (tracked) checkoutTrackedRef.current = key;
+  }
+
 
   useEffect(() => {
     const meta = document.createElement("meta");
@@ -66,6 +89,30 @@ export default function LandingPage() {
     return () => controller.abort();
   }, [slug]);
 
+  useEffect(() => {
+    if (!page?.productId) return;
+
+    function sendViewContent() {
+      trackMetaEvent("ViewContent", {
+        content_name: page.name,
+        content_ids: [String(page.productId)],
+        content_type: "product"
+      });
+    }
+
+    sendViewContent();
+
+    window.addEventListener(
+      "everythingbd:marketing-consent-accepted",
+      sendViewContent
+    );
+
+    return () => window.removeEventListener(
+      "everythingbd:marketing-consent-accepted",
+      sendViewContent
+    );
+  }, [page]);
+
   function update(key, value) {
     setCustomer(prev => ({ ...prev, [key]: value }));
   }
@@ -102,11 +149,36 @@ export default function LandingPage() {
         }],
         customerNote: `Landing page: ${page.slug}`,
         paymentMethod: "cod",
-        marketingConsent: false
+        marketingConsent: hasMarketingConsent()
       });
 
       const created = response.data || response.order || response;
       const number = created.orderNumber || response.orderNumber || "";
+
+      if (number && hasMarketingConsent()) {
+        const total = Number(created.total);
+        const details = {
+          currency: "BDT",
+          order_id: number,
+          content_type: "product",
+          content_ids: [String(page.productId)],
+          contents: [{
+            id: String(page.productId),
+            quantity: Number(quantity)
+          }],
+          num_items: Number(quantity)
+        };
+
+        if (Number.isFinite(total) && total >= 0) {
+          details.value = total;
+        }
+
+        trackMetaEvent(
+          "Purchase",
+          details,
+          `purchase_${number}`
+        );
+      }
 
       setOrderNumber(number || "Order submitted successfully");
     } catch (err) {
@@ -183,9 +255,12 @@ export default function LandingPage() {
           </div>
 
           <button className="lp-order-jump"
-            onClick={() => orderRef.current?.scrollIntoView({
-              behavior: "smooth", block: "start"
-            })}>
+            onClick={() => {
+              trackLandingCheckout();
+              orderRef.current?.scrollIntoView({
+                behavior: "smooth", block: "start"
+              });
+            }}>
             {page.buttonText || "Order Now"}
           </button>
         </div>
@@ -202,7 +277,10 @@ export default function LandingPage() {
             <p>{orderNumber}</p>
           </div>
         ) : (
-          <form onSubmit={placeOrder}>
+          <form
+            onSubmit={placeOrder}
+            onFocusCapture={trackLandingCheckout}
+          >
             <div className="lp-checkout-grid">
               <label>Full Name
                 <input required minLength={2} maxLength={100}

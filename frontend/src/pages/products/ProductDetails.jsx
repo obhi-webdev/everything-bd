@@ -87,13 +87,31 @@ export default function ProductDetails() {
   useEffect(() => {
     if (!product) return;
 
-    trackMetaEvent("ViewContent", {
-      content_name: product.name,
-      content_ids: [String(product._id)],
-      content_type: "product",
-      value: Number(product.price),
-      currency: "BDT"
-    });
+    function trackProductView() {
+      trackMetaEvent("ViewContent", {
+        content_name: product.name,
+        content_ids: [String(product._id)],
+        content_type: "product",
+        value: Number(product.price),
+        currency: "BDT"
+      });
+    }
+
+    // Track when consent already exists.
+    trackProductView();
+
+    // Also track when consent is accepted on this page.
+    window.addEventListener(
+      "everythingbd:marketing-consent-accepted",
+      trackProductView
+    );
+
+    return () => {
+      window.removeEventListener(
+        "everythingbd:marketing-consent-accepted",
+        trackProductView
+      );
+    };
   }, [product]);
 
   const images = product?.images?.filter(img => img.url) || [];

@@ -265,3 +265,81 @@
     gap: 6px;
   }
 }
+
+
+/* EBD CLOTHING TYPE SIZE SELECTOR */
+
+.pm-clothing-type {
+  margin: 18px 0 20px;
+  padding: 16px;
+  border: 1px solid #e3eaf0;
+  background: #ffffff;
+  border-radius: 12px;
+}
+
+.pm-clothing-type-label {
+  display: block;
+  color: #142e47;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.pm-clothing-type-options {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pm-clothing-type-options button {
+  appearance: none;
+  min-width: 96px;
+  padding: 11px 18px;
+  border: 1px solid #d7e2e8;
+  background: #f8fafc;
+  color: #314659;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 650;
+  cursor: pointer;
+  transition: background .2s, border-color .2s, color .2s;
+}
+
+.pm-clothing-type-options button:hover {
+  border-color: #2499b1;
+}
+
+.pm-clothing-type-options button.is-active {
+  background: #e7f5f9;
+  border-color: #2499b1;
+  color: #08738b;
+}
+
+.pm-clothing-type-options button:focus-visible {
+  outline: 3px solid #8ed7e7;
+  outline-offset: 2px;
+}
+
+.pm-clothing-type > p {
+  margin: 12px 0 0;
+  color: #708096;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+@media (max-width: 600px) {
+  .pm-clothing-type {
+    padding: 12px;
+  }
+
+  .pm-clothing-type-options {
+    gap: 7px;
+  }
+
+  .pm-clothing-type-options button {
+    min-width: 0;
+    flex: 1;
+    padding: 10px;
+    font-size: 13px;
+  }
+}
