@@ -1,3 +1,4 @@
+import "./adminDangerActions.css";
 import { useEffect, useState } from "react";
 import { orderApi } from "./orderApi";
 import "./order-manager.css";
@@ -73,6 +74,33 @@ export default function OrderManager({ token }) {
         token, selected._id, nextStatus
       );
 
+      setSelected(result.data);
+      setNextStatus("");
+      setRefresh(value => value + 1);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSavingStatus(false);
+    }
+  }
+
+  async function cancelSelectedOrder() {
+    if (!selected || savingStatus) return;
+
+    const allowed = ["pending", "confirmed", "processing"];
+    if (!allowed.includes(selected.orderStatus)) return;
+
+    if (!window.confirm(
+      `Cancel order ${selected.orderNumber}? Stock will be restored.`
+    )) return;
+
+    setSavingStatus(true);
+    setError("");
+
+    try {
+      const result = await orderApi.updateStatus(
+        token, selected._id, "cancelled"
+      );
       setSelected(result.data);
       setNextStatus("");
       setRefresh(value => value + 1);
@@ -204,6 +232,19 @@ export default function OrderManager({ token }) {
             <p><b>Area:</b> {selected.shippingAddress?.area}</p>
             <p><b>Address:</b> {selected.shippingAddress?.address}</p>
             <p><b>Status:</b> {selected.orderStatus}</p>
+            {["pending", "confirmed", "processing"].includes(
+              selected.orderStatus
+            ) && (
+              <button
+                type="button"
+                className="ebd-admin-cancel-order"
+                disabled={savingStatus}
+                onClick={cancelSelectedOrder}
+              >
+                {savingStatus ? "Processing..." : "Cancel Order"}
+              </button>
+            )}
+
             <div className="ebd-status-editor">
               <h3>Update Order Status</h3>
 

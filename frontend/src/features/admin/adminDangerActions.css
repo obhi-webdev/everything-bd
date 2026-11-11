@@ -1,0 +1,64 @@
+
+/* EverythingBD — Admin Safe Removal Actions */
+
+.ebd-admin-remove-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #b42318;
+  border: 1px solid #fecaca;
+  background: #fff5f5;
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+.ebd-admin-remove-btn:hover:not(:disabled) {
+  background: #fee2e2;
+}
+
+.ebd-admin-remove-btn:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+.ebd-admin-remove-btn span {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.ebd-admin-cancel-order {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0 16px;
+  padding: 10px 16px;
+  background: #fff5f5;
+  color: #b42318;
+  border: 1px solid #fecaca;
+  border-radius: 9px;
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.ebd-admin-cancel-order:hover:not(:disabled) {
+  background: #fee2e2;
+}
+
+.ebd-admin-cancel-order:disabled {
+  opacity: .55;
+  cursor: wait;
+}
+
+@media (max-width: 600px) {
+  .ebd-admin-cancel-order {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .ebd-admin-remove-btn {
+    min-height: 40px;
+  }
+}

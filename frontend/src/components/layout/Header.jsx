@@ -1,3 +1,4 @@
+import "./cleanSearch.css";
 import FloatingContactButtons from "./FloatingContactButtons";
 import { useEffect, useState } from "react";
 import {

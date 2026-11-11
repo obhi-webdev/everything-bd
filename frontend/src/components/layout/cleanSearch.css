@@ -1,0 +1,130 @@
+
+/*
+  EverythingBD — Premium Unified Search
+  Scoped only to .ebd-max-search
+*/
+
+.ebd-max-header .ebd-max-search {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-width: 0;
+  width: 100%;
+  height: 58px;
+  margin: 0;
+  padding: 5px;
+  background: #ffffff;
+  border: 1px solid #dbe5ed;
+  border-radius: 14px;
+  box-shadow: 0 3px 16px rgba(13, 38, 62, .045);
+  overflow: hidden;
+  transition:
+    border-color .2s ease,
+    box-shadow .2s ease;
+}
+
+.ebd-max-header .ebd-max-search:hover {
+  border-color: #c6d8e3;
+}
+
+.ebd-max-header .ebd-max-search:focus-within {
+  border-color: #2999b1;
+  box-shadow:
+    0 0 0 3px rgba(41, 153, 177, .09),
+    0 4px 16px rgba(13, 38, 62, .05);
+}
+
+.ebd-max-header .ebd-max-search input[type="search"] {
+  display: block;
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 0 18px !important;
+  color: #102c4e;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.ebd-max-header .ebd-max-search input[type="search"]:focus,
+.ebd-max-header .ebd-max-search input[type="search"]:focus-visible {
+  outline: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.ebd-max-header .ebd-max-search input[type="search"]::placeholder {
+  color: #92a0af;
+  opacity: 1;
+}
+
+.ebd-max-header .ebd-max-search button[type="submit"] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: static;
+  flex: 0 0 48px;
+  width: 48px;
+  height: 46px;
+  min-height: 46px;
+  margin: 0;
+  padding: 0;
+  color: #ffffff;
+  background: #2999b1;
+  border: 0;
+  border-radius: 10px;
+  box-shadow: none;
+  cursor: pointer;
+  transition: background .2s ease;
+}
+
+.ebd-max-header .ebd-max-search button[type="submit"]:hover {
+  background: #187e99;
+}
+
+.ebd-max-header .ebd-max-search button[type="submit"]:focus-visible {
+  outline: 3px solid rgba(41, 153, 177, .35);
+  outline-offset: 2px;
+}
+
+.ebd-max-header .ebd-max-search button[type="submit"] svg {
+  width: 21px;
+  height: 21px;
+}
+
+/* Mobile */
+@media (max-width: 700px) {
+  .ebd-max-header .ebd-max-search {
+    height: 52px;
+    padding: 4px;
+    border-radius: 12px;
+  }
+
+  .ebd-max-header .ebd-max-search input[type="search"] {
+    padding: 0 13px !important;
+    font-size: 13px;
+  }
+
+  .ebd-max-header .ebd-max-search button[type="submit"] {
+    flex-basis: 43px;
+    width: 43px;
+    height: 42px;
+    min-height: 42px;
+    border-radius: 9px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ebd-max-header .ebd-max-search,
+  .ebd-max-header .ebd-max-search button[type="submit"] {
+    transition: none;
+  }
+}

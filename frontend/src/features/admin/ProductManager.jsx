@@ -1,3 +1,4 @@
+import "./adminDangerActions.css";
 import { useCallback, useEffect, useState } from "react";
 import { Plus, Pencil, Archive, RefreshCw, X } from "lucide-react";
 import { productApi } from "./productApi";
@@ -544,9 +545,16 @@ export default function ProductManager({ token }) {
                     <button title="Edit" onClick={() => startEdit(p)}>
                       <Pencil size={17}/>
                     </button>
-                    <button title="Archive" disabled={p.status === "archived"}
-                      onClick={() => archive(p)}>
+                    <button
+                      type="button"
+                      className="ebd-admin-remove-btn"
+                      title="Remove from Store (Archive)"
+                      aria-label={`Remove ${p.name} from store`}
+                      disabled={p.status === "archived"}
+                      onClick={() => archive(p)}
+                    >
                       <Archive size={17}/>
+                      <span>Remove</span>
                     </button>
                   </div></td>
                 </tr>
