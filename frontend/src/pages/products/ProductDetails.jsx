@@ -80,7 +80,7 @@ export default function ProductDetails() {
       `${product.seo?.title || product.name} | EverythingBD`;
 
     return () => {
-      document.title = "EverythingBD | Premium Beauty & Skincare";
+      document.title = "EverythingBD | Premium Multi-Vendor Store";
     };
   }, [product]);
 

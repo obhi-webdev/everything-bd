@@ -115,3 +115,5 @@ export default function ProductCard({ product }) {
     </article>
   );
 }
+
+import "./compactProductCard.css";

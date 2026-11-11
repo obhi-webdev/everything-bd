@@ -1,3 +1,4 @@
+import FloatingContactButtons from "./FloatingContactButtons";
 import { useEffect, useState } from "react";
 import {
   Search, ShoppingCart, Heart, Phone,
@@ -146,6 +147,7 @@ export default function Header() {
 
   return (
     <div className={`ebd-header-stage ${scrolled && !menuOpen && !categoriesOpen ? "mobile-nav-collapsed" : ""}`}>
+    <FloatingContactButtons />
     <div className={`ebd-max-header ${scrolled ? "is-scrolled" : ""} ${compactSearchOpen ? "search-open" : ""}`}>
 
       <div className="ebd-max-main">
@@ -165,7 +167,6 @@ export default function Header() {
                 everything<span>bd</span><i>.</i>
               </span>
             </span>
-            <small>BEAUTY & SKINCARE</small>
           </a>
 
           <nav className="ebd-max-compact-nav" aria-label="Compact navigation">

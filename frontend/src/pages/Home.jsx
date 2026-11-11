@@ -179,31 +179,9 @@ export default function Home() {
 
         <MarketplaceShelves products={products} media={media}/>
 
-        <section className="promo-section">
-          <div className="container promo-inner">
-            <div>
-              <p className="section-kicker">THE SELF-CARE CLUB</p>
-              <h2>Good skin days <em>start here.</em></h2>
-              <p>A little ritual for a beautiful everyday you.</p>
 
-              <a href="#products" className="primary-btn">
-                Shop Collection <ArrowRight size={17} />
-              </a>
-            </div>
-            <div className="promo-decoration">✿</div>
-          </div>
-        </section>
 
-        <section id="about" className="about-section container">
-          <div className="section-heading center">
-            <p className="section-kicker">HELLO, BEAUTIFUL</p>
-            <h2>Welcome to <em>EverythingBD</em></h2>
-            <p>
-              Your beauty destination for skincare,
-              self-care and everyday essentials.
-            </p>
-          </div>
-        </section>
+
       </main>
 
       <Footer/>

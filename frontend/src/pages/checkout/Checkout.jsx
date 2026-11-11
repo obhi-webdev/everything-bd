@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { getCheckoutConfig, submitOrder } from "../../features/checkout/checkoutApi";
 import { validateCheckout } from "../../features/checkout/checkoutValidation";
+import "./checkout-simple.css";
 import Header from "../../components/layout/Header";
 import CartDrawer from "../../components/layout/CartDrawer";
 import { useShopStore } from "../../store/useShopStore";
@@ -49,8 +50,8 @@ export default function Checkout() {
     phone: "",
     alternatePhone: "",
     email: "",
-    district: "",
-    area: "",
+    district: "See full address",
+    area: "See full address",
     address: "",
     deliveryZone: "",
     customerNote: ""
@@ -294,94 +295,108 @@ export default function Checkout() {
               className="checkout-form"
               onSubmit={handleSubmit}
             >
-              <section className="checkout-panel">
-                <h2>01. Contact Information</h2>
+              {/* EverythingBD simple three-field checkout */}
+              <section className="checkout-panel eb-simple-checkout">
+                <h2>01. Customer & Delivery Information</h2>
+                <p className="eb-simple-intro">
+                  Enter your details to confirm your order.
+                </p>
 
-                <div className="checkout-fields">
+                <div className="checkout-fields eb-simple-fields">
                   <label>
                     Full Name *
-                    <input required minLength={2}
+                    <input
+                      required
+                      minLength={2}
+                      maxLength={100}
                       autoComplete="name"
                       value={form.name}
                       onChange={e => change("name", e.target.value)}
-                      placeholder="Your full name" />
+                      placeholder="আপনার সম্পূর্ণ নাম"
+                    />
                   </label>
 
                   <label>
                     Mobile Number *
-                    <input required type="tel"
+                    <input
+                      required
+                      type="tel"
                       inputMode="tel"
-                      pattern="(\+?88)?01[3-9][0-9]{8}"
+                      autoComplete="tel"
+                      pattern="(\\+?88)?01[3-9][0-9]{8}"
                       value={form.phone}
                       onChange={e => change("phone", e.target.value)}
-                      placeholder="01XXXXXXXXX" />
-                  </label>
-
-                  <label>
-                    Alternative Phone
-                    <input type="tel" inputMode="tel"
-                      value={form.alternatePhone}
-                      onChange={e => change("alternatePhone", e.target.value)}
-                      placeholder="Optional" />
-                  </label>
-
-                  <label>
-                    Email Address
-                    <input type="email"
-                      autoComplete="email"
-                      value={form.email}
-                      onChange={e => change("email", e.target.value)}
-                      placeholder="Optional" />
-                  </label>
-                </div>
-              </section>
-
-              <section className="checkout-panel">
-                <h2><MapPin size={19}/> 02. Delivery Address</h2>
-
-                <div className="checkout-fields">
-                  <label>
-                    District *
-                    <input required
-                      value={form.district}
-                      onChange={e => change("district", e.target.value)}
-                      placeholder="e.g. Mymensingh" />
-                  </label>
-
-                  <label>
-                    Area / Thana *
-                    <input required
-                      value={form.area}
-                      onChange={e => change("area", e.target.value)}
-                      placeholder="Your area or thana" />
+                      placeholder="01XXXXXXXXX"
+                    />
                   </label>
 
                   <label className="checkout-wide">
-                    Full Address *
-                    <textarea required minLength={10} rows={3}
+                    Full Delivery Address *
+                    <textarea
+                      required
+                      minLength={10}
+                      maxLength={500}
+                      rows={4}
                       autoComplete="street-address"
                       value={form.address}
                       onChange={e => change("address", e.target.value)}
-                      placeholder="House, road, village or landmark" />
+                      placeholder="জেলা, থানা, এলাকা, বাসা/রাস্তা এবং সম্পূর্ণ ঠিকানা লিখুন"
+                    />
                   </label>
 
-                  <label className="checkout-wide">
-                    Delivery Zone *
-                    <select required value={form.deliveryZone}
-                      onChange={e => change("deliveryZone", e.target.value)}>
-                      <option value="">Select delivery zone</option>
-                      <option value="inside_dhaka">Inside Dhaka</option>
-                      <option value="outside_dhaka">Outside Dhaka</option>
-                    </select>
-                  </label>
+                  <fieldset className="eb-delivery-zone checkout-wide">
+                    <legend>Delivery Location *</legend>
 
-                  <label className="checkout-wide">
-                    Order Note
-                    <textarea rows={2} maxLength={500}
-                      value={form.customerNote}
-                      onChange={e => change("customerNote", e.target.value)}
-                      placeholder="Any special instructions? (Optional)" />
-                  </label>
+                    <div className="eb-delivery-choices">
+                      <label
+                        className={
+                          form.deliveryZone === "inside_dhaka"
+                            ? "eb-zone-active" : ""
+                        }
+                      >
+                        <input
+                          type="radio"
+                          name="deliveryZone"
+                          value="inside_dhaka"
+                          required
+                          checked={form.deliveryZone === "inside_dhaka"}
+                          onChange={e =>
+                            change("deliveryZone", e.target.value)
+                          }
+                        />
+                        <span>Inside Dhaka</span>
+                        <strong>
+                          {config?.delivery?.inside_dhaka == null
+                            ? "Pending"
+                            : money(config.delivery.inside_dhaka)}
+                        </strong>
+                      </label>
+
+                      <label
+                        className={
+                          form.deliveryZone === "outside_dhaka"
+                            ? "eb-zone-active" : ""
+                        }
+                      >
+                        <input
+                          type="radio"
+                          name="deliveryZone"
+                          value="outside_dhaka"
+                          required
+                          checked={form.deliveryZone === "outside_dhaka"}
+                          onChange={e =>
+                            change("deliveryZone", e.target.value)
+                          }
+                        />
+                        <span>Outside Dhaka</span>
+                        <strong>
+                          {config?.delivery?.outside_dhaka == null
+                            ? "Pending"
+                            : money(config.delivery.outside_dhaka)}
+                        </strong>
+                      </label>
+                    </div>
+                  </fieldset>
                 </div>
               </section>
 

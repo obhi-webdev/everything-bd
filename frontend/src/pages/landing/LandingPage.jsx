@@ -354,7 +354,7 @@ export default function LandingPage() {
       </section>
 
       <footer className="lp-public-footer">
-        © EverythingBD · Beauty & Skincare
+        © EverythingBD · Multi-Vendor Store
       </footer>
     </div>
   );

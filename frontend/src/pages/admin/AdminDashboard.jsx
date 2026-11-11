@@ -101,7 +101,7 @@ export default function AdminDashboard({ user, token, onLogout }) {
           <p className="admin-eyebrow">EVERYTHINGBD / {active.toUpperCase()}</p>
           <h1>{active === "Overview" ? "Dashboard Overview" : active}</h1>
           <p className="admin-muted">
-            Manage your EverythingBD beauty store.
+            Manage your EverythingBD Multi-Vendor Store.
           </p>
 
           {active === "Products" ? (

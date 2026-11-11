@@ -52,7 +52,7 @@ export default function AdminLogin({ onLogin }) {
         <p className="admin-eyebrow">ADMINISTRATION</p>
         <h1>Welcome <em>back.</em></h1>
         <p className="admin-login-subtitle">
-          Sign in to manage your beauty store.
+          Sign in to manage your Multi-Vendor Store.
         </p>
 
         <form onSubmit={handleSubmit}>
