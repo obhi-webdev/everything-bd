@@ -1,3 +1,4 @@
+import { useCategories } from "../../features/categories/useCategories";
 import "./cleanSearch.css";
 import FloatingContactButtons from "./FloatingContactButtons";
 import { useEffect, useState } from "react";
@@ -17,15 +18,24 @@ const navigation = [
   { name: "Contact Us", url: "/#contact" }
 ];
 
-const categoryLinks = [
-  "Serum",
-  "Cleanser",
-  "Moisturizer",
-  "Sunscreen",
-  "Skincare"
-];
+
 
 export default function Header() {
+  const managedCategories = useCategories();
+
+  const categoryLinks = Array.isArray(managedCategories)
+    ? [...new Set(
+        managedCategories
+          .filter(item =>
+            item &&
+            item.isActive !== false &&
+            typeof item.name === "string" &&
+            item.name.trim()
+          )
+          .map(item => item.name.trim())
+      )]
+    : [];
+
   const [headerFavicon, setHeaderFavicon] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);

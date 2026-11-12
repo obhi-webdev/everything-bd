@@ -1,0 +1,86 @@
+
+/* EverythingBD Static Responsive Category Grid */
+
+.em-categories-section .em-category-static-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  align-items: start;
+  gap: 24px 15px;
+  margin-top: 25px;
+  margin-bottom: 28px;
+  width: 100%;
+}
+
+.em-categories-section .em-category-static-grid
+.em-category-circle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 5px;
+  text-align: center;
+  white-space: normal;
+  animation: none;
+}
+
+.em-categories-section .em-category-static-grid
+.em-category-photo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(100%, 152px);
+  max-width: 152px;
+  aspect-ratio: 1;
+  height: auto;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.em-categories-section .em-category-static-grid
+.em-category-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.em-categories-section .em-category-static-grid
+.em-category-circle strong {
+  display: block;
+  max-width: 100%;
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+@media (max-width: 1100px) {
+  .em-categories-section .em-category-static-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .em-categories-section .em-category-static-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px 9px;
+  }
+
+  .em-categories-section .em-category-static-grid
+  .em-category-circle strong {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 380px) {
+  .em-categories-section .em-category-static-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

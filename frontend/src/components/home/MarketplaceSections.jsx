@@ -1,3 +1,4 @@
+import "./categoryGridFix.css";
 import { ArrowRight, ChevronRight, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import Hero from "./Hero";
@@ -121,32 +122,6 @@ export function MarketplaceCategories({
     );
   }
 
-  function renderRow(direction, rowCategories, label) {
-    return (
-      <div
-        className={`em-category-marquee em-category-${direction}`}
-        aria-label={label}
-      >
-        <div className="em-category-marquee-track">
-          <div className="em-category-marquee-group">
-            {rowCategories.map((category, index) =>
-              renderCategory(category, index)
-            )}
-          </div>
-
-          <div
-            className="em-category-marquee-group"
-            aria-hidden="true"
-          >
-            {rowCategories.map((category, index) =>
-              renderCategory(category, index, true)
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <section id="categories" className="em-categories-section">
       <div className="container">
@@ -158,17 +133,9 @@ export function MarketplaceCategories({
         </div>
 
         {categories.length > 0 ? (
-          <div className="em-category-double-marquee">
-            {renderRow(
-              "rtl",
-              categories,
-              "Categories moving right to left"
-            )}
-
-            {renderRow(
-              "ltr",
-              [...categories].reverse(),
-              "Categories moving left to right"
+          <div className="em-category-static-grid">
+            {categories.map((category, index) =>
+              renderCategory(category, index)
             )}
           </div>
         ) : (
