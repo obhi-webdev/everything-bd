@@ -323,7 +323,7 @@ export default function Checkout() {
                       type="tel"
                       inputMode="tel"
                       autoComplete="tel"
-                      pattern="(\\+?88)?01[3-9][0-9]{8}"
+                      pattern="(?:[+]88|88)?01[3-9][0-9]{8}"
                       value={form.phone}
                       onChange={e => change("phone", e.target.value)}
                       placeholder="01XXXXXXXXX"

@@ -5,6 +5,9 @@ const phoneSchema = z.string()
   .regex(
     /^(?:\+?88)?01[3-9]\d{8}$/,
     "Enter a valid Bangladesh mobile number"
+  )
+  .transform(value =>
+    value.replace(/^(?:\+?88)(?=01)/, "")
   );
 
 export const createOrderSchema = z.object({

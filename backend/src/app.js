@@ -57,7 +57,9 @@ app.use(cors({
       return callback(null, true);
     }
 
-    return callback(new Error("CORS origin not allowed"));
+    const error = new Error("CORS origin not allowed");
+    error.status = 403;
+    return callback(error);
   }
 }));
 app.use(express.json({ limit: "100kb" }));
@@ -103,6 +105,20 @@ app.use("/api/admin/customers", customerAdminRoutes);
 app.use("/api/marketing", marketingRoutes);
 
 app.use("/api/analytics", analyticsRoutes);
+
+app.use((error, req, res, next) => {
+  if (
+    error.status === 403 &&
+    error.message === "CORS origin not allowed"
+  ) {
+    return res.status(403).json({
+      success: false,
+      message: "Origin not allowed"
+    });
+  }
+
+  next(error);
+});
 
 app.use((req, res) => {
   res.status(404).json({
