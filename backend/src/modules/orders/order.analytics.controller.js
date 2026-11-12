@@ -32,7 +32,12 @@ export async function getAdminAnalytics(req, res) {
 
   try {
     const start = new Date(Date.now() - days * 86400000);
-    const dateFilter = { createdAt: { $gte: start } };
+    // Exclude orders moved to Trash from the active dashboard.
+    // MongoDB matches both null and missing archivedAt values.
+    const dateFilter = {
+      createdAt: { $gte: start },
+      archivedAt: null
+    };
     const valueFilter = {
       ...dateFilter,
       orderStatus: { $nin: ["cancelled", "returned"] }

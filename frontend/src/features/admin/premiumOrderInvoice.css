@@ -1,0 +1,60 @@
+
+/* EverythingBD Premium Order Actions */
+
+.ebd-order-toolbar,
+.ebd-order-action-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.ebd-order-action-bar {
+  margin: 18px 0;
+  padding: 13px;
+  border: 1px solid #e2e9ed;
+  border-radius: 14px;
+  background: #f8fafb;
+}
+
+.ebd-order-action-bar button,
+.ebd-order-toolbar button {
+  min-height: 42px;
+  padding: 10px 15px;
+  border-radius: 10px;
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.ebd-order-action-bar .ebd-invoice-button {
+  border: 1px solid #116f65;
+  background: #117a70;
+  color: white;
+}
+
+.ebd-order-action-bar .ebd-order-trash-button {
+  border: 1px solid #e9b4b4;
+  background: #fff2f2;
+  color: #a72b2b;
+}
+
+.ebd-order-action-bar button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+@media (max-width: 599px) {
+  .ebd-order-action-bar {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .ebd-order-action-bar button {
+    width: 100%;
+  }
+
+  .ebd-order-toolbar {
+    width: 100%;
+  }
+}

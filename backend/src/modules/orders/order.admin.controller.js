@@ -23,7 +23,11 @@ export async function listAdminOrders(req, res, next) {
       Math.min(50, Math.trunc(Number(req.query.limit) || 15))
     );
 
-    const filter = {};
+    const filter = {
+      archivedAt: req.query.trash === "1"
+        ? { $ne: null }
+        : null
+    };
 
     if (req.query.status) {
       if (
@@ -239,6 +243,122 @@ export async function updateAdminOrderStatus(req, res, next) {
       });
     }
 
+    next(error);
+  }
+}
+
+
+// Archive only completed or already cancelled orders.
+// The order is retained for accounting and audit purposes.
+export async function archiveAdminOrder(req, res, next) {
+  try {
+    const { id } = req.params;
+    const { orderNumber } = req.body || {};
+
+    if (!mongoose.isObjectIdOrHexString(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid order ID"
+      });
+    }
+
+    const order = await Order.findById(id);
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found"
+      });
+    }
+
+    if (order.archivedAt) {
+      return res.status(409).json({
+        success: false,
+        message: "Order is already in Trash"
+      });
+    }
+
+    if (
+      typeof orderNumber !== "string" ||
+      orderNumber !== order.orderNumber
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Order number confirmation does not match"
+      });
+    }
+
+    if (!["cancelled", "returned", "delivered"].includes(
+      order.orderStatus
+    )) {
+      return res.status(409).json({
+        success: false,
+        message:
+          "Complete delivery/return or cancel the order " +
+          "before moving it to Trash"
+      });
+    }
+
+    const updated = await Order.findOneAndUpdate(
+      {
+        _id: id,
+        archivedAt: null,
+        orderStatus: order.orderStatus
+      },
+      { $set: { archivedAt: new Date() } },
+      { new: true, runValidators: true }
+    );
+
+    if (!updated) {
+      return res.status(409).json({
+        success: false,
+        message: "Order changed. Refresh and retry."
+      });
+    }
+
+    res.set("Cache-Control", "no-store");
+    return res.json({
+      success: true,
+      message: "Order moved to Trash",
+      data: updated
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function restoreAdminOrder(req, res, next) {
+  try {
+    if (!mongoose.isObjectIdOrHexString(req.params.id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid order ID"
+      });
+    }
+
+    const restored = await Order.findOneAndUpdate(
+      {
+        _id: req.params.id,
+        archivedAt: { $ne: null }
+      },
+      { $set: { archivedAt: null } },
+      { new: true, runValidators: true }
+    );
+
+    if (!restored) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found in Trash"
+      });
+    }
+
+    res.set("Cache-Control", "no-store");
+    return res.json({
+      success: true,
+      message: "Order restored",
+      data: restored
+    });
+  } catch (error) {
     next(error);
   }
 }

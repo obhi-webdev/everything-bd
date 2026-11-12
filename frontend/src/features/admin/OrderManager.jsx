@@ -1,3 +1,5 @@
+import { printOrderInvoice } from "./orderInvoice";
+import "./premiumOrderInvoice.css";
 import "./adminDangerActions.css";
 import { useEffect, useState } from "react";
 import { orderApi } from "./orderApi";
@@ -13,6 +15,8 @@ const money = value =>
 
 export default function OrderManager({ token }) {
   const [orders, setOrders] = useState([]);
+  const [showTrash, setShowTrash] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [status, setStatus] = useState("");
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({});
@@ -39,7 +43,7 @@ export default function OrderManager({ token }) {
     setLoading(true);
     setError("");
 
-    orderApi.list(token, page, status)
+    orderApi.list(token, page, status, showTrash)
       .then(result => {
         if (!active) return;
         setOrders(result.data || []);
@@ -55,7 +59,7 @@ export default function OrderManager({ token }) {
       });
 
     return () => { active = false; };
-  }, [token, page, status, refresh]);
+  }, [token, page, status, showTrash, refresh]);
 
 
   async function changeOrderStatus() {
@@ -111,6 +115,54 @@ export default function OrderManager({ token }) {
     }
   }
 
+  async function archiveSelectedOrder() {
+    if (!selected || deleting || savingStatus) return;
+
+    const entered = window.prompt(
+      `To move this order to Trash, type ${selected.orderNumber}`
+    );
+
+    if (entered === null) return;
+
+    if (entered.trim() !== selected.orderNumber) {
+      setError("Order number does not match.");
+      return;
+    }
+
+    setDeleting(true);
+    setError("");
+
+    try {
+      await orderApi.archive(
+        token, selected._id, selected.orderNumber
+      );
+      setSelected(null);
+      setRefresh(value => value + 1);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setDeleting(false);
+    }
+  }
+
+  async function restoreSelectedOrder() {
+    if (!selected || deleting) return;
+    if (!window.confirm("Restore this order from Trash?")) return;
+
+    setDeleting(true);
+    setError("");
+
+    try {
+      await orderApi.restore(token, selected._id);
+      setSelected(null);
+      setRefresh(value => value + 1);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setDeleting(false);
+    }
+  }
+
   async function viewOrder(id) {
     try {
       setError("");
@@ -126,12 +178,28 @@ export default function OrderManager({ token }) {
     <section className="ebd-orders">
       <div className="ebd-orders-header">
         <div>
-          <h2>Customer Orders</h2>
+          <h2>{showTrash ? "Order Trash" : "Customer Orders"}</h2>
           <p>Review your EverythingBD orders.</p>
         </div>
-        <button onClick={() => setRefresh(v => v + 1)}>
-          Refresh
-        </button>
+        <div className="ebd-order-toolbar">
+          <button
+            type="button"
+            onClick={() => {
+              setShowTrash(value => !value);
+              setPage(1);
+              setStatus("");
+              setSelected(null);
+            }}
+          >
+            {showTrash ? "All Orders" : "View Trash"}
+          </button>
+          <button
+            type="button"
+            onClick={() => setRefresh(v => v + 1)}
+          >
+            Refresh
+          </button>
+        </div>
       </div>
 
       <div className="ebd-orders-filter">
@@ -226,15 +294,51 @@ export default function OrderManager({ token }) {
               <button onClick={() => setSelected(null)}>Close</button>
             </div>
 
+            <div className="ebd-order-action-bar">
+              <button
+                type="button"
+                className="ebd-invoice-button"
+                onClick={() => printOrderInvoice(selected)}
+              >
+                Print / Save Invoice
+              </button>
+
+              {selected.archivedAt ? (
+                <button
+                  type="button"
+                  disabled={deleting}
+                  onClick={restoreSelectedOrder}
+                >
+                  {deleting ? "Restoring..." : "Restore Order"}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="ebd-order-trash-button"
+                  disabled={
+                    deleting ||
+                    savingStatus ||
+                    !["cancelled", "returned", "delivered"]
+                      .includes(selected.orderStatus)
+                  }
+                  onClick={archiveSelectedOrder}
+                  title="Available for cancelled, returned or delivered orders"
+                >
+                  {deleting ? "Moving..." : "Move to Trash"}
+                </button>
+              )}
+            </div>
+
             <p><b>Customer:</b> {selected.customer?.name}</p>
             <p><b>Phone:</b> {selected.customer?.phone}</p>
             <p><b>District:</b> {selected.shippingAddress?.district}</p>
             <p><b>Area:</b> {selected.shippingAddress?.area}</p>
             <p><b>Address:</b> {selected.shippingAddress?.address}</p>
             <p><b>Status:</b> {selected.orderStatus}</p>
-            {["pending", "confirmed", "processing"].includes(
-              selected.orderStatus
-            ) && (
+            {!selected.archivedAt &&
+              ["pending", "confirmed", "processing"].includes(
+                selected.orderStatus
+              ) && (
               <button
                 type="button"
                 className="ebd-admin-cancel-order"
@@ -245,6 +349,7 @@ export default function OrderManager({ token }) {
               </button>
             )}
 
+            {!selected.archivedAt && (
             <div className="ebd-status-editor">
               <h3>Update Order Status</h3>
 
@@ -270,6 +375,7 @@ export default function OrderManager({ token }) {
 
               {error && <p role="alert">{error}</p>}
             </div>
+            )}
 
             <p><b>Payment:</b> {selected.paymentStatus}</p>
             <p><b>Note:</b> {selected.customerNote || "None"}</p>

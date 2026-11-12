@@ -160,6 +160,11 @@ const orderSchema = new mongoose.Schema({
     default: "pending"
   },
 
+  archivedAt: {
+    type: Date,
+    default: null
+  },
+
   customerNote: {
     type: String,
     default: ""

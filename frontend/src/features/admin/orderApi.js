@@ -48,7 +48,7 @@ async function updateOrderStatus(token, id, status) {
 
 export const orderApi = {
   updateStatus: updateOrderStatus,
-  list(token, page = 1, status = "") {
+  list(token, page = 1, status = "", trash = false) {
     const params = new URLSearchParams({
       page: String(page),
       limit: "15"
@@ -58,10 +58,52 @@ export const orderApi = {
       params.set("status", status);
     }
 
+    if (trash) {
+      params.set("trash", "1");
+    }
+
     return request(
       `/admin/orders?${params.toString()}`,
       token
     );
+  },
+
+  async archive(token, id, orderNumber) {
+    const response = await fetch(
+      `${API_URL}/admin/orders/${encodeURIComponent(id)}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ orderNumber })
+      }
+    );
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || "Unable to archive order");
+    }
+    return data;
+  },
+
+  async restore(token, id) {
+    const response = await fetch(
+      `${API_URL}/admin/orders/${encodeURIComponent(id)}/restore`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || "Unable to restore order");
+    }
+    return data;
   },
 
   details(token, id) {
