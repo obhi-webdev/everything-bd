@@ -1,0 +1,160 @@
+
+/*
+ * EverythingBD Premium Admin Typography
+ * English: Inter
+ * Bangla: Hind Siliguri
+ * Scoped to Admin Dashboard only.
+ */
+
+@import url(
+  'https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap'
+);
+
+.admin-dashboard {
+  --ebd-admin-font:
+    "Inter",
+    "Hind Siliguri",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  font-family: var(--ebd-admin-font) !important;
+  font-size: 14px;
+  line-height: 1.55;
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Apply consistent typography across admin controls */
+.admin-dashboard button,
+.admin-dashboard input,
+.admin-dashboard select,
+.admin-dashboard textarea,
+.admin-dashboard label,
+.admin-dashboard table {
+  font-family: inherit !important;
+}
+
+/* Main page headings */
+.admin-dashboard .admin-content > h1 {
+  font-family: var(--ebd-admin-font);
+  font-size: clamp(24px, 2.5vw, 34px);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.045em;
+  color: #153a35;
+}
+
+/* Section headings */
+.admin-dashboard .admin-content h2 {
+  font-family: var(--ebd-admin-font);
+  font-weight: 750;
+  line-height: 1.3;
+  letter-spacing: -0.035em;
+}
+
+.admin-dashboard .admin-content h3 {
+  font-family: var(--ebd-admin-font);
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.025em;
+}
+
+/* Supporting text */
+.admin-dashboard .admin-muted,
+.admin-dashboard .admin-content p {
+  line-height: 1.65;
+}
+
+/* Sidebar and navigation */
+.admin-dashboard .admin-sidebar nav button {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.admin-dashboard .admin-sidebar-brand {
+  font-weight: 800;
+  letter-spacing: -0.045em;
+}
+
+/* Analytics numbers */
+.admin-dashboard .admin-stat-card strong,
+.admin-dashboard .ebd-traffic-card strong {
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  letter-spacing: -0.045em;
+}
+
+/* Product names */
+.admin-dashboard .pm-product strong {
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+/* Form field typography */
+.admin-dashboard .admin-content input,
+.admin-dashboard .admin-content textarea,
+.admin-dashboard .admin-content select {
+  font-size: 14px;
+  font-weight: 450;
+  letter-spacing: 0;
+}
+
+/* Mobile bottom navigation */
+.admin-dashboard .ebd-mobile-tab-label {
+  font-family: var(--ebd-admin-font);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.admin-dashboard .ebd-mobile-bottom-nav button.is-active
+.ebd-mobile-tab-label {
+  font-weight: 750;
+}
+
+/* Mobile More menu */
+.admin-dashboard .ebd-mobile-more-card {
+  font-family: var(--ebd-admin-font);
+  font-weight: 650;
+  font-size: 13px;
+}
+
+/* Mobile optimization */
+@media (max-width: 767px) {
+
+  .admin-dashboard {
+    font-size: 13px;
+  }
+
+  .admin-dashboard .admin-content > h1 {
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 1.22;
+  }
+
+  .admin-dashboard .admin-content h2 {
+    font-size: clamp(19px, 5.2vw, 25px);
+  }
+
+  .admin-dashboard .admin-content h3 {
+    font-size: 16px;
+  }
+
+  .admin-dashboard .admin-muted {
+    font-size: 12px;
+  }
+
+  .admin-dashboard .ebd-mobile-tab-label {
+    font-size: 10px;
+  }
+
+  /* Keep input size at 16px to avoid iOS auto zoom */
+  .admin-dashboard .admin-content input:not([type="checkbox"]),
+  .admin-dashboard .admin-content select,
+  .admin-dashboard .admin-content textarea {
+    font-size: 16px !important;
+  }
+}

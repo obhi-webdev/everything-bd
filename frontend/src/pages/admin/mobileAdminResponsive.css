@@ -1,0 +1,544 @@
+
+/*
+ * EverythingBD Premium Mobile Admin
+ * Scoped primarily to mobile screens.
+ * Does not modify order, product, or authentication logic.
+ */
+
+@media (max-width: 767px) {
+
+  /* Keep admin content within the phone viewport */
+  .admin-dashboard,
+  .admin-layout,
+  .admin-main,
+  .admin-content,
+  .admin-page-content,
+  .admin-dashboard main,
+  .eb-category-manager,
+  .ebd-orders,
+  .ebd-premium-analytics {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  /* Category management */
+  .eb-category-heading {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+
+  .eb-category-heading h2 {
+    font-size: 24px;
+    letter-spacing: -.6px;
+  }
+
+  .eb-category-primary {
+    min-height: 45px;
+    border-radius: 12px;
+  }
+
+  .eb-category-grid {
+    display: grid;
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+  }
+
+  .eb-category-card {
+    min-width: 0;
+    border-radius: 16px;
+  }
+
+  .eb-category-card-info {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .eb-category-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+
+  .eb-category-form {
+    min-width: 0;
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .eb-category-form-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .eb-category-form input,
+  .eb-category-form select,
+  .eb-category-form textarea {
+    max-width: 100%;
+    font-size: 16px;
+  }
+
+  /* Product Management:
+     convert desktop rows into readable mobile cards */
+  .pm-table {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    border: 0;
+  }
+
+  .pm-table thead {
+    display: none;
+  }
+
+  .pm-table tbody {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .pm-table tbody tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 12px;
+    padding: 14px;
+    border: 1px solid #e2eae5;
+    border-radius: 17px;
+    background: #ffffff;
+    box-shadow: 0 5px 20px rgba(20, 54, 46, .04);
+  }
+
+  .pm-table tbody td {
+    display: block;
+    width: auto;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    overflow-wrap: anywhere;
+    font-size: 12px;
+  }
+
+  .pm-table tbody td:first-child {
+    grid-column: 1 / -1;
+    margin-bottom: 4px;
+  }
+
+  .pm-table .pm-product {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .pm-table .pm-product img,
+  .pm-table .pm-no-image {
+    width: 68px;
+    height: 68px;
+    min-width: 68px;
+    object-fit: cover;
+    border-radius: 11px;
+  }
+
+  .pm-table .pm-product > div:last-child {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .pm-table .pm-product strong {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  .pm-table .pm-product small {
+    display: block;
+    margin-top: 5px;
+    font-size: 11px;
+    color: #7b8c83;
+  }
+
+  .pm-table tbody td:nth-child(2)::before {
+    content: "SKU";
+  }
+
+  .pm-table tbody td:nth-child(3)::before {
+    content: "PRICE";
+  }
+
+  .pm-table tbody td:nth-child(4)::before {
+    content: "STOCK";
+  }
+
+  .pm-table tbody td:nth-child(5)::before {
+    content: "STATUS";
+  }
+
+  .pm-table tbody td:nth-child(n+2):nth-child(-n+5)::before {
+    display: block;
+    margin-bottom: 4px;
+    color: #899990;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .7px;
+  }
+
+  .pm-table tbody td:last-child {
+    grid-column: 1 / -1;
+    padding-top: 10px;
+    border-top: 1px solid #edf1ee;
+  }
+
+  .pm-table .pm-row-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .pm-table .pm-row-actions button {
+    min-height: 40px;
+    min-width: 42px;
+    border-radius: 10px;
+  }
+
+  /* Orders */
+  .ebd-orders {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .ebd-orders-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .ebd-orders-header h2 {
+    font-size: 24px;
+    letter-spacing: -.6px;
+  }
+
+  .ebd-orders select,
+  .ebd-orders input {
+    max-width: 100%;
+    min-height: 43px;
+    border-radius: 10px;
+    font-size: 16px;
+  }
+
+  .ebd-order-backdrop {
+    padding: 12px;
+  }
+
+  .ebd-order-dialog {
+    width: min(100%, 520px);
+    max-width: 100%;
+    max-height: 88dvh;
+    overflow-y: auto;
+    border-radius: 17px;
+    padding: 17px;
+  }
+
+  .ebd-order-line {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    overflow-wrap: anywhere;
+  }
+
+  .ebd-order-line > :first-child {
+    min-width: 0;
+  }
+
+  .ebd-status-editor {
+    min-width: 0;
+  }
+
+  /* Analytics */
+  .ebd-premium-analytics .admin-stat-grid,
+  .ebd-traffic-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 11px;
+  }
+
+  .ebd-premium-analytics .admin-stat-card,
+  .ebd-traffic-card {
+    min-width: 0;
+    min-height: 132px;
+    padding: 15px;
+    border-radius: 17px;
+    background: #fff;
+  }
+
+  .ebd-premium-analytics .admin-stat-card strong,
+  .ebd-traffic-card strong {
+    font-size: clamp(18px, 5.5vw, 27px);
+    overflow-wrap: anywhere;
+  }
+
+  .ebd-analytics-periods {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 13px;
+  }
+
+  .ebd-analytics-chart,
+  .ebd-traffic-chart {
+    min-width: 0;
+    overflow: hidden;
+    border-radius: 17px;
+  }
+
+  .ebd-analytics-bars,
+  .ebd-traffic-bars {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  /* Forms and common action controls */
+  .pm-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+  }
+
+  .pm-actions button {
+    min-height: 42px;
+    border-radius: 10px;
+  }
+
+  /* Comfortable touch targets */
+  .eb-category-manager button:focus-visible,
+  .ebd-orders button:focus-visible,
+  .pm-table button:focus-visible {
+    outline: 3px solid rgba(19, 127, 118, .3);
+    outline-offset: 2px;
+  }
+}
+
+@media (max-width: 360px) {
+  .pm-table tbody tr {
+    padding: 11px;
+    gap: 7px;
+  }
+
+  .ebd-premium-analytics .admin-stat-card,
+  .ebd-traffic-card {
+    padding: 12px;
+  }
+}
+
+
+/* EVERYTHINGBD MOBILE BOTTOM NAV V1 */
+
+.admin-dashboard .ebd-mobile-bottom-nav {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .admin-dashboard {
+    --ebd-mobile-nav-height: 72px;
+  }
+
+  .admin-dashboard .admin-main {
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .admin-dashboard .admin-content {
+    width: 100%;
+    min-width: 0;
+    padding-bottom: calc(
+      var(--ebd-mobile-nav-height) +
+      env(safe-area-inset-bottom, 0px) + 38px
+    ) !important;
+  }
+
+  .admin-dashboard .ebd-mobile-bottom-nav {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: max(10px, env(safe-area-inset-bottom, 0px));
+    z-index: 1050;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 2px;
+    min-height: var(--ebd-mobile-nav-height);
+    padding: 7px 5px;
+    border: 1px solid #e1e9e3;
+    border-radius: 22px;
+    background: rgba(255,255,255,.97);
+    box-shadow: 0 9px 35px rgba(10,48,39,.12);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .admin-dashboard .ebd-mobile-bottom-nav button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-width: 0;
+    min-height: 54px;
+    padding: 3px 1px;
+    border: 0;
+    border-radius: 15px;
+    background: transparent;
+    color: #788981;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  .admin-dashboard .ebd-mobile-tab-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 41px;
+    height: 34px;
+    border-radius: 14px;
+    transition: background .2s ease;
+  }
+
+  .admin-dashboard .ebd-mobile-bottom-nav
+  button.is-active {
+    color: #0e5e57;
+    font-weight: 700;
+  }
+
+  .admin-dashboard .ebd-mobile-bottom-nav
+  button.is-active .ebd-mobile-tab-icon {
+    background: #def2ec;
+    color: #0c7068;
+  }
+
+  .admin-dashboard .ebd-mobile-tab-label {
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .admin-dashboard .ebd-mobile-bottom-nav
+  button:focus-visible {
+    outline: 2px solid #13867c;
+    outline-offset: 1px;
+  }
+
+  /* Keep the drawer above the mobile bottom bar. */
+  .admin-dashboard .admin-sidebar.open {
+    z-index: 1200;
+  }
+
+  .admin-dashboard .admin-mobile-backdrop {
+    z-index: 1150;
+  }
+
+  /* More page */
+  .admin-dashboard .ebd-mobile-more-page {
+    width: 100%;
+    padding-top: 8px;
+  }
+
+  .admin-dashboard .ebd-more-intro h2 {
+    margin: 0 0 5px;
+    font-size: 22px;
+    color: #173a34;
+  }
+
+  .admin-dashboard .ebd-more-intro p {
+    margin: 0 0 23px;
+    font-size: 13px;
+    color: #72857b;
+  }
+
+  .admin-dashboard .ebd-mobile-more-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .admin-dashboard .ebd-mobile-more-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    min-width: 0;
+    min-height: 128px;
+    padding: 16px;
+    text-align: left;
+    border: 1px solid #e1e9e3;
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 4px 18px rgba(20, 70, 50, .035);
+    color: #193d37;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 650;
+    cursor: pointer;
+  }
+
+  .admin-dashboard .ebd-mobile-more-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    background: #e1f2ec;
+    color: #117c71;
+  }
+
+  .admin-dashboard .ebd-mobile-more-arrow {
+    position: absolute;
+    right: 13px;
+    top: 18px;
+    color: #8a9c92;
+  }
+
+  .admin-dashboard .ebd-mobile-more-logout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    width: 100%;
+    min-height: 45px;
+    margin-top: 23px;
+    border: 1px solid #f2c9c9;
+    border-radius: 13px;
+    background: #fff6f6;
+    color: #a52a2a;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 650;
+    cursor: pointer;
+  }
+}
+
+@media (max-width: 360px) {
+  .admin-dashboard .ebd-mobile-bottom-nav {
+    left: 7px;
+    right: 7px;
+    padding: 6px 3px;
+  }
+
+  .admin-dashboard .ebd-mobile-tab-label {
+    font-size: 9px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-dashboard .ebd-mobile-tab-icon {
+    transition: none;
+  }
+}
