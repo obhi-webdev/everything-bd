@@ -143,8 +143,7 @@ export default function Footer() {
           <div className="ebd-premium-payment-grid">
             <div className="ebd-premium-payment-card ebd-premium-bkash">
               <div className="ebd-premium-payment-brand">
-                <span className="ebd-payment-brand-icon">b</span>
-                <strong>bKash</strong>
+                <img className="ebd-payment-brand-logo" src="/payment-logos/bkash.png" alt="bKash logo" loading="lazy" />
               </div>
               <span className="ebd-premium-payment-label">
                 Payment Number
@@ -156,8 +155,7 @@ export default function Footer() {
 
             <div className="ebd-premium-payment-card ebd-premium-nagad">
               <div className="ebd-premium-payment-brand">
-                <span className="ebd-payment-brand-icon">N</span>
-                <strong>Nagad</strong>
+                <img className="ebd-payment-brand-logo" src="/payment-logos/nagad.png" alt="Nagad logo" loading="lazy" />
               </div>
               <span className="ebd-premium-payment-label">
                 Payment Number
