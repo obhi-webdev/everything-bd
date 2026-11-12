@@ -1,0 +1,42 @@
+
+/* EverythingBD Privacy Choices */
+
+.ebd-footer-privacy-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 15px;
+  width: 100%;
+}
+
+.ebd-footer-privacy-button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  opacity: .8;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.ebd-footer-privacy-button:hover,
+.ebd-footer-privacy-button:focus-visible {
+  opacity: 1;
+  outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+  .ebd-footer-privacy-wrap {
+    padding: 10px;
+  }
+
+  .ebd-footer-privacy-button {
+    min-height: 40px;
+  }
+}

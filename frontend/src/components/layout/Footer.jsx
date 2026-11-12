@@ -197,6 +197,18 @@ export default function Footer() {
           <span>Beauty · Fashion · Lifestyle</span>
         </div>
       </div>
+
+      <div className="ebd-footer-privacy-wrap">
+        <button
+          type="button"
+          className="ebd-footer-privacy-button"
+          onClick={() => window.dispatchEvent(
+            new Event("everythingbd:open-privacy-choices")
+          )}
+        >
+          Privacy Settings
+        </button>
+      </div>
     </footer>
   );
 }

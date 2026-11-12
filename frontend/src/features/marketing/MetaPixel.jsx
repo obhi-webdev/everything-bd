@@ -1,3 +1,4 @@
+import "./privacyChoices.css";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
@@ -131,6 +132,25 @@ export default function MetaPixel() {
   const [showChoices, setShowChoices] = useState(false);
 
   useEffect(() => {
+    const openPrivacyChoices = () => {
+      setShowChoices(true);
+    };
+
+    window.addEventListener(
+      "everythingbd:open-privacy-choices",
+      openPrivacyChoices
+    );
+
+    return () => {
+      window.removeEventListener(
+        "everythingbd:open-privacy-choices",
+        openPrivacyChoices
+      );
+    };
+  }, []);
+
+
+  useEffect(() => {
     let mounted = true;
 
     fetch(`${API}/marketing/public`, { cache: "no-store" })
@@ -204,21 +224,11 @@ export default function MetaPixel() {
     }
   }
 
-  if (!pixelId) return null;
+
 
   return (
     <>
-      {consent && !showChoices && (
-        <button
-          type="button"
-          className="ebd-consent-manage"
-          onClick={() => setShowChoices(true)}
-        >
-          Privacy Choices
-        </button>
-      )}
-
-      {(!consent || showChoices) && (
+{showChoices && (
         <div
           role="region"
           aria-label="Marketing privacy choices"
