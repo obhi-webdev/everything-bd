@@ -7,7 +7,6 @@ import {
   MarketplaceShelves,
   MarketplacePromoBanners
 } from "../components/home/MarketplaceSections";
-import PromoCards from "../components/home/PromoCards";
 import "../styles/store-redesign.css";
 import "../styles/luxury-header.css";
 import { useEffect, useState } from "react";
@@ -90,9 +89,7 @@ export default function Home() {
           key => media[key]?.imageUrl
         ) ? (
           <MarketplacePromoBanners media={media}/>
-        ) : (
-          <PromoCards products={products}/>
-        )}
+        ) : null}
 
         <section className="benefits">
           <div className="container benefit-grid">
