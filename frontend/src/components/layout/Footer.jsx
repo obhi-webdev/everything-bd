@@ -1,3 +1,4 @@
+import "./premiumFooterPayments.css";
 import {
   Globe,
   Phone,
@@ -139,21 +140,42 @@ export default function Footer() {
         <div className="ebd-footer-column ebd-footer-payment">
           <h3>Payment Information</h3>
 
-          <div className="ebd-payment-badges">
-            <span className="ebd-payment-badge ebd-bkash">
-              bKash
-            </span>
-            <small className="ebd-payment-number">01316804410</small>
+          <div className="ebd-premium-payment-grid">
+            <div className="ebd-premium-payment-card ebd-premium-bkash">
+              <div className="ebd-premium-payment-brand">
+                <span className="ebd-payment-brand-icon">b</span>
+                <strong>bKash</strong>
+              </div>
+              <span className="ebd-premium-payment-label">
+                Payment Number
+              </span>
+              <a href="tel:01316804410" className="ebd-premium-payment-phone">
+                01316804410
+              </a>
+            </div>
 
-            <span className="ebd-payment-badge ebd-nagad">
-              Nagad
-            </span>
-            <small className="ebd-payment-number">01316804410</small>
+            <div className="ebd-premium-payment-card ebd-premium-nagad">
+              <div className="ebd-premium-payment-brand">
+                <span className="ebd-payment-brand-icon">N</span>
+                <strong>Nagad</strong>
+              </div>
+              <span className="ebd-premium-payment-label">
+                Payment Number
+              </span>
+              <a href="tel:01316804410" className="ebd-premium-payment-phone">
+                01316804410
+              </a>
+            </div>
 
-            <span className="ebd-payment-badge ebd-cod">
-              <Banknote size={16}/>
-              COD
-            </span>
+            <div className="ebd-premium-payment-cod">
+              <span className="ebd-premium-cod-icon">
+                <Banknote size={21}/>
+              </span>
+              <div>
+                <strong>Cash on Delivery</strong>
+                <small>Pay when you receive your order</small>
+              </div>
+            </div>
           </div>
 
           <p className="ebd-payment-note">

@@ -1,0 +1,169 @@
+
+/* EverythingBD Premium Footer Payments */
+
+.ebd-premium-payment-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 15px;
+  margin-bottom: 14px;
+  width: 100%;
+  max-width: 540px;
+}
+
+.ebd-premium-payment-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid rgba(229, 236, 244, .14);
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, .06);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.ebd-premium-payment-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 9px 22px rgba(0, 0, 0, .12);
+}
+
+.ebd-premium-payment-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 18px;
+  font-size: 15px;
+  letter-spacing: -.2px;
+}
+
+.ebd-payment-brand-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 33px;
+  height: 33px;
+  border-radius: 9px;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.ebd-premium-bkash .ebd-payment-brand-icon {
+  background: #fce3ef;
+  color: #c71368;
+}
+
+.ebd-premium-bkash .ebd-premium-payment-brand strong {
+  color: #c71368;
+}
+
+.ebd-premium-nagad .ebd-payment-brand-icon {
+  background: #fff0dc;
+  color: #c46913;
+}
+
+.ebd-premium-nagad .ebd-premium-payment-brand strong {
+  color: #c46913;
+}
+
+.ebd-premium-payment-label {
+  color: #7b8795;
+  font-size: 11px;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.ebd-premium-payment-phone {
+  display: inline-block;
+  align-self: flex-start;
+  margin-top: 4px;
+  color: #142437 !important;
+  text-decoration: none !important;
+  font-size: clamp(12px, 2vw, 15px);
+  font-weight: 750;
+  line-height: 1.6;
+  letter-spacing: .2px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.ebd-premium-payment-phone:hover {
+  text-decoration: underline !important;
+}
+
+.ebd-premium-payment-cod {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-width: 0;
+  padding: 15px;
+  border: 1px solid rgba(226, 239, 235, .16);
+  border-radius: 15px;
+  background: rgba(255, 255, 255, .075);
+}
+
+.ebd-premium-cod-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: rgba(133, 210, 176, .16);
+  color: #9ce3be;
+}
+
+.ebd-premium-payment-cod > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.ebd-premium-payment-cod strong {
+  color: #f8fafc;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.ebd-premium-payment-cod small {
+  color: #b7c4d0;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+@media (max-width: 390px) {
+  .ebd-premium-payment-grid {
+    gap: 8px;
+  }
+
+  .ebd-premium-payment-card {
+    padding: 11px;
+    border-radius: 13px;
+  }
+
+  .ebd-premium-payment-brand {
+    gap: 6px;
+    margin-bottom: 13px;
+    font-size: 13px;
+  }
+
+  .ebd-payment-brand-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .ebd-premium-payment-phone {
+    font-size: 12px;
+    letter-spacing: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ebd-premium-payment-card {
+    transition: none;
+  }
+}
