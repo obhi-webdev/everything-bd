@@ -190,7 +190,7 @@ export default function Hero() {
                 "ebd-premium-slide " +
                 (isActive ? "is-active" : "")
               }
-              aria-hidden={!isActive}
+              inert={isActive ? undefined : ""}
             >
               {banner.buttonLink ? (
                 <a
