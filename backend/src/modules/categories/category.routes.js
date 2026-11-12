@@ -20,39 +20,18 @@ function validImage(url) {
 }
 
 async function categoryList(includeInactive = false) {
-  const [saved, existing] = await Promise.all([
-    Category.find().lean(),
-    Product.distinct("category", { status: "active" })
-  ]);
+  // Only categories explicitly saved by an admin.
+  // Product category text must never create a category card.
+  const saved = await Category.find()
+    .sort({ sortOrder: 1, name: 1 })
+    .lean();
 
-  const map = new Map();
-
-  for (const name of existing) {
-    if (typeof name === "string" && name.trim()) {
-      map.set(name.trim().toLowerCase(), {
-        name: name.trim(),
-        imageUrl: "",
-        description: "",
-        sortOrder: 1000,
-        isActive: true,
-        isLegacy: true
-      });
-    }
-  }
-
-  for (const category of saved) {
-    map.set(category.name.toLowerCase(), {
-      ...category,
-      isLegacy: false
-    });
-  }
-
-  return [...map.values()]
-    .filter(item => includeInactive || item.isActive)
-    .sort((a, b) =>
-      a.sortOrder - b.sortOrder ||
-      a.name.localeCompare(b.name)
-    );
+  return saved.filter(
+    category => includeInactive || category.isActive
+  ).map(category => ({
+    ...category,
+    isLegacy: false
+  }));
 }
 
 publicCategoryRoutes.get("/", async (_req, res) => {

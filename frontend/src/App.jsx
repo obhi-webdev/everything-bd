@@ -1,3 +1,4 @@
+import StoreAnalyticsTracker from "./features/analytics/StoreAnalyticsTracker";
 import DynamicFavicon from "./components/settings/DynamicFavicon";
 import LandingPage from "./pages/landing/LandingPage";
 import MetaPixel from "./features/marketing/MetaPixel";
@@ -126,6 +127,7 @@ function AdminArea() {
 export default function App() {
   return (
     <BrowserRouter>
+      <StoreAnalyticsTracker />
       <DynamicFavicon />
       <MetaPixel />
       <Routes>

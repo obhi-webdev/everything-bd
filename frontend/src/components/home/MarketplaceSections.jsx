@@ -70,31 +70,32 @@ export function MarketplaceCategories({
   selected,
   onSelect
 }) {
-  const categories = managedCategories !== null
-    ? managedCategories.map(item => item.name)
-    : [...new Set(
-        products
-          .map(product => product.category)
-          .filter(Boolean)
-      )];
+  // Only admin-created categories with uploaded images.
+  // Never generate category cards from product category text.
+  const categories = Array.isArray(managedCategories)
+    ? managedCategories
+        .filter(item =>
+          item &&
+          item.isActive !== false &&
+          typeof item.name === "string" &&
+          item.name.trim() &&
+          typeof item.imageUrl === "string" &&
+          item.imageUrl.trim()
+        )
+        .map(item => item.name)
+    : [];
 
   function selectCategory(category) {
     onSelect(category);
   }
 
   function renderCategory(category, index, duplicate = false) {
-    const representative = products.find(
-      product => product.category === category && product.image
-    );
-
     const managed = managedCategories?.find(
       item => item.name === category
     );
 
-    const image =
-      managed?.imageUrl ||
-      media[`category:${category}`]?.imageUrl ||
-      representative?.image;
+    // The category's own uploaded image is authoritative.
+    const image = managed?.imageUrl || "";
 
     return (
       <button
@@ -172,7 +173,9 @@ export function MarketplaceCategories({
           </div>
         ) : (
           <p className="em-empty-category">
-            Categories will appear when products are added.
+            {managedCategories === null
+              ? "Loading categories..."
+              : "No categories with images available yet."}
           </p>
         )}
       </div>

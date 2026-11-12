@@ -1,5 +1,7 @@
+import TrafficAnalytics from "./TrafficAnalytics";
 import { useCallback, useEffect, useState } from "react";
 import { RefreshCw, ArrowUpRight } from "lucide-react";
+import "./premiumAnalytics.css";
 
 const API_URL =
   import.meta.env.VITE_API_URL || "http://localhost:5001/api";
@@ -38,6 +40,7 @@ export default function AdminOverview({ token }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [days, setDays] = useState(7);
 
   const load = useCallback(async (signal) => {
     setLoading(true);
@@ -45,7 +48,7 @@ export default function AdminOverview({ token }) {
 
     try {
       const response = await fetch(
-        `${API_URL}/admin/orders/analytics`,
+        `${API_URL}/admin/orders/analytics?days=${days}`,
         {
           headers: { Authorization: `Bearer ${token}` },
           signal
@@ -66,7 +69,7 @@ export default function AdminOverview({ token }) {
     } finally {
       if (!signal?.aborted) setLoading(false);
     }
-  }, [token]);
+  }, [token, days]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -76,34 +79,76 @@ export default function AdminOverview({ token }) {
 
   const stats = [
     {
-      title: "Total Order Value",
-      value: money(data?.totalOrderValue),
+      title: "Total Orders",
+      value: data?.totalOrders ?? "—",
+      note: `Orders in the last ${days} days`
+    },
+    {
+      title: "Order Value",
+      value: data ? money(data.totalOrderValue) : "—",
       note: "Excludes cancelled and returned"
     },
     {
-      title: "Total Orders",
-      value: data?.totalOrders ?? 0,
-      note: "All orders"
+      title: "Customers",
+      value: data?.totalCustomers ?? "—",
+      note: "Unique customer phone numbers"
     },
     {
       title: "Active Products",
-      value: data?.activeProducts ?? 0,
-      note: "Published products"
+      value: data?.activeProducts ?? "—",
+      note: "Currently published products"
     },
     {
       title: "Pending Orders",
-      value: data?.pendingOrders ?? 0,
-      note: "Awaiting confirmation"
+      value: data?.pendingOrders ?? "—",
+      note: `Pending in the last ${days} days`
     },
     {
-      title: "Customers",
-      value: data?.totalCustomers ?? 0,
-      note: "Unique customer phone numbers"
+      title: "Visitors",
+      value: "—",
+      note: "Visitor tracking not configured"
     }
   ];
 
+  const chartDays = (data?.dailyOrders || []).slice(
+    -(days === 7 ? 7 : 14)
+  );
+
+  const maxOrders = Math.max(
+    1,
+    ...chartDays.map(item => item.orders)
+  );
+
   return (
-    <section aria-label="Live store analytics">
+    <section
+      className="ebd-premium-analytics"
+      aria-label="Store analytics"
+    >
+      <TrafficAnalytics token={token} days={days} />
+      <div className="ebd-analytics-heading">
+        <div>
+          <span className="ebd-analytics-eyebrow">
+            EVERYTHINGBD INSIGHTS
+          </span>
+          <h2>Analytics</h2>
+          <p>Understand your orders and store performance.</p>
+        </div>
+      </div>
+
+      <div className="ebd-analytics-periods"
+        role="group" aria-label="Analytics date range">
+        {[7, 30, 90].map(value => (
+          <button
+            key={value}
+            type="button"
+            className={days === value ? "is-active" : ""}
+            aria-pressed={days === value}
+            onClick={() => setDays(value)}
+          >
+            {value} days
+          </button>
+        ))}
+      </div>
       <div className="pm-actions" style={{ marginBottom: 20 }}>
         <button onClick={() => load()} disabled={loading}>
           <RefreshCw size={16} />
@@ -143,6 +188,57 @@ export default function AdminOverview({ token }) {
                 <small>{item.note}</small>
               </div>
             ))}
+          </div>
+
+          <div className="ebd-analytics-chart">
+            <div className="ebd-analytics-chart-heading">
+              <div>
+                <h3>Order Trend</h3>
+                <p>
+                  Daily orders — last {chartDays.length} days
+                </p>
+              </div>
+              <strong>{data.totalOrders} orders</strong>
+            </div>
+
+            <div className="ebd-analytics-bars"
+              role="img"
+              aria-label="Daily order counts for the chart period">
+              {chartDays.map(day => (
+                <div className="ebd-analytics-bar-col"
+                  key={day.date}
+                  title={`${day.date}: ${day.orders} orders`}>
+                  <div className="ebd-analytics-bar-area">
+                    <div
+                      className="ebd-analytics-bar"
+                      style={{
+                        height: day.orders
+                          ? `${Math.max(
+                              5,
+                              day.orders / maxOrders * 100
+                            )}%`
+                          : "0%"
+                      }}
+                    />
+                  </div>
+                  <small>{day.date.slice(8)}</small>
+                </div>
+              ))}
+            </div>
+            <p className="ebd-analytics-chart-note">
+              Values are based on orders saved in your database.
+              This is not a page-view chart.
+            </p>
+          </div>
+
+          <div className="ebd-analytics-tracking-note">
+            <strong>Website Visitors & Page Views</strong>
+            <p>
+              Tracking has not been configured yet.
+              Visitor numbers will appear after a tracking
+              service is connected. No estimated values
+              are being shown.
+            </p>
           </div>
 
           <div className="admin-welcome-card"

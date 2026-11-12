@@ -115,6 +115,8 @@ function toPayload(form) {
 export default function ProductManager({ token }) {
   const [clothingType, setClothingType] = useState("Men");
   const [products, setProducts] = useState([]);
+  const [availableCategories, setAvailableCategories] = useState([]);
+  const [categoryError, setCategoryError] = useState("");
   const [form, setForm] = useState(empty);
   const [editingId, setEditingId] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -182,6 +184,48 @@ export default function ProductManager({ token }) {
     }));
   }
 
+  useEffect(() => {
+    let active = true;
+
+    async function loadCategories() {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL ||
+            "http://localhost:5001/api"}/categories`,
+          { cache: "no-store" }
+        );
+
+        if (!response.ok) {
+          throw new Error("Could not load categories");
+        }
+
+        const result = await response.json();
+
+        if (active) {
+          setAvailableCategories(
+            (Array.isArray(result.data) ? result.data : [])
+              .filter(item =>
+                item._id &&
+                item.name &&
+                item.isActive !== false
+              )
+          );
+          setCategoryError("");
+        }
+      } catch {
+        if (active) {
+          setCategoryError(
+            "Unable to load categories. Check your backend."
+          );
+        }
+      }
+    }
+
+    loadCategories();
+
+    return () => { active = false; };
+  }, []);
+
   function startCreate() {
     setClothingType("Men");
     setEditingId(null);
@@ -203,6 +247,29 @@ export default function ProductManager({ token }) {
   }
 
   async function save(event) {
+    event.preventDefault();
+
+    const originalProduct = editingId
+      ? products.find(item => item._id === editingId)
+      : null;
+
+    const validCategory = availableCategories.some(
+      item => item.name === form.category
+    );
+
+    const unchangedLegacyCategory =
+      Boolean(editingId) &&
+      Boolean(originalProduct) &&
+      originalProduct.category === form.category;
+
+    if (!validCategory && !unchangedLegacyCategory) {
+      setError(
+        categoryError ||
+        "Please select an active category from Category Management."
+      );
+      return;
+    }
+
     event.preventDefault();
     if (uploadingImages) return;
     setSaving(true);
@@ -318,9 +385,37 @@ export default function ProductManager({ token }) {
                   onChange={e => change("brand", e.target.value)}/>
               </label>
               <label>Category *
-                <input required value={form.category}
-                  placeholder="Serum, Cleanser, Sunscreen..."
-                  onChange={e => change("category", e.target.value)}/>
+                <select
+                  required
+                  value={form.category}
+                  onChange={e => change("category", e.target.value)}
+                >
+                  <option value="">
+                    Select existing category
+                  </option>
+                  {form.category &&
+                    !availableCategories.some(
+                      item => item.name === form.category
+                    ) && (
+                      <option
+                        value={form.category}
+                        disabled={
+                          !editingId ||
+                          !products.some(item =>
+                            item._id === editingId &&
+                            item.category === form.category
+                          )
+                        }
+                      >
+                        {form.category} (Existing product category)
+                      </option>
+                    )}
+                  {availableCategories.map(item => (
+                    <option key={item._id} value={item.name}>
+                      {item.name}
+                    </option>
+                  ))}
+                </select>
               </label>
               <label>Status
                 <select value={form.status}

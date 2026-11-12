@@ -1,3 +1,4 @@
+import analyticsRoutes from "./modules/analytics/analytics.routes.js";
 import {
   publicCategoryRoutes,
   adminCategoryRoutes
@@ -100,6 +101,8 @@ app.use("/api/orders", publicOrderRoutes);
 app.use("/api/admin/orders", adminOrderRoutes);
 app.use("/api/admin/customers", customerAdminRoutes);
 app.use("/api/marketing", marketingRoutes);
+
+app.use("/api/analytics", analyticsRoutes);
 
 app.use((req, res) => {
   res.status(404).json({

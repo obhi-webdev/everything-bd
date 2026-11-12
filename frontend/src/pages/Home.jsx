@@ -139,10 +139,23 @@ export default function Home() {
             <div className="filter-row">
               {[
                 "All",
-                "Serum",
-                "Cleanser",
-                "Moisturizer",
-                "Skincare"
+                ...new Set(
+                  (Array.isArray(managedCategories)
+                    ? managedCategories
+                    : Array.isArray(managedCategories?.data)
+                      ? managedCategories.data
+                      : Array.isArray(managedCategories?.categories)
+                        ? managedCategories.categories
+                        : []
+                  )
+                    .filter(item =>
+                      item &&
+                      item.isActive !== false &&
+                      typeof item.name === "string" &&
+                      item.name.trim()
+                    )
+                    .map(item => item.name)
+                )
               ].map((item) => (
                 <button
                   key={item}

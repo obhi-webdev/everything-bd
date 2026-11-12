@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { validateProductCategory } from "./productCategoryGuard.js";
 
 import {
   requireAuth,
@@ -18,8 +19,8 @@ router.use(requireAuth);
 router.use(requireRole("admin"));
 
 router.get("/", adminListProducts);
-router.post("/", adminCreateProduct);
-router.patch("/:id", adminUpdateProduct);
+router.post("/", validateProductCategory, adminCreateProduct);
+router.patch("/:id", validateProductCategory, adminUpdateProduct);
 router.delete("/:id", adminArchiveProduct);
 
 export default router;

@@ -1,0 +1,238 @@
+
+/* EverythingBD — Premium Mobile Analytics */
+
+.ebd-premium-analytics {
+  color: #152f2e;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.ebd-analytics-heading {
+  margin-bottom: 22px;
+}
+
+.ebd-analytics-heading h2 {
+  margin: 6px 0 5px;
+  font-size: clamp(27px, 3.4vw, 38px);
+  letter-spacing: -1px;
+  font-weight: 800;
+  color: #123432;
+}
+
+.ebd-analytics-heading p {
+  margin: 0;
+  color: #74837d;
+  font-size: 14px;
+}
+
+.ebd-analytics-eyebrow {
+  font-size: 10px;
+  letter-spacing: 2px;
+  font-weight: 800;
+  color: #14847d;
+}
+
+.ebd-analytics-periods {
+  display: flex;
+  gap: 5px;
+  padding: 5px;
+  margin-bottom: 24px;
+  border: 1px solid #e1e9e2;
+  border-radius: 15px;
+  background: #f2f6f1;
+  max-width: 500px;
+}
+
+.ebd-analytics-periods button {
+  flex: 1;
+  min-width: 0;
+  min-height: 42px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 11px;
+  background: transparent;
+  color: #536560;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ebd-analytics-periods button.is-active {
+  color: #123432;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(18, 52, 50, .08);
+}
+
+.ebd-premium-analytics .admin-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin: 0 0 24px;
+}
+
+.ebd-premium-analytics .admin-stat-card {
+  min-width: 0;
+  min-height: 148px;
+  padding: 20px;
+  border: 1px solid #e3eae5;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 5px 20px rgba(28, 65, 54, .035);
+}
+
+.ebd-premium-analytics .admin-stat-title {
+  color: #61766d;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.ebd-premium-analytics .admin-stat-card strong {
+  display: block;
+  color: #122e2e;
+  font-size: clamp(20px, 2.4vw, 30px);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.ebd-premium-analytics .admin-stat-card small {
+  display: block;
+  font-size: 11px;
+  color: #798780;
+  line-height: 1.5;
+}
+
+.ebd-analytics-chart,
+.ebd-analytics-tracking-note {
+  padding: 24px;
+  margin: 20px 0;
+  border: 1px solid #e3eae5;
+  border-radius: 19px;
+  background: #fff;
+}
+
+.ebd-analytics-chart-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.ebd-analytics-chart-heading h3 {
+  margin: 0 0 4px;
+  font-size: 18px;
+}
+
+.ebd-analytics-chart-heading p,
+.ebd-analytics-chart-note,
+.ebd-analytics-tracking-note p {
+  color: #7a8983;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.ebd-analytics-chart-heading strong {
+  font-size: 13px;
+  color: #136c67;
+  white-space: nowrap;
+}
+
+.ebd-analytics-bars {
+  height: 210px;
+  display: flex;
+  align-items: stretch;
+  gap: 7px;
+  margin: 28px 0 10px;
+  padding-top: 10px;
+  border-bottom: 1px solid #e4ece7;
+}
+
+.ebd-analytics-bar-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.ebd-analytics-bar-area {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.ebd-analytics-bar {
+  width: min(100%, 34px);
+  min-height: 0;
+  background: linear-gradient(180deg, #1c928b, #b0dfd4);
+  border-radius: 7px 7px 0 0;
+  transition: height .2s;
+}
+
+.ebd-analytics-bar-col small {
+  color: #89958e;
+  font-size: 10px;
+  padding-bottom: 8px;
+}
+
+.ebd-analytics-tracking-note {
+  background: #f5faf7;
+}
+
+.ebd-analytics-tracking-note strong {
+  color: #245953;
+}
+
+.ebd-premium-analytics .admin-welcome-card {
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+@media (max-width: 950px) {
+  .ebd-premium-analytics .admin-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .ebd-premium-analytics {
+    padding-bottom: 30px;
+  }
+
+  .ebd-premium-analytics .admin-stat-grid {
+    gap: 10px;
+  }
+
+  .ebd-premium-analytics .admin-stat-card {
+    min-height: 135px;
+    padding: 15px 13px;
+    border-radius: 16px;
+  }
+
+  .ebd-premium-analytics .admin-stat-title {
+    font-size: 12px;
+  }
+
+  .ebd-premium-analytics .admin-stat-card strong {
+    font-size: 23px;
+  }
+
+  .ebd-analytics-chart,
+  .ebd-analytics-tracking-note {
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .ebd-analytics-bars {
+    height: 160px;
+    gap: 4px;
+  }
+
+  .ebd-analytics-chart-heading strong {
+    font-size: 11px;
+  }
+}
