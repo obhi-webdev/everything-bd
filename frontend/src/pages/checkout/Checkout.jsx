@@ -534,10 +534,7 @@ export default function Checkout() {
                 </p>
               )}
 
-              <p className="checkout-pending">
-                Order placement will be enabled after
-                delivery charges and checkout verification.
-              </p>
+
 
               <div className="checkout-trust">
                 <span><ShieldCheck size={16}/> Secure Checkout</span>
