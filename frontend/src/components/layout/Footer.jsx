@@ -143,10 +143,12 @@ export default function Footer() {
             <span className="ebd-payment-badge ebd-bkash">
               bKash
             </span>
+            <small className="ebd-payment-number">01316804410</small>
 
             <span className="ebd-payment-badge ebd-nagad">
               Nagad
             </span>
+            <small className="ebd-payment-number">01316804410</small>
 
             <span className="ebd-payment-badge ebd-cod">
               <Banknote size={16}/>
