@@ -190,7 +190,7 @@ export default function Hero() {
                 "ebd-premium-slide " +
                 (isActive ? "is-active" : "")
               }
-              inert={isActive ? undefined : ""}
+              inert={!isActive}
             >
               {banner.buttonLink ? (
                 <a
