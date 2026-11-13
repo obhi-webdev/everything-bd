@@ -41,6 +41,21 @@ const app = express();
 
 app.disable("x-powered-by");
 
+// Hostinger reverse proxy support.
+// Set TRUST_PROXY_HOPS to the verified proxy hop count.
+// Do not use trust proxy: true.
+const proxyHops = Number(process.env.TRUST_PROXY_HOPS || 0);
+
+if (
+  !Number.isInteger(proxyHops) ||
+  proxyHops < 0 ||
+  proxyHops > 5
+) {
+  throw new Error("Invalid TRUST_PROXY_HOPS configuration");
+}
+
+app.set("trust proxy", proxyHops);
+
 app.use(helmet());
 app.use(cors({
   origin: (origin, callback) => {
