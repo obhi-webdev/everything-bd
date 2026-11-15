@@ -84,3 +84,27 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+
+/* EVERYTHINGBD CATEGORY TO PRODUCT GAP FIX */
+.em-categories-section {
+  padding-bottom: 12px;
+}
+
+.em-categories-section .em-category-static-grid {
+  margin-bottom: 0;
+}
+
+#products.section.products-section {
+  padding-top: 18px;
+}
+
+@media (max-width: 767px) {
+  .em-categories-section {
+    padding-bottom: 8px;
+  }
+
+  #products.section.products-section {
+    padding-top: 12px;
+  }
+}
