@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   ArrowLeft, ShoppingBag, Truck,
-  ShieldCheck, Banknote, MapPin
+  ShieldCheck, Banknote
 } from "lucide-react";
 import { getCheckoutConfig, submitOrder } from "../../features/checkout/checkoutApi";
 import { validateCheckout } from "../../features/checkout/checkoutValidation";
@@ -28,6 +28,7 @@ export default function Checkout() {
   const [couponInput, setCouponInput] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState("");
   const [couponDiscount, setCouponDiscount] = useState(0);
+  const [couponCartSignature, setCouponCartSignature] = useState(null);
   const [couponError, setCouponError] = useState("");
   const [couponLoading, setCouponLoading] = useState(false);
 
@@ -57,16 +58,20 @@ export default function Checkout() {
     customerNote: ""
   });
 
+  const cartSignature = JSON.stringify(
+    cart.map(item => ({
+      id: item.id,
+      size: item.size || "",
+      quantity: item.quantity,
+      price: item.price
+    }))
+  );
+
   const subtotal = cart.reduce(
     (sum, item) =>
       sum + Number(item.price) * item.quantity, 0
   );
 
-  useEffect(() => {
-    setAppliedCoupon("");
-    setCouponDiscount(0);
-    setCouponError("");
-  }, [cart]);
 
   async function applyCoupon() {
     const code = couponInput.trim().toUpperCase();
@@ -97,6 +102,7 @@ export default function Checkout() {
 
       setAppliedCoupon(result.data.code);
       setCouponDiscount(result.data.discount);
+        setCouponCartSignature(cartSignature);
     } catch (error) {
       setCouponError(error.message);
     } finally {
@@ -104,19 +110,32 @@ export default function Checkout() {
     }
   }
 
+  const couponIsValid =
+    Boolean(appliedCoupon) &&
+    couponCartSignature === cartSignature;
+
+  const effectiveCouponDiscount =
+    couponIsValid ? couponDiscount : 0;
+
+  const effectiveCouponCode =
+    couponIsValid ? appliedCoupon : "";
+
   const deliveryRate = form.deliveryZone
     ? config?.delivery?.[form.deliveryZone]
     : null;
 
   const estimatedTotal = deliveryRate == null
     ? null
-    : Math.max(0, subtotal + deliveryRate - couponDiscount);
+    : Math.max(0, subtotal + deliveryRate - effectiveCouponDiscount);
 
   const totalItems = cart.reduce(
     (sum, item) => sum + item.quantity, 0
   );
 
+  const initialCartRef = useRef(cart);
+
   useEffect(() => {
+    const cart = initialCartRef.current;
     if (cart.length === 0) return;
 
     const subtotal = cart.reduce(
@@ -192,7 +211,7 @@ export default function Checkout() {
       },
       items,
       customerNote: form.customerNote.trim(),
-      couponCode: appliedCoupon,
+      couponCode: effectiveCouponCode,
       paymentMethod: "cod",
       marketingConsent: hasMarketingConsent()
     };
@@ -205,7 +224,7 @@ export default function Checkout() {
     try {
       pending = JSON.parse(sessionStorage.getItem(key) || "null");
     } catch {
-      pending = null;
+      // Invalid stored checkout data; create a fresh request ID.
     }
 
     if (!pending || pending.fingerprint !== fingerprint) {

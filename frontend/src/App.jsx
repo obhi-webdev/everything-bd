@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { adminApi } from "./features/admin/adminApi";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
+import Shop from "./pages/Shop";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import "./styles/admin.css";
@@ -132,6 +133,7 @@ export default function App() {
       <MetaPixel />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/shop" element={<Shop />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/order-success" element={<OrderSuccess />} />
         <Route path="/product/:slug" element={<ProductDetails />} />

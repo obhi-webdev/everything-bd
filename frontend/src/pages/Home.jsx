@@ -22,7 +22,8 @@ import Header from "../components/layout/Header";
 import Footer from "../components/layout/Footer";
 import { useShopStore } from "../store/useShopStore";
 import Hero from "../components/home/Hero";
-import ProductCard from "../components/product/ProductCard";
+import CategoryProductSection from "../components/home/CategoryProductSection";
+import MarketplaceCampaign from "../components/home/MarketplaceCampaign";
 import CartDrawer from "../components/layout/CartDrawer";
 
 import {
@@ -60,23 +61,20 @@ export default function Home() {
     return () => window.clearTimeout(timer);
   }, []);
 
-  const filteredProducts = products.filter((product) => {
-    const keyword = search.toLowerCase();
 
-    const matchSearch = [
-      product.name,
-      product.brand,
-      product.category
-    ].join(" ").toLowerCase().includes(keyword);
+  const categoryCounts = products.reduce((counts, product) => {
+    const name = String(product.category || "").trim();
+    if (name) counts[name] = (counts[name] || 0) + 1;
+    return counts;
+  }, {});
 
-    const matchCategory =
-      category === "All" || product.category === category;
-
-    const matchWishlist =
-      !showWishlist || wishlist.includes(product.id);
-
-    return matchSearch && matchCategory && matchWishlist;
-  });
+  const featuredCategories = Object.keys(categoryCounts)
+    .sort((a, b) =>
+      categoryCounts[b] - categoryCounts[a] ||
+      a.localeCompare(b)
+    )
+    .slice(0, 2)
+    .reverse();
 
   return (
     <>
@@ -106,88 +104,39 @@ export default function Home() {
           media={media}
           selected={category}
           onSelect={value => {
-            setCategory(value);
-            document.getElementById("products")?.scrollIntoView({
-              behavior: "smooth"
-            });
+            window.location.assign(
+              value === "All"
+                ? "/shop"
+                : `/shop?category=${encodeURIComponent(value)}`
+            );
           }}
         />
 
-        <section id="products" className="section products-section">
-          <div className="container">
-            <div className="section-top">
-              <div className="section-heading">
-                <p className="section-kicker">FRESH BEAUTY FINDS</p>
-                <h2>New <em>arrivals</em></h2>
-                <p>Discover your new skincare favourites.</p>
-              </div>
-
-              <button
-                className="view-all"
-                onClick={() => {
-                  setCategory("All");
-                  setSearch("");
-                }}
-              >
-                View All <ArrowRight size={16} />
-              </button>
-            </div>
-
-            <div className="filter-row">
-              {[
-                "All",
-                ...new Set(
-                  (Array.isArray(managedCategories)
-                    ? managedCategories
-                    : Array.isArray(managedCategories?.data)
-                      ? managedCategories.data
-                      : Array.isArray(managedCategories?.categories)
-                        ? managedCategories.categories
-                        : []
-                  )
-                    .filter(item =>
-                      item &&
-                      item.isActive !== false &&
-                      typeof item.name === "string" &&
-                      item.name.trim()
-                    )
-                    .map(item => item.name)
-                )
-              ].map((item) => (
-                <button
-                  key={item}
-                  className={
-                    category === item ? "filter-active" : ""
-                  }
-                  onClick={() => setCategory(item)}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
-
-            {loading ? (
-              <div className="no-products">Loading skincare products...</div>
-            ) : error ? (
-              <div className="no-products" role="alert">{error}</div>
-            ) : filteredProducts.length > 0 ? (
-              <div className="product-grid">
-                {filteredProducts.map((product) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="no-products">
-                {showWishlist ? "No wishlist products found." : "No matching products found."}
-              </div>
-            )}
+        {loading ? (
+          <div className="container no-products">
+            Loading products...
           </div>
-        </section>
+        ) : error ? (
+          <div className="container no-products" role="alert">
+            {error}
+          </div>
+        ) : (
+          <>
+            <CategoryProductSection
+              id="products"
+              category={featuredCategories[0]}
+              products={products}
+            />
 
-        <MarketplaceShelves products={products} media={media}/>
+            <MarketplaceCampaign media={media} />
+
+            <CategoryProductSection
+              id="more-products"
+              category={featuredCategories[1]}
+              products={products}
+            />
+          </>
+        )}
 
 
 

@@ -13,7 +13,7 @@ import "./scrollHeader.css";
 
 const navigation = [
   { name: "Home", url: "/#home" },
-  { name: "Shop", url: "/#products" },
+  { name: "Shop", url: "/shop" },
   { name: "About", url: "/#about" },
   { name: "Contact Us", url: "/#contact" }
 ];
@@ -151,8 +151,8 @@ export default function Header() {
 
     window.location.assign(
       query
-        ? `/?q=${encodeURIComponent(query)}#products`
-        : "/#products"
+        ? `/shop?q=${encodeURIComponent(query)}`
+        : "/shop"
     );
   }
 
@@ -218,7 +218,7 @@ export default function Header() {
             </button>
 
             <a
-              href="/?wishlist=1#products"
+              href="/shop?wishlist=1"
               className="ebd-max-action"
               aria-label={`Wishlist (${wishlist.length})`}
             >
@@ -294,14 +294,14 @@ export default function Header() {
                 {categoryLinks.map(category => (
                   <a
                     key={category}
-                    href={`/?q=${encodeURIComponent(category)}#products`}
+                    href={`/shop?category=${encodeURIComponent(category)}`}
                     onClick={() => setCategoriesOpen(false)}
                   >
                     {category}
                   </a>
                 ))}
                 <a
-                  href="/#products"
+                  href="/shop"
                   onClick={() => setCategoriesOpen(false)}
                 >
                   View All Products
