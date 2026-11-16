@@ -56,7 +56,7 @@ export default function MobilePromoGrid({
       </div>
 
       <div className="ebd-mobile-four-grid">
-        {items.map(item => (
+        {items.map((item, index) => (
           <a
             key={item.key}
             href={item.link}
@@ -66,7 +66,9 @@ export default function MobilePromoGrid({
             <img
               src={item.image}
               alt={item.title}
-              loading="lazy"
+              loading={index < 2 ? "eager" : "lazy"}
+              fetchPriority={index === 0 ? "high" : "auto"}
+              decoding="async"
             />
           </a>
         ))}

@@ -244,3 +244,47 @@
     transform: none;
   }
 }
+
+
+/* EVERYTHINGBD HERO LOADING STABILITY */
+
+.ebd-banner-loading,
+.ebd-banner-empty {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+}
+
+.ebd-banner-loading {
+  background: linear-gradient(
+    110deg,
+    #f3f5f6 8%,
+    #e6edef 18%,
+    #f3f5f6 33%
+  );
+  background-size: 220% 100%;
+  animation: ebd-banner-shimmer 1.6s linear infinite;
+}
+
+.ebd-banner-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f9fa;
+  color: #12364c;
+  font-weight: 700;
+}
+
+@keyframes ebd-banner-shimmer {
+  to {
+    background-position-x: -220%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ebd-banner-loading {
+    animation: none;
+  }
+}

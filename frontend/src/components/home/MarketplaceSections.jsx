@@ -65,8 +65,6 @@ export function MarketplaceHero({ products = [], media = {} }) {
 }
 
 export function MarketplaceCategories({
-  products = [],
-  media = {},
   managedCategories = null,
   selected,
   onSelect
@@ -133,10 +131,32 @@ export function MarketplaceCategories({
         </div>
 
         {categories.length > 0 ? (
-          <div className="em-category-static-grid">
-            {categories.map((category, index) =>
-              renderCategory(category, index)
-            )}
+          <div
+            className="em-category-double-marquee"
+            aria-label="Popular product categories"
+          >
+            <div className="em-category-marquee em-category-rtl">
+              <div className="em-category-marquee-track">
+                <div className="em-category-marquee-group">
+                  {categories.map((category, index) =>
+                    renderCategory(category, index)
+                  )}
+                </div>
+
+                <div
+                  className="em-category-marquee-group"
+                  aria-hidden="true"
+                >
+                  {categories.map((category, index) =>
+                    renderCategory(
+                      category,
+                      index + categories.length,
+                      true
+                    )
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         ) : (
           <p className="em-empty-category">

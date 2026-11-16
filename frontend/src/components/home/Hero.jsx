@@ -1,10 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Pause,
-  Play
-} from "lucide-react";
 import "./heroBanners.css";
 
 const API =
@@ -13,19 +7,12 @@ const API =
 
 const SLIDE_TIME = 3000;
 
-const fallbackBanner = {
-  _id: "default",
-  title: "EverythingBD Beauty Collection",
-  desktopImage:
-    "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=1600&q=85",
-  mobileImage: "",
-  buttonLink: "/#products"
-};
 
 export default function Hero() {
-  const [banners, setBanners] = useState([fallbackBanner]);
+  const [banners, setBanners] = useState([]);
   const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
+  const [bannersLoaded, setBannersLoaded] = useState(false);
+  const [paused] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [pageHidden, setPageHidden] = useState(false);
 
@@ -63,7 +50,11 @@ export default function Hero() {
         }
       } catch (error) {
         if (error.name !== "AbortError") {
-          console.warn("Using fallback banner:", error.message);
+          console.warn("Banner loading failed:", error.message);
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setBannersLoaded(true);
         }
       }
     }
@@ -115,9 +106,6 @@ export default function Hero() {
     );
   }
 
-  function goToSlide(index) {
-    setActive(index);
-  }
 
   function handleTouchStart(event) {
     touchStartX.current = event.touches[0]?.clientX ?? null;
@@ -156,6 +144,20 @@ export default function Hero() {
       onTouchEnd={handleTouchEnd}
     >
       <div className="ebd-premium-slider-track">
+        {!bannersLoaded && (
+          <div
+            className="ebd-banner-loading"
+            role="status"
+            aria-label="Loading promotional banners"
+          />
+        )}
+
+        {bannersLoaded && banners.length === 0 && (
+          <div className="ebd-banner-empty">
+            Explore EverythingBD Collections
+          </div>
+        )}
+
         {banners.map((banner, index) => {
           const isActive = index === active;
 
@@ -174,9 +176,9 @@ export default function Hero() {
                   banner.title ||
                   `EverythingBD promotional banner ${index + 1}`
                 }
-                loading={index < 2 ? "eager" : "lazy"}
+                loading={isActive ? "eager" : "lazy"}
                 fetchPriority={
-                  index === 0 ? "high" : undefined
+                  isActive ? "high" : undefined
                 }
                 draggable="false"
               />
