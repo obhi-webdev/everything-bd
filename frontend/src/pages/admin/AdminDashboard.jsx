@@ -2,6 +2,7 @@ import "./premiumAdminTypography.css";
 import CategoryManager from "../../features/admin/CategoryManager";
 import "./premiumDashboard.css";
 import "./mobileAdminResponsive.css";
+import "./adminLogo.css";
 import WebsiteMediaManager from "../../features/admin/WebsiteMediaManager";
 import CouponManager from "../../features/admin/CouponManager";
 import CustomerManager from "../../features/admin/CustomerManager";
@@ -11,11 +12,11 @@ import BannerManager from "../../features/admin/BannerManager";
 import AdminOverview from "../../features/admin/AdminOverview";
 import OrderManager from "../../features/admin/OrderManager";
 import ProductManager from "../../features/admin/ProductManager";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   LayoutDashboard, Package, ShoppingBag,
   Users, TicketPercent, Image, Settings,
-  LogOut, Menu, X, ArrowUpRight, ShieldCheck,
+  LogOut, Menu, X,
   House, ChartColumn, LayoutGrid, ChevronRight
 } from "lucide-react";
 
@@ -44,6 +45,74 @@ const mainMobilePages = [
   "Overview", "Orders", "Products", "Analytics"
 ];
 
+
+function AdminBrand({ compact = false }) {
+  const [faviconUrl, setFaviconUrl] = useState("");
+
+  useEffect(() => {
+    let active = true;
+    const controller = new AbortController();
+
+    const API = import.meta.env.VITE_API_URL ||
+      "http://localhost:5001/api";
+
+    fetch(`${API}/site-settings`, {
+      cache: "no-store",
+      signal: controller.signal
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("Unable to load site settings");
+        }
+        return response.json();
+      })
+      .then(result => {
+        if (!active) return;
+
+        const url = result.data?.faviconUrl;
+
+        setFaviconUrl(
+          typeof url === "string" &&
+          url.startsWith("https://") ? url : ""
+        );
+      })
+      .catch(() => {
+        // Keep text logo visible if settings are unavailable.
+      });
+
+    return () => {
+      active = false;
+      controller.abort();
+    };
+  }, []);
+
+  return (
+    <div className={
+      `ebd-admin-brand ebd-original-admin-brand ${
+        compact ? "is-compact" : ""
+      }`
+    }>
+      {faviconUrl && (
+        <img
+          src={faviconUrl}
+          alt=""
+          aria-hidden="true"
+          className="ebd-admin-original-favicon"
+        />
+      )}
+
+      <span className="ebd-admin-brand-labels">
+        <span className="ebd-admin-original-wordmark">
+          everything<span>bd</span><i>.</i>
+        </span>
+        {compact && (
+          <small className="ebd-admin-mobile-role">Admin</small>
+        )}
+      </span>
+    </div>
+  );
+}
+
 export default function AdminDashboard({ user, token, onLogout }) {
   const [active, setActive] = useState("Overview");
   const [menuOpen, setMenuOpen] = useState(false);
@@ -66,8 +135,7 @@ export default function AdminDashboard({ user, token, onLogout }) {
     <div className="admin-dashboard">
       <aside className={`admin-sidebar ${menuOpen ? "open" : ""}`}>
         <div className="admin-sidebar-brand">
-          everything<span>bd</span>.
-          <small>ADMIN PANEL</small>
+          <AdminBrand />
         </div>
 
         <p className="admin-menu-label">MANAGEMENT</p>
@@ -102,6 +170,8 @@ export default function AdminDashboard({ user, token, onLogout }) {
 
       <div className="admin-main">
         <header className="admin-topbar">
+
+
           <button
             className="admin-menu-toggle"
             onClick={() => setMenuOpen(!menuOpen)}
@@ -109,6 +179,11 @@ export default function AdminDashboard({ user, token, onLogout }) {
           >
             {menuOpen ? <X /> : <Menu />}
           </button>
+
+          <div className="ebd-admin-mobile-logo">
+            <AdminBrand compact />
+          </div>
+
 
           <div className="admin-topbar-user">
             <div className="admin-avatar">
@@ -121,7 +196,11 @@ export default function AdminDashboard({ user, token, onLogout }) {
           </div>
         </header>
 
-        <div className="admin-content">
+        <div className={
+            "admin-content" +
+            (active === "Orders" ? " ebd-orders-active-page" :
+             active === "Products" ? " ebd-products-active-page" : "")
+          }>
           <p className="admin-eyebrow">EVERYTHINGBD / {active.toUpperCase()}</p>
           <h1>
             {active === "Overview" ? "Dashboard Overview" : active}

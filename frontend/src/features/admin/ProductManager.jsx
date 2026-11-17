@@ -1,6 +1,7 @@
 import "./adminDangerActions.css";
+import "./productSearch.css";
 import { useCallback, useEffect, useState } from "react";
-import { Plus, Pencil, Archive, RefreshCw, X } from "lucide-react";
+import { Plus, Pencil, Archive, RefreshCw, X, Search } from "lucide-react";
 import { productApi } from "./productApi";
 import ImageUploader from "./ImageUploader";
 
@@ -115,6 +116,7 @@ function toPayload(form) {
 export default function ProductManager({ token }) {
   const [clothingType, setClothingType] = useState("Men");
   const [products, setProducts] = useState([]);
+  const [productSearch, setProductSearch] = useState("");
   const [availableCategories, setAvailableCategories] = useState([]);
   const [categoryError, setCategoryError] = useState("");
   const [form, setForm] = useState(empty);
@@ -139,7 +141,19 @@ export default function ProductManager({ token }) {
     }
   }, [token]);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    let active = true;
+
+    Promise.resolve().then(() => {
+      if (active) {
+        load();
+      }
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [load]);
 
   function change(key, value) {
     setForm(prev => ({ ...prev, [key]: value }));
@@ -331,6 +345,23 @@ export default function ProductManager({ token }) {
     }
   }
 
+  const normalizedSearch = productSearch.trim().toLowerCase();
+
+  const filteredProducts = products.filter(product => {
+    if (!normalizedSearch) return true;
+
+    return [
+      product.name,
+      product.sku,
+      product.brand,
+      product.category
+    ].some(value =>
+      String(value ?? "")
+        .toLowerCase()
+        .includes(normalizedSearch)
+    );
+  });
+
   return (
     <div className="pm">
       <div className="pm-heading">
@@ -345,6 +376,38 @@ export default function ProductManager({ token }) {
           <button className="pm-primary" onClick={startCreate}>
             <Plus size={17}/> Add Product
           </button>
+        </div>
+      </div>
+
+      <div className="ebd-product-search">
+        <div className="ebd-product-search-field">
+          <Search size={19} aria-hidden="true" />
+
+          <input
+            type="search"
+            aria-label="Search admin products"
+            placeholder="Search name, SKU, brand or category..."
+            value={productSearch}
+            onChange={event =>
+              setProductSearch(event.target.value)
+            }
+          />
+
+          {productSearch && (
+            <button
+              type="button"
+              aria-label="Clear product search"
+              onClick={() => setProductSearch("")}
+            >
+              <X size={17} />
+            </button>
+          )}
+        </div>
+
+        <div className="ebd-product-search-meta" role="status">
+          {normalizedSearch
+            ? `${filteredProducts.length} of ${products.length} products found`
+            : `${products.length} products loaded`}
         </div>
       </div>
 
@@ -624,7 +687,7 @@ export default function ProductManager({ token }) {
               <th>Stock</th><th>Status</th><th>Actions</th>
             </tr></thead>
             <tbody>
-              {products.map(p => (
+              {filteredProducts.map(p => (
                 <tr key={p._id}>
                   <td><div className="pm-product">
                     {p.images?.[0]?.url

@@ -1,0 +1,77 @@
+
+/* EverythingBD Admin Product Search */
+
+.ebd-product-search {
+  margin: 16px 0 20px;
+}
+
+.ebd-product-search-field {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  min-height: 50px;
+  padding: 0 14px;
+  background: #fff;
+  border: 1px solid #d9e8e2;
+  border-radius: 14px;
+  color: #0d776c;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.ebd-product-search-field:focus-within {
+  border-color: #0d8175;
+  box-shadow: 0 0 0 3px rgba(13, 129, 117, .09);
+}
+
+.ebd-product-search-field input {
+  flex: 1;
+  min-width: 0;
+  height: 48px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  box-shadow: none;
+  color: #173d39;
+  font-size: 14px;
+}
+
+.ebd-product-search-field input::placeholder {
+  color: #8a9c96;
+}
+
+.ebd-product-search-field button {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 9px;
+  background: #e8f3ee;
+  color: #0d776c;
+  cursor: pointer;
+}
+
+.ebd-product-search-meta {
+  margin-top: 9px;
+  font-size: 12px;
+  color: #708b82;
+  text-align: right;
+}
+
+@media (max-width: 767px) {
+  .ebd-product-search {
+    margin: 12px 0 16px;
+  }
+
+  .ebd-product-search-field {
+    min-height: 46px;
+    border-radius: 12px;
+    padding: 0 12px;
+  }
+
+  .ebd-product-search-field input {
+    height: 44px;
+    font-size: 13px;
+  }
+}

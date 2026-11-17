@@ -542,3 +542,143 @@
     transition: none;
   }
 }
+
+
+/* EVERYTHINGBD MOBILE PRODUCTS REFINEMENT V3 */
+
+@media (max-width: 767px) {
+
+  /* Hide duplicate parent heading */
+  .admin-dashboard
+  .ebd-products-active-page > .admin-eyebrow,
+
+  .admin-dashboard
+  .ebd-products-active-page > h1,
+
+  .admin-dashboard
+  .ebd-products-active-page > .admin-muted {
+    display: none !important;
+  }
+
+  /* Compact content spacing */
+  .admin-dashboard
+  .admin-content.ebd-products-active-page {
+    padding-top: 18px !important;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+    padding-bottom: calc(
+      120px + env(safe-area-inset-bottom, 0px)
+    ) !important;
+  }
+
+  /* Product management header */
+  .ebd-products-active-page .pm-header,
+  .ebd-products-active-page .pm-heading {
+    margin-bottom: 16px;
+  }
+
+  .ebd-products-active-page .pm-header h2,
+  .ebd-products-active-page .pm-heading h2 {
+    font-size: 23px;
+    line-height: 1.25;
+    letter-spacing: -.6px;
+    color: #153e39;
+  }
+
+  /* Buttons */
+  .ebd-products-active-page .pm-header button,
+  .ebd-products-active-page .pm-heading button,
+  .ebd-products-active-page .pm-actions button {
+    border-radius: 11px;
+    min-height: 41px;
+  }
+
+  /* Compact product table cards */
+  .ebd-products-active-page .pm-table {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .ebd-products-active-page .pm-table tbody {
+    gap: 10px;
+  }
+
+  .ebd-products-active-page .pm-table tbody tr {
+    padding: 12px;
+    gap: 8px 10px;
+    border: 1px solid #dce9e3;
+    border-radius: 15px;
+    background: #fff;
+    box-shadow: 0 4px 15px rgba(16, 71, 58, .035);
+  }
+
+  .ebd-products-active-page .pm-table tbody td {
+    font-size: 12px;
+    color: #234740;
+  }
+
+  .ebd-products-active-page .pm-table tbody td:first-child {
+    margin-bottom: 2px;
+  }
+
+  .ebd-products-active-page .pm-table .pm-product {
+    gap: 10px;
+  }
+
+  .ebd-products-active-page .pm-table .pm-product img,
+  .ebd-products-active-page .pm-table .pm-no-image {
+    width: 58px;
+    height: 58px;
+    min-width: 58px;
+    border-radius: 10px;
+    object-fit: cover;
+  }
+
+  .ebd-products-active-page .pm-table .pm-product strong {
+    font-size: 13px;
+    line-height: 1.4;
+    color: #103d38;
+  }
+
+  .ebd-products-active-page
+  .pm-table tbody td:nth-child(n+2):nth-child(-n+5)::before {
+    color: #829a90;
+    font-size: 9px;
+  }
+
+  .ebd-products-active-page .pm-table tbody td:last-child {
+    padding-top: 9px;
+    border-top: 1px solid #e8f0eb;
+  }
+
+  .ebd-products-active-page .pm-table .pm-row-actions {
+    gap: 7px;
+  }
+
+  .ebd-products-active-page .pm-table .pm-row-actions button {
+    min-height: 37px;
+    border-radius: 9px;
+    border-color: #d4e7df;
+    background: #eff8f4;
+    color: #14776b;
+  }
+
+  .ebd-products-active-page
+  .pm-table .pm-row-actions button:focus-visible {
+    outline: 2px solid #13867c;
+    outline-offset: 2px;
+  }
+
+  /* Teal product management accents */
+  .ebd-products-active-page .pm-primary,
+  .ebd-products-active-page .pm-add-button {
+    background: #0c776e;
+    border-color: #0c776e;
+    color: #fff;
+  }
+
+  /* Allow the last product to scroll clear of bottom nav */
+  .ebd-products-active-page .pm-table-wrap {
+    margin-bottom: 18px;
+  }
+}
