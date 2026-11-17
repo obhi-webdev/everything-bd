@@ -1,6 +1,7 @@
 import "./premiumAdminTypography.css";
 import CategoryManager from "../../features/admin/CategoryManager";
 import "./premiumDashboard.css";
+import "./premiumOverviewV4.css";
 import "./mobileAdminResponsive.css";
 import "./adminLogo.css";
 import WebsiteMediaManager from "../../features/admin/WebsiteMediaManager";
@@ -199,7 +200,8 @@ export default function AdminDashboard({ user, token, onLogout }) {
         <div className={
             "admin-content" +
             (active === "Orders" ? " ebd-orders-active-page" :
-             active === "Products" ? " ebd-products-active-page" : "")
+             active === "Products" ? " ebd-products-active-page" :
+             active === "Overview" ? " ebd-premium-overview-v4" : "")
           }>
           <p className="admin-eyebrow">EVERYTHINGBD / {active.toUpperCase()}</p>
           <h1>

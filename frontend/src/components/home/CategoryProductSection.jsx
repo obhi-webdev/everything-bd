@@ -23,7 +23,13 @@ export default function CategoryProductSection({
             <p className="section-kicker">
               EVERYTHINGBD COLLECTION
             </p>
-            <h2>{category}</h2>
+            <h2>
+              {category === "K- beauty product"
+                ? "Beauty Product"
+                : category === "Chinese gadgets"
+                  ? "Chinese gadgets"
+                  : category}
+            </h2>
             <p>Discover our selected products.</p>
           </div>
 

@@ -124,7 +124,7 @@ export default function Home() {
           <>
             <CategoryProductSection
               id="products"
-              category={featuredCategories[0]}
+              category={featuredCategories[1]}
               products={products}
             />
 
@@ -132,7 +132,7 @@ export default function Home() {
 
             <CategoryProductSection
               id="more-products"
-              category={featuredCategories[1]}
+              category={featuredCategories[0]}
               products={products}
             />
           </>

@@ -1,0 +1,191 @@
+
+/*
+ * EverythingBD Premium Client UI V2
+ * Customer-facing pages only.
+ * Preserves existing product and checkout functionality.
+ */
+
+body:has(.ebd-max-header) {
+  --ebd-v2-bg: #f5f8f3;
+  --ebd-v2-card: #ffffff;
+  --ebd-v2-text: #193a32;
+  --ebd-v2-muted: #708078;
+  --ebd-v2-border: #e2e9e1;
+  --ebd-v2-teal: #137e70;
+
+  background: var(--ebd-v2-bg);
+  color: var(--ebd-v2-text);
+}
+
+/* Homepage section backgrounds */
+
+body:has(.ebd-max-header) .em-categories-section,
+body:has(.ebd-max-header) .em-shelf,
+body:has(.ebd-max-header) #products,
+body:has(.ebd-max-header) #more-products {
+  background: var(--ebd-v2-bg);
+}
+
+/* Section headings */
+
+body:has(.ebd-max-header) .em-marketplace-title-row h2,
+body:has(.ebd-max-header) .section-top h2 {
+  color: var(--ebd-v2-text);
+  font-weight: 800;
+  letter-spacing: -.7px;
+}
+
+body:has(.ebd-max-header) .em-marketplace-title-row a {
+  color: var(--ebd-v2-teal);
+}
+
+/* Product cards */
+
+body:has(.ebd-max-header) .product-card {
+  background: var(--ebd-v2-card);
+  border: 1px solid var(--ebd-v2-border);
+  border-radius: 18px;
+  box-shadow: 0 5px 20px rgba(25, 58, 50, .035);
+  overflow: hidden;
+}
+
+body:has(.ebd-max-header) .product-card:hover {
+  box-shadow: 0 12px 28px rgba(25, 58, 50, .075);
+}
+
+body:has(.ebd-max-header) .product-card .product-info h3 {
+  color: var(--ebd-v2-text);
+  font-weight: 650;
+  line-height: 1.5;
+}
+
+body:has(.ebd-max-header) .product-card .product-brand {
+  color: var(--ebd-v2-muted);
+  font-weight: 650;
+}
+
+body:has(.ebd-max-header) .product-card .product-rating {
+  color: var(--ebd-v2-muted);
+}
+
+body:has(.ebd-max-header) .product-card .price-row strong {
+  color: var(--ebd-v2-text);
+  font-weight: 800;
+}
+
+/* Purchase buttons */
+
+body:has(.ebd-max-header)
+.product-card .ebd-card-actions .ebd-card-add {
+  background: #eaf5f1;
+  border: 1px solid #b8dbcf;
+  color: #116f61;
+  border-radius: 10px;
+}
+
+body:has(.ebd-max-header)
+.product-card .ebd-card-actions .ebd-card-add:hover:not(:disabled) {
+  background: #d9eee7;
+}
+
+body:has(.ebd-max-header)
+.product-card .ebd-card-actions .ebd-card-buy {
+  background: var(--ebd-v2-teal);
+  border: 1px solid var(--ebd-v2-teal);
+  color: #ffffff;
+  border-radius: 10px;
+}
+
+body:has(.ebd-max-header)
+.product-card .ebd-card-actions .ebd-card-buy:hover:not(:disabled) {
+  background: #0d665b;
+}
+
+/* Shop page */
+
+body:has(.ebd-max-header) .eb-shop-page {
+  background: var(--ebd-v2-bg);
+}
+
+body:has(.ebd-max-header) .eb-shop-heading h1 {
+  color: var(--ebd-v2-text);
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+body:has(.ebd-max-header) .eb-shop-heading p,
+body:has(.ebd-max-header) .eb-shop-count {
+  color: var(--ebd-v2-muted);
+}
+
+body:has(.ebd-max-header) .eb-shop-filter-card,
+body:has(.ebd-max-header) .eb-shop-toolbar {
+  background: #ffffff;
+  border: 1px solid var(--ebd-v2-border);
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(25, 58, 50, .025);
+}
+
+body:has(.ebd-max-header) .eb-shop-filter-card h3 {
+  color: var(--ebd-v2-text);
+  border-bottom-color: var(--ebd-v2-border);
+}
+
+body:has(.ebd-max-header) .eb-shop-check {
+  color: var(--ebd-v2-text);
+}
+
+body:has(.ebd-max-header) .eb-shop-check input {
+  accent-color: var(--ebd-v2-teal);
+}
+
+body:has(.ebd-max-header) .eb-shop-apply {
+  background: var(--ebd-v2-teal);
+  border-radius: 10px;
+}
+
+body:has(.ebd-max-header) .eb-shop-reset {
+  color: var(--ebd-v2-teal);
+  border-color: var(--ebd-v2-border);
+  border-radius: 10px;
+}
+
+body:has(.ebd-max-header) .eb-shop-sort select {
+  border-color: var(--ebd-v2-border);
+  border-radius: 10px;
+  color: var(--ebd-v2-text);
+}
+
+body:has(.ebd-max-header) .eb-shop-pagination button {
+  border-color: var(--ebd-v2-border);
+  border-radius: 10px;
+  color: var(--ebd-v2-text);
+}
+
+/* Mobile refinements */
+
+@media (max-width: 700px) {
+  body:has(.ebd-max-header)
+  :is(#products, #more-products) .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  body:has(.ebd-max-header) .product-card {
+    border-radius: 15px;
+  }
+
+  body:has(.ebd-max-header) .product-card .product-info h3 {
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  body:has(.ebd-max-header)
+  .product-card .ebd-card-actions button {
+    border-radius: 8px !important;
+  }
+
+  body:has(.ebd-max-header) .eb-shop-toolbar {
+    border-radius: 14px;
+  }
+}

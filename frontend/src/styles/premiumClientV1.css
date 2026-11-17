@@ -1,0 +1,133 @@
+
+/*
+ * EverythingBD Premium Client UI V1
+ * Customer-facing pages only.
+ * No admin or backend logic changes.
+ */
+
+:root {
+  --ebd-client-bg: #f5f8f3;
+  --ebd-client-card: #ffffff;
+  --ebd-client-text: #193a32;
+  --ebd-client-muted: #708078;
+  --ebd-client-border: #e2e9e1;
+  --ebd-client-accent: #137e70;
+}
+
+/* Customer-facing page background */
+
+body:has(.ebd-max-header) {
+  background: var(--ebd-client-bg);
+  color: var(--ebd-client-text);
+  font-family: Inter, "DM Sans", Arial, sans-serif;
+}
+
+/* Premium typography */
+
+body:has(.ebd-max-header) h1,
+body:has(.ebd-max-header) h2,
+body:has(.ebd-max-header) h3 {
+  font-family: Inter, "DM Sans", Arial, sans-serif;
+  letter-spacing: -.55px;
+}
+
+/* Product cards */
+
+body:has(.ebd-max-header) .product-card {
+  background: var(--ebd-client-card);
+  border: 1px solid var(--ebd-client-border);
+  border-radius: 19px;
+  overflow: hidden;
+  box-shadow: 0 5px 24px rgba(25, 58, 50, .035);
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease;
+}
+
+body:has(.ebd-max-header) .product-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(25, 58, 50, .07);
+}
+
+body:has(.ebd-max-header) .product-info h3 {
+  color: var(--ebd-client-text);
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+body:has(.ebd-max-header) .product-info h3 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+body:has(.ebd-max-header) .product-brand,
+body:has(.ebd-max-header) .product-rating {
+  color: var(--ebd-client-muted);
+}
+
+body:has(.ebd-max-header) .price-row strong {
+  color: var(--ebd-client-text);
+  font-weight: 800;
+}
+
+/* Buttons */
+
+body:has(.ebd-max-header) .ebd-card-add,
+body:has(.ebd-max-header) .ebd-card-buy {
+  border-radius: 11px;
+  font-weight: 700;
+}
+
+body:has(.ebd-max-header) .ebd-card-buy {
+  background: var(--ebd-client-accent);
+  border-color: var(--ebd-client-accent);
+  color: #ffffff;
+}
+
+body:has(.ebd-max-header) .ebd-card-buy:hover {
+  background: #0d665b;
+}
+
+/* Search field */
+
+body:has(.ebd-max-header) .ebd-max-search {
+  background: #ffffff;
+  border: 1px solid #dce9e2;
+  border-radius: 15px;
+}
+
+body:has(.ebd-max-header) .ebd-max-search button {
+  background: var(--ebd-client-accent);
+  border-radius: 11px;
+}
+
+body:has(.ebd-max-header) .ebd-max-search button:hover {
+  background: #0d665b;
+}
+
+/* Mobile refinements */
+
+@media (max-width: 767px) {
+  body:has(.ebd-max-header) .product-card {
+    border-radius: 17px;
+  }
+
+  body:has(.ebd-max-header) .product-info h3 {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  body:has(.ebd-max-header) .price-row strong {
+    font-size: 16px;
+  }
+
+  body:has(.ebd-max-header) .ebd-max-search {
+    border-radius: 13px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body:has(.ebd-max-header) .product-card {
+    transition: none;
+  }
+}
