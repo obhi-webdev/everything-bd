@@ -4,6 +4,7 @@ import "./adminDangerActions.css";
 import { useEffect, useState } from "react";
 import { orderApi } from "./orderApi";
 import "./order-manager.css";
+import "./mobileOrdersApp.css";
 
 const statuses = [
   "", "pending", "confirmed", "processing",
@@ -15,6 +16,7 @@ const money = value =>
 
 export default function OrderManager({ token }) {
   const [orders, setOrders] = useState([]);
+  const [mobileSearch, setMobileSearch] = useState("");
   const [showTrash, setShowTrash] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [status, setStatus] = useState("");
@@ -40,10 +42,16 @@ export default function OrderManager({ token }) {
 
   useEffect(() => {
     let active = true;
-    setLoading(true);
-    setError("");
 
-    orderApi.list(token, page, status, showTrash)
+    Promise.resolve()
+      .then(() => {
+        if (active) {
+          setLoading(true);
+          setError("");
+        }
+
+        return orderApi.list(token, page, status, showTrash);
+      })
       .then(result => {
         if (!active) return;
         setOrders(result.data || []);
@@ -174,8 +182,220 @@ export default function OrderManager({ token }) {
     }
   }
 
+  const mobileOrders = orders.filter(order => {
+    const query = mobileSearch.trim().toLowerCase();
+    if (!query) return true;
+
+    return [
+      order.orderNumber,
+      order.customer?.name,
+      order.customer?.phone
+    ].some(value =>
+      String(value ?? "").toLowerCase().includes(query)
+    );
+  });
+
+  const mobileCounts = {
+    pending: orders.filter(
+      order => order.orderStatus === "pending"
+    ).length,
+    confirmed: orders.filter(
+      order => order.orderStatus === "confirmed"
+    ).length,
+    delivered: orders.filter(
+      order => order.orderStatus === "delivered"
+    ).length
+  };
+
   return (
     <section className="ebd-orders">
+      <div className="ebd-mobile-orders-app">
+        <div className="ebd-mo-heading">
+          <div>
+            <span className="ebd-mo-eyebrow">
+              EVERYTHINGBD ADMIN
+            </span>
+            <h2>{showTrash ? "Order Trash" : "Orders"}</h2>
+            <p>Manage customer orders</p>
+          </div>
+          <span className="ebd-mo-heading-icon" aria-hidden="true">
+            ▣
+          </span>
+        </div>
+
+        <div className="ebd-mo-stats">
+          {[
+            {
+              label: "Orders on page",
+              value: orders.length,
+              icon: "▤"
+            },
+            {
+              label: "Pending on page",
+              value: mobileCounts.pending,
+              icon: "◷"
+            },
+            {
+              label: "Confirmed on page",
+              value: mobileCounts.confirmed,
+              icon: "✓"
+            },
+            {
+              label: "Delivered on page",
+              value: mobileCounts.delivered,
+              icon: "▣"
+            }
+          ].map(item => (
+            <div className="ebd-mo-stat" key={item.label}>
+              <span className="ebd-mo-stat-icon">
+                {item.icon}
+              </span>
+              <strong>{item.value}</strong>
+              <small>{item.label}</small>
+            </div>
+          ))}
+        </div>
+
+        <div className="ebd-mo-tools">
+          <input
+            type="search"
+            aria-label="Search loaded orders"
+            placeholder="Search Order ID, Name or Phone"
+            value={mobileSearch}
+            onChange={event =>
+              setMobileSearch(event.target.value)
+            }
+          />
+
+          <select
+            aria-label="Filter orders by status"
+            value={status}
+            onChange={event => {
+              setStatus(event.target.value);
+              setPage(1);
+            }}
+          >
+            {statuses.map(value => (
+              <option key={value} value={value}>
+                {value || "All Statuses"}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="ebd-mo-section-heading">
+          <h3>Recent Orders</h3>
+          <span>{pagination.total ?? 0} total</span>
+        </div>
+
+        <div className="ebd-mo-actions">
+          <button
+            type="button"
+            onClick={() => {
+              setShowTrash(value => !value);
+              setPage(1);
+              setStatus("");
+              setSelected(null);
+              setMobileSearch("");
+            }}
+          >
+            {showTrash ? "All Orders" : "View Trash"}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setRefresh(v => v + 1)}
+          >
+            Refresh
+          </button>
+        </div>
+
+        {error && (
+          <p className="ebd-orders-error" role="alert">
+            {error}
+          </p>
+        )}
+
+        {loading && <p>Loading orders...</p>}
+
+        <div className="ebd-mo-list">
+          {mobileOrders.map(order => (
+            <article
+              className="ebd-mo-order-card"
+              key={order._id}
+            >
+              <div className="ebd-mo-card-top">
+                <strong>{order.orderNumber}</strong>
+                <span className={
+                  "ebd-mo-status ebd-mo-status-" +
+                  order.orderStatus
+                }>
+                  {order.orderStatus}
+                </span>
+              </div>
+
+              <div className="ebd-mo-customer">
+                <strong>
+                  {order.customer?.name || "Customer"}
+                </strong>
+                <span>
+                  {order.customer?.phone || "No phone"}
+                </span>
+              </div>
+
+              <div className="ebd-mo-card-meta">
+                <span>
+                  {new Date(
+                    order.createdAt
+                  ).toLocaleDateString("en-BD")}
+                </span>
+                <span>
+                  Payment: {order.paymentStatus}
+                </span>
+              </div>
+
+              <div className="ebd-mo-card-bottom">
+                <strong>{money(order.total)}</strong>
+                <button
+                  type="button"
+                  onClick={() => viewOrder(order._id)}
+                >
+                  View Details
+                </button>
+              </div>
+            </article>
+          ))}
+
+          {!loading && mobileOrders.length === 0 && (
+            <p className="ebd-mo-empty">
+              No matching orders found.
+            </p>
+          )}
+        </div>
+
+        <div className="ebd-mo-pagination">
+          <button
+            disabled={loading || page <= 1}
+            onClick={() => setPage(p => p - 1)}
+          >
+            Previous
+          </button>
+
+          <span>
+            Page {page} of {pagination.totalPages || 1}
+          </span>
+
+          <button
+            disabled={
+              loading ||
+              page >= (pagination.totalPages || 1)
+            }
+            onClick={() => setPage(p => p + 1)}
+          >
+            Next
+          </button>
+        </div>
+      </div>
       <div className="ebd-orders-header">
         <div>
           <h2>{showTrash ? "Order Trash" : "Customer Orders"}</h2>
