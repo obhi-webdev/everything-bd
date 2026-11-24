@@ -7,6 +7,10 @@
   RewriteEngine On
   RewriteBase /
 
+  # EverythingBD Canonical Domain Redirect
+  RewriteCond %{HTTP_HOST} ^www\.everything-bd\.com$ [NC]
+  RewriteRule ^ https://everything-bd.com%{REQUEST_URI} [R=301,L,NE]
+
   # EverythingBD Dynamic Sitemap
   RewriteRule ^sitemap\.xml$ https://api.everything-bd.com/api/seo/sitemap.xml [R=302,L,NE,QSD]
 
