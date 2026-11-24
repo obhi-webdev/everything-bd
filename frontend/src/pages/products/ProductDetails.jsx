@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 
 import SEO from "../../components/seo/SEO";
+import ProductShipping from "./ProductShipping";
 import {
   safeImage,
   productTitle,
@@ -428,6 +429,8 @@ function ProductDetailsContent({ slug }) {
                   <span><Truck size={18}/> Nationwide Delivery</span>
                   <span><ShieldCheck size={18}/> Secure Shopping</span>
                 </div>
+
+                <ProductShipping />
 
                 <div className="pd-meta">
                   SKU: {product.sku} · Category: {product.category}

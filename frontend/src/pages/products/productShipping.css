@@ -1,0 +1,93 @@
+
+.ebd-product-shipping {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 20px 0;
+  padding: 18px;
+  border: 1px solid #e0e9e3;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #193a32;
+}
+
+.ebd-ps-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+  color: #137e70;
+}
+
+.ebd-ps-heading h3 {
+  margin: 0;
+  color: #193a32;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.ebd-ps-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid #edf1ee;
+}
+
+.ebd-ps-row > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ebd-ps-row strong {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.ebd-ps-row span {
+  font-size: 12px;
+  color: #66756d;
+}
+
+.ebd-ps-row b {
+  font-size: 19px;
+  font-weight: 700;
+  color: #137e70;
+}
+
+.ebd-ps-cod {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 13px;
+  padding: 11px 12px;
+  background: #f1f8f3;
+  color: #137e70;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.ebd-ps-note {
+  margin: 12px 0 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #66756d;
+}
+
+@media (max-width: 600px) {
+  .ebd-product-shipping {
+    margin: 16px 0;
+    padding: 14px;
+    border-radius: 12px;
+  }
+
+  .ebd-ps-heading h3 {
+    font-size: 15px;
+  }
+
+  .ebd-ps-row b {
+    font-size: 17px;
+  }
+}
