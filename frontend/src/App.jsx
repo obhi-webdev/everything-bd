@@ -1,3 +1,5 @@
+import SEO from "./components/seo/SEO";
+import { organizationSchema } from "./components/seo/seoUtils";
 import StoreAnalyticsTracker from "./features/analytics/StoreAnalyticsTracker";
 import DynamicFavicon from "./components/settings/DynamicFavicon";
 import LandingPage from "./pages/landing/LandingPage";
@@ -12,6 +14,7 @@ import { adminApi } from "./features/admin/adminApi";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import Shop from "./pages/Shop";
+import About from "./pages/About";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import "./styles/admin.css";
@@ -135,13 +138,49 @@ export default function App() {
       <DynamicFavicon />
       <MetaPixel />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={
+          <>
+            <SEO
+              path="/"
+              schemas={[organizationSchema]}
+            />
+            <Home />
+          </>
+        } />
         <Route path="/shop" element={<Shop />} />
-        <Route path="/checkout" element={<Checkout />} />
-        <Route path="/order-success" element={<OrderSuccess />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/checkout" element={
+          <>
+            <SEO
+              title="Checkout | EverythingBD"
+              description=""
+              robots="noindex, nofollow"
+            />
+            <Checkout />
+          </>
+        } />
+        <Route path="/order-success" element={
+          <>
+            <SEO
+              title="Order Confirmation | EverythingBD"
+              description=""
+              robots="noindex, nofollow"
+            />
+            <OrderSuccess />
+          </>
+        } />
         <Route path="/product/:slug" element={<ProductDetails />} />
         <Route path="/lp/:slug" element={<LandingPage />} />
-        <Route path="/admin/*" element={<AdminArea />} />
+        <Route path="/admin/*" element={
+          <>
+            <SEO
+              title="Admin Portal | EverythingBD"
+              description=""
+              robots="noindex, nofollow"
+            />
+            <AdminArea />
+          </>
+        } />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

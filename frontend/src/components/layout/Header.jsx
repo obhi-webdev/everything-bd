@@ -14,7 +14,7 @@ import "./scrollHeader.css";
 const navigation = [
   { name: "Home", url: "/#home" },
   { name: "Shop", url: "/shop" },
-  { name: "About", url: "/#about" },
+  { name: "About", url: "/about" },
   { name: "Contact Us", url: "/#contact" }
 ];
 

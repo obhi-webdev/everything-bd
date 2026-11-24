@@ -1,0 +1,130 @@
+export const SITE_URL = "https://everything-bd.com";
+
+export const DEFAULT_TITLE =
+  "EverythingBD | Korean Skincare, Fashion, Gadgets & Daily Essentials";
+
+export const DEFAULT_DESCRIPTION =
+  "EverythingBD-তে পাচ্ছেন অরিজিনাল কোরিয়ান স্কিনকেয়ার, লেডিস কুর্তি, বাচ্চাদের পোশাক, লেদার আইটেম এবং স্মার্ট গ্যাজেট। সারাদেশে ক্যাশ অন ডেলিভারি সুবিধা।";
+
+export function cleanText(value, limit = 160) {
+  return Array.from(
+    String(value || "")
+      .replace(/<[^>]*>/g, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+  ).slice(0, limit).join("");
+}
+
+export function safeImage(value) {
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" ? url.href : "";
+  } catch {
+    return "";
+  }
+}
+
+export function productTitle(product) {
+  const title =
+    cleanText(product.seo?.title, 120) ||
+    cleanText(product.name, 120);
+
+  return /everythingbd$/i.test(title)
+    ? title
+    : `${title} | EverythingBD`;
+}
+
+export function productDescription(product) {
+  return (
+    cleanText(product.seo?.description) ||
+    cleanText(product.description) ||
+    cleanText(
+      `Shop ${product.name} at EverythingBD. Cash on Delivery across Bangladesh.`
+    )
+  );
+}
+
+export function buildProductSchema(product) {
+  if (!product?.name || !product?.slug) return null;
+
+  const price = Number(product.price);
+
+  if (
+    product.price == null ||
+    product.price === "" ||
+    !Number.isFinite(price) ||
+    price < 0
+  ) return null;
+
+  const images = (product.images || [])
+    .map(image => safeImage(image?.url))
+    .filter(Boolean);
+
+  if (!images.length) return null;
+
+  const available = product.hasSizeVariants
+    ? (product.sizeVariants || []).some(
+        variant => Number(variant.stock) > 0
+      )
+    : Number(product.stock) > 0;
+
+  const url =
+    `${SITE_URL}/product/${encodeURIComponent(product.slug)}`;
+
+  const description = cleanText(
+    product.description, 5000
+  );
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    image: images,
+    url,
+    ...(description ? { description } : {}),
+    ...(product.sku ? { sku: product.sku } : {}),
+    ...(product.brand ? {
+      brand: {
+        "@type": "Brand",
+        name: product.brand
+      }
+    } : {}),
+    ...(product.category ? {
+      category: product.category
+    } : {}),
+    offers: {
+      "@type": "Offer",
+      url,
+      priceCurrency: "BDT",
+      price: price.toFixed(2),
+      availability: available
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      seller: {
+        "@type": "Organization",
+        name: "EverythingBD"
+      }
+    }
+  };
+}
+
+export function buildBreadcrumb(items) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: `${SITE_URL}${item.path}`
+    }))
+  };
+}
+
+export const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": `${SITE_URL}/#organization`,
+  name: "EverythingBD",
+  url: `${SITE_URL}/`
+};

@@ -1,6 +1,14 @@
+# EverythingBD Private Page Index Control
+<IfModule mod_headers.c>
+  Header always set X-Robots-Tag "noindex, nofollow" "expr=%{THE_REQUEST} =~ m#^[A-Z]+[[:space:]]+/(admin|checkout|order-success|lp)([/?[:space:]]|$)#i"
+</IfModule>
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
+
+  # EverythingBD Dynamic Sitemap
+  RewriteRule ^sitemap\.xml$ https://api.everything-bd.com/api/seo/sitemap.xml [R=302,L,NE,QSD]
 
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d

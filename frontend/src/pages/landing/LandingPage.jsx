@@ -6,6 +6,7 @@ import {
   hasMarketingConsent,
   trackMetaEvent
 } from "../../features/marketing/MetaPixel";
+import SEO from "../../components/seo/SEO";
 import "./landing.css";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:5001/api";
@@ -21,6 +22,16 @@ const emptyCustomer = {
 
 export default function LandingPage() {
   const { slug } = useParams();
+
+  return (
+    <LandingPageContent
+      key={slug}
+      slug={slug}
+    />
+  );
+}
+
+function LandingPageContent({ slug }) {
   const [page, setPage] = useState(null);
   const [config, setConfig] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -52,20 +63,9 @@ export default function LandingPage() {
   }
 
 
-  useEffect(() => {
-    const meta = document.createElement("meta");
-    meta.name = "robots";
-    meta.content = "noindex, nofollow";
-    document.head.appendChild(meta);
-
-    return () => meta.remove();
-  }, []);
 
   useEffect(() => {
     const controller = new AbortController();
-    setLoading(true);
-    setError("");
-    setPage(null);
 
     Promise.all([
       fetch(`${API}/landing-pages/${encodeURIComponent(slug)}`, {
@@ -77,13 +77,21 @@ export default function LandingPage() {
       }),
       getCheckoutConfig(controller.signal).catch(() => null)
     ]).then(([landing, checkout]) => {
+      if (controller.signal.aborted) return;
+
       setPage(landing);
       setConfig(checkout);
-      document.title = `${landing.name} | EverythingBD`;
     }).catch(err => {
-      if (err.name !== "AbortError") setError(err.message);
+      if (
+        !controller.signal.aborted &&
+        err.name !== "AbortError"
+      ) {
+        setError(err.message || "Page unavailable");
+      }
     }).finally(() => {
-      if (!controller.signal.aborted) setLoading(false);
+      if (!controller.signal.aborted) {
+        setLoading(false);
+      }
     });
 
     return () => controller.abort();
@@ -188,22 +196,48 @@ export default function LandingPage() {
     }
   }
 
+  const seo = (
+    <SEO
+      title={
+        page?.name
+          ? `${page.name} | EverythingBD`
+          : "Special Offer | EverythingBD"
+      }
+      description=""
+      robots="noindex, nofollow"
+    />
+  );
+
   if (loading) {
-    return <main className="lp-public-state">Loading landing page...</main>;
+    return (
+      <>
+        {seo}
+        <main className="lp-public-state">
+          Loading landing page...
+        </main>
+      </>
+    );
   }
 
   if (!page) {
-    return <main className="lp-public-state">
-      <h1>Page unavailable</h1>
-      <p>{error || "This landing page does not exist or is not published."}</p>
-    </main>;
+    return (
+      <>
+        {seo}
+        <main className="lp-public-state">
+          <h1>Page unavailable</h1>
+          <p>{error || "This landing page does not exist or is not published."}</p>
+        </main>
+      </>
+    );
   }
 
   const images = page.images || [];
   const deliveryCharge = config?.delivery?.[customer.deliveryZone];
 
   return (
-    <div className="lp-public">
+    <>
+      {seo}
+      <div className="lp-public">
       <div className="lp-brand">everything<span>bd</span>.</div>
 
       <main className="lp-public-main">
@@ -356,6 +390,7 @@ export default function LandingPage() {
       <footer className="lp-public-footer">
         © EverythingBD · Multi-Vendor Store
       </footer>
-    </div>
+      </div>
+    </>
   );
 }

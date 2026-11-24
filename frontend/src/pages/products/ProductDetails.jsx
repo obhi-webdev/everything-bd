@@ -9,6 +9,14 @@ import {
   ShieldCheck, Truck
 } from "lucide-react";
 
+import SEO from "../../components/seo/SEO";
+import {
+  safeImage,
+  productTitle,
+  productDescription,
+  buildProductSchema,
+  buildBreadcrumb
+} from "../../components/seo/seoUtils";
 import Header from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
 import ProductCard from "../../components/product/ProductCard";
@@ -23,6 +31,16 @@ const money = value =>
 
 export default function ProductDetails() {
   const { slug } = useParams();
+
+  return (
+    <ProductDetailsContent
+      key={slug}
+      slug={slug}
+    />
+  );
+}
+
+function ProductDetailsContent({ slug }) {
 
   // Always open a new product at the top of its page.
   useEffect(() => {
@@ -50,13 +68,6 @@ export default function ProductDetails() {
     const controller = new AbortController();
 
     async function loadProduct() {
-      setLoading(true);
-      setError("");
-      setProduct(null);
-      setActiveImage(0);
-      setQuantity(1);
-      setSelectedSize("");
-
       try {
         const data = await getProductBySlug(
           slug, controller.signal
@@ -72,17 +83,6 @@ export default function ProductDetails() {
     loadProduct();
     return () => controller.abort();
   }, [slug]);
-
-  useEffect(() => {
-    if (!product) return;
-
-    document.title =
-      `${product.seo?.title || product.name} | EverythingBD`;
-
-    return () => {
-      document.title = "EverythingBD | Premium Multi-Vendor Store";
-    };
-  }, [product]);
 
   useEffect(() => {
     if (!product) return;
@@ -180,6 +180,36 @@ export default function ProductDetails() {
 
   return (
     <>
+      {product && product.slug === slug && !loading && !error ? (
+        <SEO
+          title={productTitle(product)}
+          description={productDescription(product)}
+          path={`/product/${encodeURIComponent(product.slug)}`}
+          image={product.images?.map(img => safeImage(img?.url)).find(Boolean) || ""}
+          type="product"
+          schemas={[
+            buildProductSchema(product),
+            buildBreadcrumb([
+              { name: "Home", path: "/" },
+              { name: "Shop", path: "/shop" },
+              {
+                name: product.name,
+                path: `/product/${encodeURIComponent(product.slug)}`
+              }
+            ])
+          ]}
+        />
+      ) : (
+        <SEO
+          title={
+            loading
+              ? "Loading Product | EverythingBD"
+              : "Product Unavailable | EverythingBD"
+          }
+          robots={loading ? "index, follow" : "noindex, follow"}
+        />
+      )}
+
       <Header search="" setSearch={() => {}}/>
 
       <main className="pd-page">
@@ -187,7 +217,7 @@ export default function ProductDetails() {
           <div className="pd-breadcrumb">
             <Link to="/">Home</Link>
             <span>/</span>
-            <Link to="/#products">Shop</Link>
+            <Link to="/shop">Shop</Link>
             <span>/</span>
             <span>{product?.name || "Product Details"}</span>
           </div>

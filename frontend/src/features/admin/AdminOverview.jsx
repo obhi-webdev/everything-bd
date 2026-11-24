@@ -1,5 +1,5 @@
 import TrafficAnalytics from "./TrafficAnalytics";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { RefreshCw, ArrowUpRight } from "lucide-react";
 import "./premiumAnalytics.css";
 
@@ -37,45 +37,68 @@ function formatBDDate(value) {
 }
 
 export default function AdminOverview({ token }) {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [days, setDays] = useState(7);
+  const [revision, setRevision] = useState(0);
+  const [result, setResult] = useState(null);
 
-  const load = useCallback(async (signal) => {
-    setLoading(true);
-    setError("");
+  const requestKey = `${days}:${revision}`;
 
-    try {
-      const response = await fetch(
-        `${API_URL}/admin/orders/analytics?days=${days}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          signal
-        }
-      );
+  const current =
+    result?.key === requestKey &&
+    result?.token === token
+      ? result
+      : null;
 
-      const result = await response.json();
-
-      if (!response.ok || !result.success) {
-        throw new Error(result.message || "Analytics unavailable");
-      }
-
-      setData(result.data);
-    } catch (err) {
-      if (err.name !== "AbortError") {
-        setError(err.message);
-      }
-    } finally {
-      if (!signal?.aborted) setLoading(false);
-    }
-  }, [token, days]);
+  const data = current?.data ?? null;
+  const error = current?.error ?? "";
+  const loading = !current;
 
   useEffect(() => {
     const controller = new AbortController();
-    load(controller.signal);
+
+    async function load() {
+      try {
+        const response = await fetch(
+          `${API_URL}/admin/orders/analytics?days=${days}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            },
+            signal: controller.signal,
+            cache: "no-store"
+          }
+        );
+
+        const payload = await response.json();
+
+        if (!response.ok || !payload.success) {
+          throw new Error(
+            payload.message || "Analytics unavailable"
+          );
+        }
+
+        if (!controller.signal.aborted) {
+          setResult({
+            key: requestKey,
+            token,
+            data: payload.data
+          });
+        }
+      } catch (err) {
+        if (!controller.signal.aborted) {
+          setResult({
+            key: requestKey,
+            token,
+            error: err.message
+          });
+        }
+      }
+    }
+
+    load();
+
     return () => controller.abort();
-  }, [load]);
+  }, [token, days, requestKey]);
 
   const stats = [
     {
@@ -102,11 +125,6 @@ export default function AdminOverview({ token }) {
       title: "Pending Orders",
       value: data?.pendingOrders ?? "—",
       note: `Pending in the last ${days} days`
-    },
-    {
-      title: "Visitors",
-      value: "—",
-      note: "Visitor tracking not configured"
     }
   ];
 
@@ -150,7 +168,10 @@ export default function AdminOverview({ token }) {
         ))}
       </div>
       <div className="pm-actions" style={{ marginBottom: 20 }}>
-        <button onClick={() => load()} disabled={loading}>
+        <button
+          onClick={() => setRevision(value => value + 1)}
+          disabled={loading}
+        >
           <RefreshCw size={16} />
           {loading ? "Loading..." : "Refresh Analytics"}
         </button>
@@ -228,16 +249,6 @@ export default function AdminOverview({ token }) {
             <p className="ebd-analytics-chart-note">
               Values are based on orders saved in your database.
               This is not a page-view chart.
-            </p>
-          </div>
-
-          <div className="ebd-analytics-tracking-note">
-            <strong>Website Visitors & Page Views</strong>
-            <p>
-              Tracking has not been configured yet.
-              Visitor numbers will appear after a tracking
-              service is connected. No estimated values
-              are being shown.
             </p>
           </div>
 

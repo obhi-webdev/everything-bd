@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://everything-bd.com/sitemap.xml

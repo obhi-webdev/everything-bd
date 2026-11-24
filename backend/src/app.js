@@ -1,4 +1,5 @@
 import analyticsRoutes from "./modules/analytics/analytics.routes.js";
+import seoRoutes from "./modules/seo/seo.routes.js";
 import {
   publicCategoryRoutes,
   adminCategoryRoutes
@@ -120,6 +121,7 @@ app.use("/api/admin/customers", customerAdminRoutes);
 app.use("/api/marketing", marketingRoutes);
 
 app.use("/api/analytics", analyticsRoutes);
+app.use("/api/seo", seoRoutes);
 
 app.use((error, req, res, next) => {
   if (

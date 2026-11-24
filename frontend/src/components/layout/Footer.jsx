@@ -1,6 +1,5 @@
 import "./premiumFooterPayments.css";
 import {
-  Globe,
   Phone,
   MessageCircle,
   Banknote,
@@ -133,7 +132,7 @@ export default function Footer() {
           <a href="/#home">Home</a>
           <a href="/#products">Shop All</a>
           <a href="/#categories">Categories</a>
-          <a href="/#about">About Us</a>
+          <a href="/about">About Us</a>
           <a href="/#contact">Contact Us</a>
         </div>
 

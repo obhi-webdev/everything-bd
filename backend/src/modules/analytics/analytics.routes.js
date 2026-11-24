@@ -5,6 +5,7 @@ import {
   requireRole
 } from "../../middlewares/requireAuth.js";
 import { StoreVisit } from "./visit.model.js";
+import { getProductAnalytics } from "./productAnalytics.controller.js";
 
 const router = Router();
 const periods = new Set([7, 30, 90]);
@@ -196,6 +197,13 @@ router.get(
       });
     }
   }
+);
+
+router.get(
+  "/products",
+  requireAuth,
+  requireRole("admin"),
+  getProductAnalytics
 );
 
 export default router;

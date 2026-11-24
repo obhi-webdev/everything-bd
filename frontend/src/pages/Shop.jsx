@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { SlidersHorizontal, X, ChevronDown, RotateCcw } from "lucide-react";
+import SEO from "../components/seo/SEO";
+import { buildBreadcrumb } from "../components/seo/seoUtils";
 import Header from "../components/layout/Header";
 import Footer from "../components/layout/Footer";
 import CartDrawer from "../components/layout/CartDrawer";
@@ -13,6 +15,15 @@ const API_URL = import.meta.env.VITE_API_URL ||
   "http://localhost:5001/api";
 
 const PAGE_SIZE = 12;
+
+function normalizePage(value) {
+  const requestedPage = Number(value || 1);
+
+  return Number.isSafeInteger(requestedPage) &&
+    requestedPage > 0
+    ? requestedPage
+    : 1;
+}
 
 function normalizeProduct(p) {
   return {
@@ -48,6 +59,9 @@ export default function Shop() {
   const [loadingMore, setLoadingMore] = useState(false);
   const loadMoreRef = useRef(null);
 
+  // Store only the last successfully loaded collection.
+  const loadedCollectionRef = useRef(null);
+
   const [mobileFilters, setMobileFilters] = useState(false);
 
   const category = params.get("category") || "";
@@ -57,18 +71,43 @@ export default function Shop() {
   const q = params.get("q") || "";
   const minPrice = params.get("minPrice") || "";
   const maxPrice = params.get("maxPrice") || "";
-  const requestedPage = Number(params.get("page") || 1);
-  const page = Number.isSafeInteger(requestedPage) && requestedPage > 0
-    ? requestedPage : 1;
+  const page = normalizePage(params.get("page"));
 
-  const [priceDraft, setPriceDraft] = useState({
-    min: minPrice,
-    max: maxPrice
-  });
+  const priceKey = JSON.stringify([minPrice, maxPrice]);
 
-  useEffect(() => {
-    setPriceDraft({ min: minPrice, max: maxPrice });
-  }, [minPrice, maxPrice]);
+  const [priceState, setPriceState] = useState(() => ({
+    key: priceKey,
+    draft: { min: minPrice, max: maxPrice }
+  }));
+
+  // Synchronize the draft when committed URL prices change.
+  // Guarded render-time adjustment prevents stale drafts
+  // from returning when an earlier URL is revisited.
+  if (priceState.key !== priceKey) {
+    setPriceState({
+      key: priceKey,
+      draft: { min: minPrice, max: maxPrice }
+    });
+  }
+
+  const priceDraft = priceState.key === priceKey
+    ? priceState.draft
+    : { min: minPrice, max: maxPrice };
+
+  function setPriceDraft(updateDraft) {
+    setPriceState(previous => {
+      const current = previous.key === priceKey
+        ? previous.draft
+        : { min: minPrice, max: maxPrice };
+
+      return {
+        key: priceKey,
+        draft: typeof updateDraft === "function"
+          ? updateDraft(current)
+          : updateDraft
+      };
+    });
+  }
 
   function update(changes) {
     const next = new URLSearchParams(params);
@@ -85,68 +124,225 @@ export default function Shop() {
       next.delete("page");
     }
 
-    if (!Object.prototype.hasOwnProperty.call(changes, "page")) {
+    const requestKeys = [
+      "category",
+      "brand",
+      "flag",
+      "sort",
+      "q",
+      "minPrice",
+      "maxPrice",
+      "page"
+    ];
+
+    const requestValue = (search, key) => {
+      const value = search.get(key);
+
+      if (key === "sort") return value || "latest";
+
+      if (key === "page") {
+        return String(normalizePage(value));
+      }
+
+      return value || "";
+    };
+
+    const requestChanged = requestKeys.some(
+      key =>
+        requestValue(params, key) !==
+        requestValue(next, key)
+    );
+
+    if (
+      requestChanged &&
+      !Object.prototype.hasOwnProperty.call(changes, "page")
+    ) {
       setProducts([]);
       setPagination(null);
     }
 
-    setParams(next);
+    if (next.toString() !== params.toString()) {
+      setParams(next);
+    }
   }
 
   useEffect(() => {
     const controller = new AbortController();
 
-    async function load() {
-      if (page === 1) {
-        setLoading(true);
-      } else {
-        setLoadingMore(true);
+    const collectionKey = JSON.stringify([
+      category,
+      brand,
+      flag,
+      sort,
+      q,
+      minPrice,
+      maxPrice
+    ]);
+
+    async function fetchPage(targetPage) {
+      const query = new URLSearchParams({
+        page: String(targetPage),
+        limit: String(PAGE_SIZE),
+        sort
+      });
+
+      if (category) query.set("category", category);
+      if (brand) query.set("brand", brand);
+      if (flag) query.set("flag", flag);
+      if (q) query.set("q", q);
+      if (minPrice) query.set("minPrice", minPrice);
+      if (maxPrice) query.set("maxPrice", maxPrice);
+
+      const response = await fetch(
+        `${API_URL}/products?${query.toString()}`,
+        { signal: controller.signal }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(
+          result.message || "Unable to load products"
+        );
       }
+
+      if (
+        !Array.isArray(result.data) ||
+        !Number.isSafeInteger(result.pagination?.totalPages) ||
+        result.pagination.totalPages < 0
+      ) {
+        throw new Error("Invalid product pagination response");
+      }
+
+      return result;
+    }
+
+    function correctPage(targetPage) {
+      if (controller.signal.aborted) return;
+
+      loadedCollectionRef.current = null;
+
+      setParams(previous => {
+        const next = new URLSearchParams(previous);
+
+        if (targetPage === 1) {
+          next.delete("page");
+        } else {
+          next.set("page", String(targetPage));
+        }
+
+        return next;
+      }, { replace: true });
+    }
+
+    async function load() {
+      const cached = loadedCollectionRef.current;
+
+      const canAppend = Boolean(
+        cached &&
+        cached.key === collectionKey &&
+        cached.page + 1 === page
+      );
+
+      setLoading(!canAppend);
+      setLoadingMore(canAppend);
       setError("");
 
+      if (!canAppend) {
+        setProducts([]);
+        setPagination(null);
+      }
+
       try {
-        const query = new URLSearchParams({
-          page: String(page),
-          limit: String(PAGE_SIZE),
-          sort
-        });
+        let result;
+        let collection;
 
-        if (category) query.set("category", category);
-        if (brand) query.set("brand", brand);
-        if (flag) query.set("flag", flag);
-        if (q) query.set("q", q);
-        if (minPrice) query.set("minPrice", minPrice);
-        if (maxPrice) query.set("maxPrice", maxPrice);
+        if (canAppend) {
+          result = await fetchPage(page);
 
-        const response = await fetch(
-          `${API_URL}/products?${query.toString()}`,
-          { signal: controller.signal }
-        );
+          if (controller.signal.aborted) return;
 
-        const result = await response.json();
+          const lastPage = Math.max(
+            1,
+            result.pagination.totalPages
+          );
 
-        if (!response.ok) {
-          throw new Error(result.message || "Unable to load products");
+          if (page > lastPage) {
+            correctPage(lastPage);
+            return;
+          }
+
+          collection = [
+            ...cached.products,
+            ...result.data.map(normalizeProduct)
+          ];
+
+        } else {
+          // Always restore a complete prefix on direct
+          // navigation, refresh or history navigation.
+          result = await fetchPage(1);
+
+          if (controller.signal.aborted) return;
+
+          const lastPage = Math.max(
+            1,
+            result.pagination.totalPages
+          );
+
+          if (page > lastPage) {
+            correctPage(lastPage);
+            return;
+          }
+
+          collection = result.data.map(normalizeProduct);
+
+          for (let current = 2; current <= page; current++) {
+            if (controller.signal.aborted) return;
+
+            result = await fetchPage(current);
+
+            if (controller.signal.aborted) return;
+
+            const availablePages = Math.max(
+              1,
+              result.pagination.totalPages
+            );
+
+            if (page > availablePages) {
+              correctPage(availablePages);
+              return;
+            }
+
+            collection.push(
+              ...result.data.map(normalizeProduct)
+            );
+          }
         }
 
-        if (!controller.signal.aborted) {
-          const incoming = (result.data || []).map(normalizeProduct);
+        if (controller.signal.aborted) return;
 
-          setProducts(previous => {
-            if (page === 1) return incoming;
+        const uniqueProducts = [
+          ...new Map(
+            collection.map(item => [item.id, item])
+          ).values()
+        ];
 
-            const existingIds = new Set(previous.map(item => item.id));
+        loadedCollectionRef.current = {
+          key: collectionKey,
+          page,
+          products: uniqueProducts
+        };
 
-            return [
-              ...previous,
-              ...incoming.filter(item => !existingIds.has(item.id))
-            ];
-          });
-          setPagination(result.pagination || null);
-          if (result.filters) setFilters(result.filters);
+        setProducts(uniqueProducts);
+        setPagination(result.pagination);
+
+        if (result.filters) {
+          setFilters(result.filters);
         }
+
       } catch (err) {
         if (!controller.signal.aborted) {
+          loadedCollectionRef.current = null;
           setError(err.message);
           setProducts([]);
           setPagination(null);
@@ -160,8 +356,20 @@ export default function Shop() {
     }
 
     load();
+
     return () => controller.abort();
-  }, [page, category, brand, flag, sort, q, minPrice, maxPrice]);
+
+  }, [
+    page,
+    category,
+    brand,
+    flag,
+    sort,
+    q,
+    minPrice,
+    maxPrice,
+    setParams
+  ]);
 
   const totalPages = pagination?.totalPages || 0;
 
@@ -347,7 +555,32 @@ export default function Shop() {
         type="button"
         className="eb-shop-reset"
         onClick={() => {
-          setParams(new URLSearchParams());
+          setPriceState({
+            key: JSON.stringify(["", ""]),
+            draft: { min: "", max: "" }
+          });
+
+          const hasActiveRequest =
+            Boolean(
+              category ||
+              brand ||
+              flag ||
+              q ||
+              minPrice ||
+              maxPrice ||
+              sort !== "latest" ||
+              page > 1
+            );
+
+          if (hasActiveRequest) {
+            setProducts([]);
+            setPagination(null);
+          }
+
+          if (params.toString()) {
+            setParams(new URLSearchParams());
+          }
+
           setMobileFilters(false);
         }}
       >
@@ -358,6 +591,24 @@ export default function Shop() {
 
   return (
     <>
+      <SEO
+        title="Shop All Products | EverythingBD"
+        description="Explore Korean skincare, women's fashion, kids' clothing, leather accessories and smart gadgets. Shop online with Cash on Delivery across Bangladesh."
+        path="/shop"
+        robots={
+          category || brand || flag || q ||
+          minPrice || maxPrice || sort !== "latest" ||
+          page > 1
+            ? "noindex, follow"
+            : "index, follow"
+        }
+        schemas={[
+          buildBreadcrumb([
+            { name: "Home", path: "/" },
+            { name: "Shop", path: "/shop" }
+          ])
+        ]}
+      />
       <Header />
 
       <main className="eb-shop-page">
@@ -401,7 +652,7 @@ export default function Shop() {
                 </span>
               </div>
 
-              {loading && page === 1 ? (
+              {loading ? (
                 <div className="no-products">Loading products...</div>
               ) : error ? (
                 <div className="no-products" role="alert">{error}</div>

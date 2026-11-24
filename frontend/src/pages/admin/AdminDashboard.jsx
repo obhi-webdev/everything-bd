@@ -11,6 +11,7 @@ import UnifiedSettings from "../../features/admin/UnifiedSettings";
 import LandingPageManager from "../../features/admin/LandingPageManager";
 import BannerManager from "../../features/admin/BannerManager";
 import AdminOverview from "../../features/admin/AdminOverview";
+import ProductAnalytics from "../../features/admin/ProductAnalytics";
 import OrderManager from "../../features/admin/OrderManager";
 import ProductManager from "../../features/admin/ProductManager";
 import { useEffect, useState } from "react";
@@ -23,6 +24,7 @@ import {
 
 const menus = [
   { name: "Overview", icon: LayoutDashboard },
+  { name: "Analytics", icon: ChartColumn },
   { name: "Products", icon: Package },
   { name: "Categories", icon: Package },
   { name: "Orders", icon: ShoppingBag },
@@ -239,7 +241,7 @@ export default function AdminDashboard({ user, token, onLogout }) {
               <div className="ebd-mobile-more-grid">
                 {menus
                   .filter(item =>
-                    !["Overview", "Orders", "Products"].includes(
+                    !["Overview", "Orders", "Products", "Analytics"].includes(
                       item.name
                     )
                   )
@@ -271,8 +273,9 @@ export default function AdminDashboard({ user, token, onLogout }) {
                 Logout
               </button>
             </section>
-          ) : active === "Analytics" ||
-              active === "Overview" ? (
+          ) : active === "Analytics" ? (
+            <ProductAnalytics token={token} />
+          ) : active === "Overview" ? (
             <AdminOverview token={token} />
           ) : (
             <div className="admin-placeholder">
