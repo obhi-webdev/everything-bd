@@ -1,4 +1,7 @@
 import mongoose from "mongoose";
+import {
+  buildProductUpdateSet
+} from "./productSeoPatch.js";
 import { validateProductInventory } from "./product.inventory.js";
 import { Product } from "./product.model.js";
 import { Order } from "../orders/order.model.js";
@@ -206,7 +209,7 @@ export async function adminUpdateProduct(req, res) {
             __v: expectedVersion
           },
           {
-            $set: patch,
+            $set: buildProductUpdateSet(patch),
             $inc: { __v: 1 }
           },
           {

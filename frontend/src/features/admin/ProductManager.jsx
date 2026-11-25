@@ -4,6 +4,12 @@ import { useCallback, useEffect, useState } from "react";
 import { Plus, Pencil, Archive, RefreshCw, X, Search } from "lucide-react";
 import { productApi } from "./productApi";
 import ImageUploader from "./ImageUploader";
+import {
+  readImageMetadata,
+  mergeImageMetadata,
+  buildProductImages
+} from "./productImageMetadata.js";
+import ProductSeoEditor from "./ProductSeoEditor";
 
 const CLOTHING_SIZE_PRESETS = {
   Men: ["XS", "S", "M", "L", "XL", "XXL"],
@@ -40,7 +46,8 @@ const empty = {
   version: 0,
   hasSizeVariants: false, sizeVariants: [],
   status: "draft", isFeatured: false,
-  imagesText: "", ingredientsText: "", benefitsText: "",
+  imagesText: "", imageMetadata: [],
+  ingredientsText: "", benefitsText: "",
   seoTitle: "", seoDescription: ""
 };
 
@@ -66,6 +73,7 @@ const toForm = (p) => ({
   status: p.status || "draft",
   isFeatured: Boolean(p.isFeatured),
   imagesText: (p.images || []).map(x => x.url).join("\n"),
+  imageMetadata: readImageMetadata(p.images || []),
   ingredientsText: (p.ingredients || []).join("\n"),
   benefitsText: (p.benefits || []).join("\n"),
   seoTitle: p.seo?.title || "",
@@ -75,9 +83,11 @@ const toForm = (p) => ({
 const lines = (text) => text.split("\n").map(x => x.trim()).filter(Boolean);
 
 function toPayload(form) {
-  const images = lines(form.imagesText).map(url => ({
-    url, alt: form.name, publicId: ""
-  }));
+  const images = buildProductImages(
+    form.imagesText,
+    form.imageMetadata,
+    form.name
+  );
 
   return {
     name: form.name.trim(),
@@ -646,7 +656,19 @@ export default function ProductManager({ token }) {
             <ImageUploader
               token={token}
               urls={form.imagesText}
-              onChange={value => change("imagesText", value)}
+              onChange={(value, uploaded = []) => {
+                setForm(prev => ({
+                  ...prev,
+                  imagesText: value,
+                  imageMetadata: mergeImageMetadata(
+                    prev.imageMetadata,
+                    uploaded.map(image => ({
+                      ...image,
+                      alt: prev.name.trim().slice(0, 200)
+                    }))
+                  )
+                }));
+              }}
               onUploadingChange={setUploadingImages}
             />
             <div className="pm-form-grid">
@@ -658,15 +680,15 @@ export default function ProductManager({ token }) {
                 <textarea rows={3} value={form.benefitsText}
                   onChange={e => change("benefitsText", e.target.value)}/>
               </label>
-              <label>SEO Title
-                <input value={form.seoTitle}
-                  onChange={e => change("seoTitle", e.target.value)}/>
-              </label>
-              <label>SEO Description
-                <input value={form.seoDescription}
-                  onChange={e => change("seoDescription", e.target.value)}/>
-              </label>
             </div>
+
+            <ProductSeoEditor
+              form={form}
+              change={change}
+              products={products}
+              editingId={editingId}
+              disabled={saving}
+            />
             <div className="pm-form-actions">
               <button type="button" onClick={() => setShowForm(false)}>
                 Cancel

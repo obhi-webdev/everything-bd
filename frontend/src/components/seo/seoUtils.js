@@ -1,3 +1,11 @@
+import { generateProductDescription } from "./seoDescriptions.js";
+import {
+  PRODUCT_SEO_TITLES,
+  PRODUCT_SEO_TITLE_FINGERPRINTS
+} from "./productSeoTitles.js";
+import { contentFingerprint } from "./seoFingerprint.js";
+import { normalizeDescription } from "./seoDescriptions.js";
+
 export const SITE_URL = "https://everything-bd.com";
 
 export const DEFAULT_TITLE =
@@ -24,24 +32,64 @@ export function safeImage(value) {
   }
 }
 
-export function productTitle(product) {
-  const title =
-    cleanText(product.seo?.title, 120) ||
-    cleanText(product.name, 120);
+function normalizeProductTitle(value) {
+  return String(value || "")
+    .normalize("NFC")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/(?:\s*\|\s*EverythingBD)+$/i, "")
+    .replace(/^\s*\d+\.\s+/, "")
+    .replace(/\p{Extended_Pictographic}/gu, "")
+    .replace(/[\uFE0F\uFE0E\u200D]/g, "")
+    .replace(/^[\s#•®™*"'“”]+/u, "")
+    .replace(/[\s"'“”]+$/u, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
-  return /everythingbd$/i.test(title)
-    ? title
-    : `${title} | EverythingBD`;
+export function productTitle(product) {
+  const custom = normalizeProductTitle(
+    product?.seo?.title
+  );
+
+  const slug = product?.slug || "";
+
+  // Curated title freshness guard
+  const catalogTitle =
+    Object.hasOwn(PRODUCT_SEO_TITLES, slug) &&
+    Object.hasOwn(PRODUCT_SEO_TITLE_FINGERPRINTS, slug) &&
+    contentFingerprint(
+      normalizeDescription(product?.name)
+    ) === PRODUCT_SEO_TITLE_FINGERPRINTS[slug]
+      ? PRODUCT_SEO_TITLES[slug]
+      : "";
+
+  const automatic = normalizeProductTitle(
+    product?.name
+  );
+
+  const title = custom ||
+    catalogTitle ||
+    automatic;
+
+  return title
+    ? `${title} | EverythingBD`
+    : DEFAULT_TITLE;
 }
 
 export function productDescription(product) {
-  return (
-    cleanText(product.seo?.description) ||
-    cleanText(product.description) ||
-    cleanText(
-      `Shop ${product.name} at EverythingBD. Cash on Delivery across Bangladesh.`
-    )
+  return generateProductDescription(
+    product,
+    productTitle(product)
   );
+}
+
+function normalizeSchemaBrand(value) {
+  return cleanText(value, 200)
+    .replace(/^[\s"'“”‘’•#]+/u, "")
+    .replace(/[\s"'“”‘’]+$/u, "")
+    .trim();
 }
 
 export function buildProductSchema(product) {
@@ -73,7 +121,11 @@ export function buildProductSchema(product) {
 
   const description = cleanText(
     product.description, 5000
-  );
+  ) || cleanText(product.name, 5000);
+
+  const brand = normalizeSchemaBrand(product.brand);
+  const sku = cleanText(product.sku, 200);
+  const category = cleanText(product.category, 300);
 
   return {
     "@context": "https://schema.org",
@@ -82,16 +134,14 @@ export function buildProductSchema(product) {
     image: images,
     url,
     ...(description ? { description } : {}),
-    ...(product.sku ? { sku: product.sku } : {}),
-    ...(product.brand ? {
+    ...(sku ? { sku } : {}),
+    ...(brand ? {
       brand: {
         "@type": "Brand",
-        name: product.brand
+        name: brand
       }
     } : {}),
-    ...(product.category ? {
-      category: product.category
-    } : {}),
+    ...(category ? { category } : {}),
     offers: {
       "@type": "Offer",
       url,

@@ -99,6 +99,18 @@ export const productSchema = baseProductSchema.refine(
   }
 );
 
+const partialSeoSchema = z.object({
+  title: z.string().max(200).optional(),
+  description: z.string().max(320).optional()
+}).strict().refine(
+  value =>
+    value.title !== undefined ||
+    value.description !== undefined,
+  {
+    message: "At least one SEO field is required"
+  }
+);
+
 export const updateProductSchema = z.preprocess(
   (input) => {
     if (
@@ -113,6 +125,9 @@ export const updateProductSchema = z.preprocess(
   },
   baseProductSchema
   .partial()
+  .extend({
+    seo: partialSeoSchema.optional()
+  })
   .superRefine((data, ctx) => {
     if (!Object.keys(data).length) {
       ctx.addIssue({

@@ -45,7 +45,11 @@ export default function ImageUploader({
         );
 
         completed.push(result.url);
-        onChange(completed.join("\n"));
+        onChange(completed.join("\n"), [{
+          url: result.url,
+          publicId: result.publicId || "",
+          alt: ""
+        }]);
       }
       setProgress(100);
     } catch (err) {

@@ -9,19 +9,45 @@ import "./styles/checkout.css";
 import Checkout from "./pages/checkout/Checkout";
 import ProductDetails from "./pages/products/ProductDetails";
 import "./styles/product-manager.css";
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { adminApi } from "./features/admin/adminApi";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import Shop from "./pages/Shop";
 import About from "./pages/About";
-import AdminLogin from "./pages/admin/AdminLogin";
-import AdminDashboard from "./pages/admin/AdminDashboard";
+
+
 import "./styles/admin.css";
 import "./styles/everythingbd-theme.css";
 import "./styles/premiumClientV1.css";
 import "./styles/premiumClientV2.css";
 import "./styles/premiumClientV3.css";
+
+const AdminLogin = lazy(
+  () => import("./pages/admin/AdminLogin")
+);
+
+const AdminDashboard = lazy(
+  () => import("./pages/admin/AdminDashboard")
+);
+
+function AdminLoading() {
+  return (
+    <main
+      className="admin-login-page"
+      role="status"
+      aria-live="polite"
+    >
+      <div
+        className="admin-login-panel"
+        style={{ textAlign: "center" }}
+      >
+        <h2>everythingbd.</h2>
+        <p>Loading admin portal...</p>
+      </div>
+    </main>
+  );
+}
 
 const SESSION_KEY = "everythingbd_admin_session";
 
@@ -178,7 +204,9 @@ export default function App() {
               description=""
               robots="noindex, nofollow"
             />
-            <AdminArea />
+            <Suspense fallback={<AdminLoading />}>
+              <AdminArea />
+            </Suspense>
           </>
         } />
         <Route path="*" element={<Navigate to="/" replace />} />
