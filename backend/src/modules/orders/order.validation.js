@@ -61,5 +61,17 @@ export const createOrderSchema = z.object({
     .optional()
     .default(""),
   paymentMethod: z.literal("cod"),
-  marketingConsent: z.boolean().optional().default(false)
+  marketingConsent: z.boolean().optional().default(false),
+
+  marketingAttribution: z.object({
+    fbp: z.string()
+      .max(500)
+      .regex(/^fb\.\d+\.\d+\.\d+$/)
+      .optional(),
+
+    fbc: z.string()
+      .max(500)
+      .regex(/^fb\.\d+\.\d+\.[A-Za-z0-9_.-]+$/)
+      .optional()
+  }).strict().optional()
 }).strict();

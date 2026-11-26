@@ -44,6 +44,7 @@ function LandingPageContent({ slug }) {
   const requestId = useRef(null);
   const orderRef = useRef(null);
   const checkoutTrackedRef = useRef("");
+  const viewTrackedRef = useRef("");
 
   function trackLandingCheckout() {
     if (!page || !hasMarketingConsent()) return;
@@ -101,11 +102,20 @@ function LandingPageContent({ slug }) {
     if (!page?.productId) return;
 
     function sendViewContent() {
-      trackMetaEvent("ViewContent", {
+      const key = String(page.productId);
+
+      if (
+        !hasMarketingConsent() ||
+        viewTrackedRef.current === key
+      ) return;
+
+      const tracked = trackMetaEvent("ViewContent", {
         content_name: page.name,
         content_ids: [String(page.productId)],
         content_type: "product"
       });
+
+      if (tracked) viewTrackedRef.current = key;
     }
 
     sendViewContent();
@@ -132,6 +142,8 @@ function LandingPageContent({ slug }) {
     if (!requestId.current) {
       requestId.current = crypto.randomUUID();
     }
+
+    trackLandingCheckout();
 
     setSubmitting(true);
     setError("");
@@ -174,7 +186,8 @@ function LandingPageContent({ slug }) {
             id: String(page.productId),
             quantity: Number(quantity)
           }],
-          num_items: Number(quantity)
+          num_items: Number(quantity),
+          ...(created.tracking || {})
         };
 
         if (Number.isFinite(total) && total >= 0) {

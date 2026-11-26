@@ -1,7 +1,7 @@
 import "./productDetails.css";
 import "./desktop-purchase-layout.css";
 import "./productDetails-mobile-reference.css";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import {
   ArrowLeft, ChevronLeft, ChevronRight,
@@ -85,17 +85,24 @@ function ProductDetailsContent({ slug }) {
     return () => controller.abort();
   }, [slug]);
 
+  const viewTrackedRef = useRef("");
+
   useEffect(() => {
-    if (!product) return;
+    if (!product || product.slug !== slug) return;
 
     function trackProductView() {
-      trackMetaEvent("ViewContent", {
+      const key = String(product._id);
+
+      if (viewTrackedRef.current === key) return;
+      const tracked = trackMetaEvent("ViewContent", {
         content_name: product.name,
         content_ids: [String(product._id)],
         content_type: "product",
         value: Number(product.price),
         currency: "BDT"
       });
+
+      if (tracked) viewTrackedRef.current = key;
     }
 
     // Track when consent already exists.
@@ -113,7 +120,7 @@ function ProductDetailsContent({ slug }) {
         trackProductView
       );
     };
-  }, [product]);
+  }, [product, slug]);
 
   const images = product?.images?.filter(img => img.url) || [];
   const currentImage = images[activeImage];
@@ -167,9 +174,7 @@ function ProductDetailsContent({ slug }) {
       ...(hasSizes ? { size: selectedSize } : {})
     };
 
-    for (let i = 0; i < Math.min(quantity, stock); i++) {
-      addToCart(item);
-    }
+    addToCart(item, Math.min(quantity, stock));
   }
 
 

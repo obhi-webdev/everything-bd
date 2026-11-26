@@ -53,6 +53,10 @@ function flushEvents() {
 export function trackMetaEvent(name, params = {}, eventId) {
   if (!hasMarketingConsent()) return false;
 
+  if (/^\/admin(?:\/|$)/.test(window.location.pathname)) {
+    return false;
+  }
+
   if (eventQueue.length >= MAX_QUEUE) {
     eventQueue.shift();
   }
@@ -97,6 +101,11 @@ function loadPixel(pixelId) {
 
     script.onload = () => {
       try {
+        window.fbq(
+          "consent",
+          hasMarketingConsent() ? "grant" : "revoke"
+        );
+
         window.fbq("set", "autoConfig", false, pixelId);
         window.fbq("init", pixelId);
         activePixel = pixelId;
@@ -104,11 +113,16 @@ function loadPixel(pixelId) {
         flushEvents();
         resolve();
       } catch (error) {
+        ready = false;
+        pixelPromise = null;
+        script.remove();
         reject(error);
       }
     };
 
     script.onerror = () => {
+      ready = false;
+      script.remove();
       pixelPromise = null;
       reject(new Error("Meta Pixel script failed to load"));
     };
@@ -129,7 +143,9 @@ export default function MetaPixel() {
       return "";
     }
   });
-  const [showChoices, setShowChoices] = useState(false);
+  const [showChoices, setShowChoices] = useState(
+    () => !consent && !/^\/admin(?:\/|$)/.test(location.pathname)
+  );
 
   useEffect(() => {
     const openPrivacyChoices = () => {
@@ -180,9 +196,14 @@ export default function MetaPixel() {
   }, []);
 
   useEffect(() => {
-    if (!pixelId || consent !== "accepted") return;
+    if (
+      !pixelId ||
+      consent !== "accepted" ||
+      /^\/admin(?:\/|$)/.test(location.pathname)
+    ) return;
+
     loadPixel(pixelId).catch(() => {});
-  }, [pixelId, consent]);
+  }, [pixelId, consent, location.pathname]);
 
   useEffect(() => {
     if (
@@ -212,6 +233,19 @@ export default function MetaPixel() {
 
     if (value !== "accepted") {
       eventQueue = [];
+      lastPage = "";
+      lastPageTime = 0;
+    }
+
+    if (typeof window.fbq === "function") {
+      try {
+        window.fbq(
+          "consent",
+          value === "accepted" ? "grant" : "revoke"
+        );
+      } catch {
+        // Privacy choices must remain available.
+      }
     }
 
     setConsent(value);
@@ -228,7 +262,7 @@ export default function MetaPixel() {
 
   return (
     <>
-{showChoices && (
+{showChoices && !/^\/admin(?:\/|$)/.test(location.pathname) && (
         <div
           role="region"
           aria-label="Marketing privacy choices"

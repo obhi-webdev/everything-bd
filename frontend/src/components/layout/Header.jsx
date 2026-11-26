@@ -2,6 +2,7 @@ import { useCategories } from "../../features/categories/useCategories";
 import "./cleanSearch.css";
 import FloatingContactButtons from "./FloatingContactButtons";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Search, ShoppingCart, Heart, Phone,
   Menu, X, ChevronDown, ChevronUp
@@ -21,6 +22,7 @@ const navigation = [
 
 
 export default function Header() {
+  const navigate = useNavigate();
   const managedCategories = useCategories();
 
   const categoryLinks = Array.isArray(managedCategories)
@@ -149,7 +151,10 @@ export default function Header() {
       trackMetaEvent("Search", { search_string: query });
     }
 
-    window.location.assign(
+    setCompactSearchOpen(false);
+    setMenuOpen(false);
+
+    navigate(
       query
         ? `/shop?q=${encodeURIComponent(query)}`
         : "/shop"

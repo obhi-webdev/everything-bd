@@ -133,10 +133,18 @@ export default function Checkout() {
   );
 
   const initialCartRef = useRef(cart);
+  const checkoutTrackedRef = useRef(false);
 
   useEffect(() => {
+    function trackCheckout() {
+
     const cart = initialCartRef.current;
-    if (cart.length === 0) return;
+
+    if (
+      checkoutTrackedRef.current ||
+      !hasMarketingConsent() ||
+      cart.length === 0
+    ) return;
 
     const subtotal = cart.reduce(
       (sum, item) =>
@@ -144,7 +152,7 @@ export default function Checkout() {
       0
     );
 
-    trackMetaEvent("InitiateCheckout", {
+    const tracked = trackMetaEvent("InitiateCheckout", {
       currency: "BDT",
       value: Number(subtotal.toFixed(2)),
       num_items: cart.reduce(
@@ -158,6 +166,23 @@ export default function Checkout() {
         item_price: Number(item.price)
       }))
     });
+
+    if (tracked) checkoutTrackedRef.current = true;
+
+    }
+
+    trackCheckout();
+
+    window.addEventListener(
+      "everythingbd:marketing-consent-accepted",
+      trackCheckout
+    );
+
+    return () => window.removeEventListener(
+      "everythingbd:marketing-consent-accepted",
+      trackCheckout
+    );
+
   }, []);
 
   function change(key, value) {
@@ -268,13 +293,18 @@ export default function Checkout() {
           value: Number(result.data.total),
           currency: "BDT",
           order_id: result.data.orderNumber,
+          num_items: cart.reduce(
+            (sum, item) => sum + Number(item.quantity || 0),
+            0
+          ),
           content_type: "product",
           content_ids: cart.map(item => String(item.id)),
           contents: cart.map(item => ({
             id: String(item.id),
             quantity: item.quantity,
             item_price: Number(item.price)
-          }))
+          })),
+          ...(result.data.tracking || {})
         },
         `purchase_${result.data.orderNumber}`
       );

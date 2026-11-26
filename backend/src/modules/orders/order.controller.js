@@ -232,7 +232,11 @@ export async function createOrder(req, res) {
     // Never send real Meta events from the isolated size test DB.
     if (mongoose.connection.name !== "everythingbd_size_variation_test") {
       try {
-        await sendMetaPurchase(order, req);
+        await sendMetaPurchase(
+          order,
+          req,
+          input.marketingAttribution
+        );
       } catch (metaError) {
         console.error(
           "Meta Purchase tracking failed:",
@@ -247,7 +251,21 @@ export async function createOrder(req, res) {
       data: {
         orderNumber: order.orderNumber,
         total: order.total,
-        orderStatus: order.orderStatus
+        orderStatus: order.orderStatus,
+        tracking: {
+          content_type: "product",
+          content_ids: order.items.map(
+            item => String(item.product)
+          ),
+          contents: order.items.map(item => ({
+            id: String(item.product),
+            quantity: Number(item.quantity),
+            item_price: Number(item.price)
+          })),
+          num_items: order.items.reduce(
+            (sum, item) => sum + Number(item.quantity), 0
+          )
+        }
       }
     });
   } catch (error) {

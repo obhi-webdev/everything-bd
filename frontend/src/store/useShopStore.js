@@ -33,7 +33,7 @@ export const useShopStore = create((set) => ({
   }),
 
 
-  addToCart: (product) =>
+  addToCart: (product, requestedQuantity = 1) =>
     set((state) => {
       if (!product?.id || !Number.isFinite(Number(product.price))) {
         return state;
@@ -52,28 +52,45 @@ export const useShopStore = create((set) => ({
         return { cartOpen: true };
       }
 
+      const requested = Math.max(
+        1,
+        Math.floor(Number(requestedQuantity) || 1)
+      );
+
+      const addedQuantity = Math.min(
+        requested,
+        stock - current
+      );
+
+      if (addedQuantity <= 0) {
+        return { cartOpen: true };
+      }
+
       const cart = existing
         ? state.cart.map(item =>
             cartKey(item) === key
-              ? { ...item, cartKey: key, stock, quantity: current + 1 }
+              ? { ...item, cartKey: key, stock, quantity: current + addedQuantity }
               : item
           )
         : [...state.cart, {
             ...product,
             cartKey: key,
             stock,
-            quantity: 1
+            quantity: addedQuantity
           }];
 
       trackMetaEvent("AddToCart", {
         content_ids: [String(product.id)],
         content_type: "product",
         content_name: product.name,
-        value: Number(product.price),
+        value: Number(
+          (Number(product.price) * addedQuantity).toFixed(2)
+        ),
+        num_items: addedQuantity,
         currency: "BDT",
         contents: [{
           id: String(product.id),
-          quantity: 1,
+          quantity: addedQuantity,
           item_price: Number(product.price)
         }]
       });
@@ -94,6 +111,29 @@ export const useShopStore = create((set) => ({
             stock,
             Math.max(0, current + Number(delta || 0))
           );
+
+          const addedQuantity = next - current;
+
+          if (
+            addedQuantity > 0 &&
+            Number.isFinite(Number(item.price))
+          ) {
+            trackMetaEvent("AddToCart", {
+              content_ids: [String(item.id)],
+              content_type: "product",
+              content_name: item.name,
+              currency: "BDT",
+              value: Number(
+                (Number(item.price) * addedQuantity).toFixed(2)
+              ),
+              num_items: addedQuantity,
+              contents: [{
+                id: String(item.id),
+                quantity: addedQuantity,
+                item_price: Number(item.price)
+              }]
+            });
+          }
 
           return { ...item, quantity: next };
         })

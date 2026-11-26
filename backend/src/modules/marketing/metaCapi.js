@@ -36,7 +36,11 @@ function hash(value) {
     .digest("hex");
 }
 
-export async function sendMetaPurchase(order, req) {
+export async function sendMetaPurchase(
+  order,
+  req,
+  attribution = {}
+) {
   if (req.body?.marketingConsent !== true) {
     return { skipped: "Marketing consent not granted" };
   }
@@ -72,6 +76,22 @@ export async function sendMetaPurchase(order, req) {
 
   if (bdPhone) userData.ph = [hash(bdPhone)];
   if (email) userData.em = [hash(email)];
+
+  if (
+    typeof attribution.fbp === "string" &&
+    attribution.fbp.length <= 500 &&
+    /^fb\.\d+\.\d+\.\d+$/.test(attribution.fbp)
+  ) {
+    userData.fbp = attribution.fbp;
+  }
+
+  if (
+    typeof attribution.fbc === "string" &&
+    attribution.fbc.length <= 500 &&
+    /^fb\.\d+\.\d+\.[A-Za-z0-9_.-]+$/.test(attribution.fbc)
+  ) {
+    userData.fbc = attribution.fbc;
+  }
 
   const origin = req.get("origin");
   let eventSourceUrl;
@@ -137,5 +157,19 @@ export async function sendMetaPurchase(order, req) {
     throw new Error(`Meta CAPI HTTP ${response.status}`);
   }
 
-  return { sent: true, eventId: event.event_id };
+  const result = await response.json();
+
+  if (
+    result.error ||
+    Number(result.events_received) < 1 ||
+    !Number.isFinite(Number(result.events_received))
+  ) {
+    throw new Error("Meta CAPI did not acknowledge the event");
+  }
+
+  return {
+    sent: true,
+    eventId: event.event_id,
+    eventsReceived: Number(result.events_received)
+  };
 }
