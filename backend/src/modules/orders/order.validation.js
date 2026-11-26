@@ -30,8 +30,8 @@ export const createOrderSchema = z.object({
     area: z.string().trim().min(2).max(150),
     address: z.string().trim().min(10).max(500),
     deliveryZone: z.enum([
-      "inside_dhaka",
-      "outside_dhaka"
+      "inside_mymensingh",
+      "outside_mymensingh"
     ])
   }).strict(),
 

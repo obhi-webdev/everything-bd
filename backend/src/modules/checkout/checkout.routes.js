@@ -1,9 +1,14 @@
+const legacyDeliveryKeys = {
+  DELIVERY_INSIDE_MYMENSINGH: "DELIVERY_INSIDE_DHAKA",
+  DELIVERY_OUTSIDE_MYMENSINGH: "DELIVERY_OUTSIDE_DHAKA"
+};
+
 import { Router } from "express";
 
 const router = Router();
 
 function getRate(key) {
-  const value = process.env[key];
+  const value = (process.env[key] ?? process.env[legacyDeliveryKeys[key]]);
 
   if (value === undefined || value.trim() === "") {
     return null;
@@ -19,12 +24,12 @@ function getRate(key) {
 }
 
 router.get("/config", (req, res) => {
-  const insideDhaka = getRate("DELIVERY_INSIDE_DHAKA");
-  const outsideDhaka = getRate("DELIVERY_OUTSIDE_DHAKA");
+  const insideMymensingh = getRate("DELIVERY_INSIDE_MYMENSINGH");
+  const outsideMymensingh = getRate("DELIVERY_OUTSIDE_MYMENSINGH");
 
   const configured =
-    insideDhaka !== null &&
-    outsideDhaka !== null;
+    insideMymensingh !== null &&
+    outsideMymensingh !== null;
 
   res.set("Cache-Control", "no-store");
 
@@ -33,8 +38,8 @@ router.get("/config", (req, res) => {
     currency: "BDT",
     paymentMethods: ["cod"],
     delivery: {
-      inside_dhaka: insideDhaka,
-      outside_dhaka: outsideDhaka
+      inside_mymensingh: insideMymensingh,
+      outside_mymensingh: outsideMymensingh
     },
     checkoutAvailable: configured,
     message: configured

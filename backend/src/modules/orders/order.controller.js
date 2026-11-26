@@ -1,3 +1,8 @@
+const legacyDeliveryKeys = {
+  DELIVERY_INSIDE_MYMENSINGH: "DELIVERY_INSIDE_DHAKA",
+  DELIVERY_OUTSIDE_MYMENSINGH: "DELIVERY_OUTSIDE_DHAKA"
+};
+
 import {
   getValidCoupon,
   calculateDiscount,
@@ -20,11 +25,11 @@ class CheckoutError extends Error {
 }
 
 function deliveryCharge(zone) {
-  const key = zone === "inside_dhaka"
-    ? "DELIVERY_INSIDE_DHAKA"
-    : "DELIVERY_OUTSIDE_DHAKA";
+  const key = zone === "inside_mymensingh"
+    ? "DELIVERY_INSIDE_MYMENSINGH"
+    : "DELIVERY_OUTSIDE_MYMENSINGH";
 
-  const raw = process.env[key];
+  const raw = (process.env[key] ?? process.env[legacyDeliveryKeys[key]]);
 
   if (raw === undefined || raw.trim() === "") {
     return null;
@@ -51,8 +56,8 @@ export async function createOrder(req, res) {
   const input = validated.data;
 
   // Checkout stays closed until both rates are configured.
-  const inside = deliveryCharge("inside_dhaka");
-  const outside = deliveryCharge("outside_dhaka");
+  const inside = deliveryCharge("inside_mymensingh");
+  const outside = deliveryCharge("outside_mymensingh");
 
   if (inside === null || outside === null) {
     return res.status(503).json({
@@ -69,12 +74,12 @@ export async function createOrder(req, res) {
     .trim().toLowerCase();
 
   if (
-    input.shippingAddress.deliveryZone === "inside_dhaka" &&
-    district !== "dhaka"
+    input.shippingAddress.deliveryZone === "inside_mymensingh" &&
+    district !== "mymensingh"
   ) {
     return res.status(400).json({
       success: false,
-      message: "Inside Dhaka delivery requires Dhaka district"
+      message: "Inside Mymensingh delivery requires Mymensingh district"
     });
   }
 

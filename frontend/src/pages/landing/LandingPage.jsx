@@ -17,7 +17,7 @@ const emptyCustomer = {
   district: "",
   area: "",
   address: "",
-  deliveryZone: "outside_dhaka"
+  deliveryZone: "outside_mymensingh"
 };
 
 export default function LandingPage() {
@@ -364,8 +364,8 @@ function LandingPageContent({ slug }) {
               <label>Delivery Location
                 <select value={customer.deliveryZone}
                   onChange={e => update("deliveryZone", e.target.value)}>
-                  <option value="inside_dhaka">Inside Dhaka</option>
-                  <option value="outside_dhaka">Outside Dhaka</option>
+                  <option value="inside_mymensingh">Inside Mymensingh</option>
+                  <option value="outside_mymensingh">Outside Mymensingh</option>
                 </select>
               </label>
 

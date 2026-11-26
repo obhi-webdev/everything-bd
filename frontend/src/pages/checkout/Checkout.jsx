@@ -399,49 +399,49 @@ export default function Checkout() {
                     <div className="eb-delivery-choices">
                       <label
                         className={
-                          form.deliveryZone === "inside_dhaka"
+                          form.deliveryZone === "inside_mymensingh"
                             ? "eb-zone-active" : ""
                         }
                       >
                         <input
                           type="radio"
                           name="deliveryZone"
-                          value="inside_dhaka"
+                          value="inside_mymensingh"
                           required
-                          checked={form.deliveryZone === "inside_dhaka"}
+                          checked={form.deliveryZone === "inside_mymensingh"}
                           onChange={e =>
                             change("deliveryZone", e.target.value)
                           }
                         />
-                        <span>Inside Dhaka</span>
+                        <span>Inside Mymensingh</span>
                         <strong>
-                          {config?.delivery?.inside_dhaka == null
+                          {config?.delivery?.inside_mymensingh == null
                             ? "Pending"
-                            : money(config.delivery.inside_dhaka)}
+                            : money(config.delivery.inside_mymensingh)}
                         </strong>
                       </label>
 
                       <label
                         className={
-                          form.deliveryZone === "outside_dhaka"
+                          form.deliveryZone === "outside_mymensingh"
                             ? "eb-zone-active" : ""
                         }
                       >
                         <input
                           type="radio"
                           name="deliveryZone"
-                          value="outside_dhaka"
+                          value="outside_mymensingh"
                           required
-                          checked={form.deliveryZone === "outside_dhaka"}
+                          checked={form.deliveryZone === "outside_mymensingh"}
                           onChange={e =>
                             change("deliveryZone", e.target.value)
                           }
                         />
-                        <span>Outside Dhaka</span>
+                        <span>Outside Mymensingh</span>
                         <strong>
-                          {config?.delivery?.outside_dhaka == null
+                          {config?.delivery?.outside_mymensingh == null
                             ? "Pending"
-                            : money(config.delivery.outside_dhaka)}
+                            : money(config.delivery.outside_mymensingh)}
                         </strong>
                       </label>
                     </div>

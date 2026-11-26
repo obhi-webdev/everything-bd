@@ -45,8 +45,8 @@ export default function ProductShipping() {
           !config.success ||
           !config.checkoutAvailable ||
           config.currency !== "BDT" ||
-          !validRate(config.delivery?.inside_dhaka) ||
-          !validRate(config.delivery?.outside_dhaka)
+          !validRate(config.delivery?.inside_mymensingh) ||
+          !validRate(config.delivery?.outside_mymensingh)
         ) {
           throw new Error("Invalid shipping configuration");
         }
@@ -99,18 +99,18 @@ export default function ProductShipping() {
           <>
             <div className="ebd-ps-row">
               <div>
-                <strong>Inside Dhaka</strong>
+                <strong>Inside Mymensingh</strong>
                 <span>Delivery within 2 days</span>
               </div>
-              <b>{money(state.delivery.inside_dhaka)}</b>
+              <b>{money(state.delivery.inside_mymensingh)}</b>
             </div>
 
             <div className="ebd-ps-row">
               <div>
-                <strong>Outside Dhaka</strong>
+                <strong>Outside Mymensingh</strong>
                 <span>Delivery within 4 days</span>
               </div>
-              <b>{money(state.delivery.outside_dhaka)}</b>
+              <b>{money(state.delivery.outside_mymensingh)}</b>
             </div>
 
             {state.cod && (

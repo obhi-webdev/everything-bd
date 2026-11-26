@@ -91,7 +91,12 @@ const orderSchema = new mongoose.Schema({
     },
     deliveryZone: {
       type: String,
-      enum: ["inside_dhaka", "outside_dhaka"],
+      enum: [
+        "inside_mymensingh",
+        "outside_mymensingh",
+        "inside_dhaka",
+        "outside_dhaka"
+      ],
       required: true
     }
   },

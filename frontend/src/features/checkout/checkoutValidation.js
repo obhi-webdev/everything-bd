@@ -32,15 +32,15 @@ export function validateCheckout(form) {
     return "Address must contain 10 to 500 characters.";
   }
 
-  if (!["inside_dhaka", "outside_dhaka"].includes(form.deliveryZone)) {
+  if (!["inside_mymensingh", "outside_mymensingh"].includes(form.deliveryZone)) {
     return "Please select a delivery zone.";
   }
 
   if (
-    form.deliveryZone === "inside_dhaka" &&
-    district.toLowerCase() !== "dhaka"
+    form.deliveryZone === "inside_mymensingh" &&
+    district.toLowerCase() !== "mymensingh"
   ) {
-    return "Inside Dhaka delivery requires Dhaka district.";
+    return "Inside Mymensingh delivery requires Mymensingh district.";
   }
 
   if (
