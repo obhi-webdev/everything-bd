@@ -59,9 +59,17 @@ export async function submitOrder(payload) {
   try {
     body.marketingConsent =
       payload.marketingConsent === true &&
-      localStorage.getItem(
-        "everythingbd_marketing_consent"
-      ) === "accepted";
+      (
+        localStorage.getItem(
+          "everythingbd_marketing_consent"
+        ) === "accepted" ||
+        (
+          import.meta.env.VITE_META_TRACKING_MODE === "opt_out" &&
+          !localStorage.getItem(
+            "everythingbd_marketing_consent"
+          )
+        )
+      );
 
     if (body.marketingConsent) {
       const attribution = readMetaCookies(document.cookie);

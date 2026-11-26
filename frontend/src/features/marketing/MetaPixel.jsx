@@ -6,6 +6,17 @@ const API = import.meta.env.VITE_API_URL ||
   "http://localhost:5001/api";
 
 const CONSENT_KEY = "everythingbd_marketing_consent";
+
+const AUTO_TRACKING =
+  import.meta.env.VITE_META_TRACKING_MODE === "opt_out";
+
+function marketingChoice() {
+  try {
+    return localStorage.getItem(CONSENT_KEY) || "";
+  } catch {
+    return "declined";
+  }
+}
 const MAX_QUEUE = 50;
 
 let activePixel = "";
@@ -18,7 +29,12 @@ let lastPageTime = 0;
 
 export function hasMarketingConsent() {
   try {
-    return localStorage.getItem(CONSENT_KEY) === "accepted";
+    const choice = marketingChoice();
+
+    if (choice === "declined") return false;
+    if (choice === "accepted") return true;
+
+    return AUTO_TRACKING && choice === "";
   } catch {
     return false;
   }
@@ -138,7 +154,9 @@ export default function MetaPixel() {
   const [pixelId, setPixelId] = useState("");
   const [consent, setConsent] = useState(() => {
     try {
-      return localStorage.getItem(CONSENT_KEY) || "";
+      return hasMarketingConsent()
+        ? "accepted"
+        : marketingChoice();
     } catch {
       return "";
     }
